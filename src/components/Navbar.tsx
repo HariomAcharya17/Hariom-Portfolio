@@ -10,7 +10,10 @@ const links = [
   { label: "Contact", href: "#contact" },
 ];
 
-export default function Navbar() {
+export default function Navbar(props: any) {
+
+  const { lightMode, setLightMode } = props;
+
   const [scrolled, setScrolled] = useState(false);
   const [open, setOpen] = useState(false);
 
@@ -29,12 +32,14 @@ export default function Navbar() {
       }`}
     >
       <div className="container mx-auto px-6 py-4 flex items-center justify-between">
+
         <a href="#" className="text-xl font-bold gradient-text font-display">
           HA
         </a>
 
-        {/* Desktop */}
+        {/* Desktop Links */}
         <div className="hidden md:flex items-center gap-8">
+
           {links.map((l) => (
             <a
               key={l.href}
@@ -45,15 +50,40 @@ export default function Navbar() {
               <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all duration-300 group-hover:w-full" />
             </a>
           ))}
+
+          {/* iOS Theme Toggle */}
+          <button
+            onClick={() => {
+              if (setLightMode) {
+                setLightMode(!lightMode);
+              }
+            }}
+            className={`w-14 h-7 flex items-center rounded-full p-1 transition duration-300 ${
+              lightMode ? "bg-[#34c759]" : "bg-gray-600"
+            }`}
+          >
+            <motion.div
+              layout
+              transition={{ type: "spring", stiffness: 500, damping: 30 }}
+              className={`w-5 h-5 bg-white rounded-full shadow ${
+                lightMode ? "ml-auto" : ""
+              }`}
+            />
+          </button>
+
         </div>
 
         {/* Mobile toggle */}
-        <button className="md:hidden text-foreground" onClick={() => setOpen(!open)}>
+        <button
+          className="md:hidden text-foreground"
+          onClick={() => setOpen(!open)}
+        >
           {open ? <X size={24} /> : <Menu size={24} />}
         </button>
+
       </div>
 
-      {/* Mobile menu */}
+      {/* Mobile Menu */}
       <AnimatePresence>
         {open && (
           <motion.div
@@ -63,6 +93,7 @@ export default function Navbar() {
             className="md:hidden glass-strong"
           >
             <div className="px-6 py-4 flex flex-col gap-4">
+
               {links.map((l) => (
                 <a
                   key={l.href}
@@ -73,6 +104,27 @@ export default function Navbar() {
                   {l.label}
                 </a>
               ))}
+
+              {/* Mobile Theme Toggle */}
+              <button
+                onClick={() => {
+                  if (setLightMode) {
+                    setLightMode(!lightMode);
+                  }
+                }}
+                className={`w-14 h-7 flex items-center rounded-full p-1 transition duration-300 ${
+                  lightMode ? "bg-[#34c759]" : "bg-gray-600"
+                }`}
+              >
+                <motion.div
+                  layout
+                  transition={{ type: "spring", stiffness: 500, damping: 30 }}
+                  className={`w-5 h-5 bg-white rounded-full shadow ${
+                    lightMode ? "ml-auto" : ""
+                  }`}
+                />
+              </button>
+
             </div>
           </motion.div>
         )}
