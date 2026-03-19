@@ -1,29 +1,47 @@
-import { motion, useInView } from "framer-motion";
+import { motion, useInView, AnimatePresence } from "framer-motion";
 import { useRef, useState, useEffect } from "react";
 import { Send, Mail, User, MessageSquare } from "lucide-react";
-import { toast } from "sonner";
+import { supabase } from "@/lib/supabase";
 
 export default function ContactSection({ lightMode }: any) {
 
   const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+  const isInView = useInView(ref, { once: true });
 
   const [form, setForm] = useState({ name: "", email: "", message: "" });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const [showSuccess,setShowSuccess] = useState(false);
+
+  // ✅ SUBMIT FUNCTION
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    toast.success("Message sent! I'll get back to you soon.");
+
+    const { error } = await supabase
+      .from("contact_form")
+      .insert([form]);
+
+    if (error) {
+      console.error(error);
+      return;
+    }
+
+    // 🔥 Show Apple success animation
+    setShowSuccess(true);
+    setTimeout(()=>setShowSuccess(false),2500);
+
     setForm({ name: "", email: "", message: "" });
   };
 
   /* ================= CHAT TYPING ================= */
 
   const messages = [
-    "Hello 👋",
-    "Did you like my portfolio??",
-    "What are you building these days?",
-    "Maybe we can collaborate on something interesting 🚀",
-    "Mail me,I would Love❤️ to catch up😉"
+    "Hello 👋, welcome to my portfolio",
+    "Hope you’re having a great day!",
+    "Did something here catch your interest?",
+    "I love building scalable and impactful solutions ❤️",
+    "Always open to exciting opportunities and collaborations",
+    "Let’s connect and create something meaningful together ✨",
+    "Feel free to drop a message anytime 😊"
   ];
 
   const [displayedText, setDisplayedText] = useState("");
@@ -46,11 +64,9 @@ export default function ContactSection({ lightMode }: any) {
         setTyping(false);
 
         setTimeout(() => {
-
           setTyping(true);
           setDisplayedText("");
           setMessageIndex((prev) => (prev + 1) % messages.length);
-
         }, 2500);
 
       }
@@ -63,11 +79,68 @@ export default function ContactSection({ lightMode }: any) {
 
   return (
 
+    <>
+    {/* 🔥 APPLE SUCCESS NOTIFICATION */}
+    <AnimatePresence>
+      {showSuccess && (
+
+        <motion.div
+          initial={{ y: -120, opacity: 0 }}
+          animate={{ y: 30, opacity: 1 }}
+          exit={{ y: -120, opacity: 0 }}
+          transition={{ type:"spring", stiffness:180, damping:18 }}
+          className="fixed top-0 left-0 w-full flex justify-center z-[9999] pointer-events-none"
+        >
+
+          <div
+            className={`flex items-center gap-3 px-6 py-3 rounded-full shadow-xl backdrop-blur-xl border ${
+              lightMode
+                ? "bg-white/90 border-gray-200"
+                : "bg-black/80 border-white/10"
+            }`}
+          >
+
+            {/* ✅ Animated Tick */}
+            <motion.div
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{ type: "spring", stiffness: 300, damping: 15 }}
+              className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center"
+            >
+              <motion.svg
+                viewBox="0 0 24 24"
+                className="w-4 h-4 text-white"
+                initial={{ pathLength: 0 }}
+                animate={{ pathLength: 1 }}
+                transition={{ duration: 0.5 }}
+              >
+                <motion.path
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M5 13l4 4L19 7"
+                />
+              </motion.svg>
+            </motion.div>
+
+            <span className={`${lightMode ? "text-black" : "text-white"} font-medium`}>
+              Message Sent
+            </span>
+
+          </div>
+
+        </motion.div>
+
+      )}
+    </AnimatePresence>
+
+
     <section id="contact" className="py-28 relative overflow-hidden">
 
-      {/* glow only in dark mode */}
       {!lightMode && (
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[900px] h-[400px] bg-purple-500/20 blur-[180px]" />
+        <div className="absolute pointer-events-none bottom-0 left-1/2 -translate-x-1/2 w-[900px] h-[400px] bg-purple-500/20 blur-[180px]" />
       )}
 
       <div className="container mx-auto px-6" ref={ref}>
@@ -83,7 +156,6 @@ export default function ContactSection({ lightMode }: any) {
           Let's <span className="text-purple-400">Chat</span>
         </motion.h2>
 
-        {/* Mac window */}
         <motion.div
           initial={{ opacity: 0, y: 40 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
@@ -95,162 +167,93 @@ export default function ContactSection({ lightMode }: any) {
           }`}
         >
 
-          {/* window header */}
-          <div
-            className={`flex items-center gap-2 px-4 py-3 border-b ${
-              lightMode
-                ? "bg-gray-100 border-gray-200"
-                : "bg-[#161b22] border-[#30363d]"
-            }`}
-          >
-
+          {/* Header */}
+          <div className={`flex items-center gap-2 px-4 py-3 border-b ${
+            lightMode
+              ? "bg-gray-100 border-gray-200"
+              : "bg-[#161b22] border-[#30363d]"
+          }`}>
             <div className="w-3 h-3 rounded-full bg-red-500" />
             <div className="w-3 h-3 rounded-full bg-yellow-500" />
             <div className="w-3 h-3 rounded-full bg-green-500" />
-
             <span className="ml-4 text-sm text-gray-400 font-mono">
               messages.app
             </span>
-
           </div>
 
-          {/* chat area */}
+          {/* Body */}
           <div className="p-8 space-y-6">
 
             {/* AI message */}
-            <motion.div
-              className="flex"
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-            >
-
-              <div
-                className={`px-4 py-3 rounded-2xl max-w-xs font-mono ${
-                  lightMode
-                    ? "bg-gray-100 border border-gray-200 text-gray-700"
-                    : "bg-[#161b22] border border-[#30363d] text-gray-300"
-                }`}
-              >
-
+            <div className="flex">
+              <div className={`px-4 py-3 rounded-2xl max-w-xs font-mono ${
+                lightMode
+                  ? "bg-gray-100 border border-gray-200 text-gray-700"
+                  : "bg-[#161b22] border border-[#30363d] text-gray-300"
+              }`}>
                 {displayedText}
-
-                {typing && (
-                  <span className="ml-1 animate-pulse text-purple-400">|</span>
-                )}
-
+                {typing && <span className="ml-1 animate-pulse text-purple-400">|</span>}
               </div>
+            </div>
 
-            </motion.div>
-
-            {/* your reply */}
-            <motion.div
-              className="flex justify-end"
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-            >
-
+            {/* Reply */}
+            <div className="flex justify-end">
               <div className="bg-purple-500 text-white px-4 py-3 rounded-2xl max-w-xs">
                 I'd love to collaborate with you.
               </div>
+            </div>
 
-            </motion.div>
-
-            {/* typing dots */}
-            {typing && (
-              <div className="flex gap-1 ml-2">
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"/>
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100"/>
-                <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200"/>
-              </div>
-            )}
-
-            {/* form */}
+            {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-4 pt-6">
 
-              {/* name */}
-              <div
-                className={`flex items-center gap-3 rounded-lg px-4 py-3 ${
-                  lightMode
-                    ? "bg-gray-100 border border-gray-200"
-                    : "bg-[#161b22] border border-[#30363d]"
-                }`}
-              >
+              <div className={`flex items-center gap-3 rounded-lg px-4 py-3 ${
+                lightMode ? "bg-gray-100 border border-gray-200" : "bg-[#161b22] border border-[#30363d]"
+              }`}>
                 <User size={16} className="text-purple-400" />
-
                 <input
                   type="text"
                   required
                   value={form.name}
-                  onChange={(e) => setForm({ ...form, name: e.target.value })}
+                  onChange={(e)=>setForm(prev=>({...prev,name:e.target.value}))}
                   placeholder="Your name"
-                  className={`bg-transparent outline-none w-full ${
-                    lightMode ? "text-gray-800" : "text-gray-200"
-                  }`}
+                  className="bg-transparent outline-none w-full"
                 />
-
               </div>
 
-              {/* email */}
-              <div
-                className={`flex items-center gap-3 rounded-lg px-4 py-3 ${
-                  lightMode
-                    ? "bg-gray-100 border border-gray-200"
-                    : "bg-[#161b22] border border-[#30363d]"
-                }`}
-              >
-
+              <div className={`flex items-center gap-3 rounded-lg px-4 py-3 ${
+                lightMode ? "bg-gray-100 border border-gray-200" : "bg-[#161b22] border border-[#30363d]"
+              }`}>
                 <Mail size={16} className="text-purple-400" />
-
                 <input
                   type="email"
                   required
                   value={form.email}
-                  onChange={(e) => setForm({ ...form, email: e.target.value })}
+                  onChange={(e)=>setForm(prev=>({...prev,email:e.target.value}))}
                   placeholder="your@email.com"
-                  className={`bg-transparent outline-none w-full ${
-                    lightMode ? "text-gray-800" : "text-gray-200"
-                  }`}
+                  className="bg-transparent outline-none w-full"
                 />
-
               </div>
 
-              {/* message */}
-              <div
-                className={`flex items-start gap-3 rounded-lg px-4 py-3 ${
-                  lightMode
-                    ? "bg-gray-100 border border-gray-200"
-                    : "bg-[#161b22] border border-[#30363d]"
-                }`}
-              >
-
+              <div className={`flex items-start gap-3 rounded-lg px-4 py-3 ${
+                lightMode ? "bg-gray-100 border border-gray-200" : "bg-[#161b22] border border-[#30363d]"
+              }`}>
                 <MessageSquare size={16} className="text-purple-400 mt-1" />
-
                 <textarea
                   required
                   rows={3}
                   value={form.message}
-                  onChange={(e) =>
-                    setForm({ ...form, message: e.target.value })
-                  }
+                  onChange={(e)=>setForm(prev=>({...prev,message:e.target.value}))}
                   placeholder="Your message..."
-                  className={`bg-transparent outline-none w-full resize-none ${
-                    lightMode ? "text-gray-800" : "text-gray-200"
-                  }`}
+                  className="bg-transparent outline-none w-full resize-none"
                 />
-
               </div>
 
-              {/* submit */}
-              <motion.button
+              <button
                 type="submit"
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                className="w-full flex items-center justify-center gap-2 bg-purple-500 text-white py-3 rounded-lg font-medium hover:bg-purple-600 transition"
+                className="w-full flex items-center justify-center gap-2 bg-purple-500 text-white py-3 rounded-lg hover:bg-purple-600 transition"
               >
-
                 <Send size={18}/> Send Message
-
-              </motion.button>
+              </button>
 
             </form>
 
@@ -261,6 +264,6 @@ export default function ContactSection({ lightMode }: any) {
       </div>
 
     </section>
-
+    </>
   );
 }

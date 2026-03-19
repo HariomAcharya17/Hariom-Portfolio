@@ -10,8 +10,7 @@ import ContactSection from "@/components/ContactSection";
 import FeedbackSection from "@/components/FeedbackSection";
 import Footer from "@/components/Footer";
 import CertificatesSection from "@/components/CertificatesSection";
-
-
+import NowBuilding from "@/components/NowBuilding";
 const Index = () => {
 
   const [lightMode, setLightMode] = useState(false);
@@ -36,13 +35,14 @@ const Index = () => {
       <AboutSection lightMode={lightMode} />
 
       <SkillsSection lightMode={lightMode} />
-  
-
+      
+ 
       <CertificatesSection lightMode={lightMode} />
 
       <ProjectsSection lightMode={lightMode} />
-
+     
       <ExperienceSection lightMode={lightMode} />
+      <NowBuilding lightMode={lightMode} />
 
       <ContactSection lightMode={lightMode} />
 

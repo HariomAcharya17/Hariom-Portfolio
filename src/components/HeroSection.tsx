@@ -3,58 +3,58 @@ import { useEffect, useState } from "react";
 import { ArrowDown, Download, FolderOpen } from "lucide-react";
 import developerAvatar from "@/assets/developer-avatar.png";
 import developerAvatarLight from "@/assets/developer-avatar-light.png";
-import LeetCodeCalendar from "@/components/LeetCodeCalendar";
 
 const roles = ["Full Stack Developer", "AI/ML Enthusiast", "Cloud Engineer"];
 
 export default function HeroSection({ lightMode }: any) {
 
-  const [roleIdx, setRoleIdx] = useState(0);
-  const [text, setText] = useState("");
-  const [deleting, setDeleting] = useState(false);
+const [roleIdx, setRoleIdx] = useState(0);
+const [text, setText] = useState("");
+const [deleting, setDeleting] = useState(false);
 
-  /* particles generated once */
-  const [particles] = useState(() =>
-    Array.from({ length: 170 }).map(() => ({
-      center: `${10 + Math.random() * 100}%`,
-      duration: `${20 + Math.random() * 60}s`,
-      delay: `${Math.random() * 10}s`
-    }))
-  );
+/* particles */
 
-  useEffect(() => {
+const [particles] = useState(() =>
+Array.from({ length: 170 }).map(() => ({
+center: `${10 + Math.random() * 100}%`,
+duration: `${20 + Math.random() * 60}s`,
+delay: `${Math.random() * 10}s`
+}))
+);
 
-    const current = roles[roleIdx];
-    let timeout: ReturnType<typeof setTimeout>;
+useEffect(() => {
 
-    if (!deleting) {
+const current = roles[roleIdx];
+let timeout: ReturnType<typeof setTimeout>;
 
-      if (text.length < current.length) {
-        timeout = setTimeout(() => {
-          setText(current.slice(0, text.length + 1));
-        }, 80);
-      } else {
-        timeout = setTimeout(() => setDeleting(true), 2000);
-      }
+if (!deleting) {
 
-    } else {
+if (text.length < current.length) {
+timeout = setTimeout(() => {
+setText(current.slice(0, text.length + 1));
+}, 80);
+} else {
+timeout = setTimeout(() => setDeleting(true), 2000);
+}
 
-      if (text.length > 0) {
-        timeout = setTimeout(() => {
-          setText(text.slice(0, -1));
-        }, 40);
-      } else {
-        setDeleting(false);
-        setRoleIdx((prev) => (prev + 1) % roles.length);
-      }
+} else {
 
-    }
+if (text.length > 0) {
+timeout = setTimeout(() => {
+setText(text.slice(0, -1));
+}, 40);
+} else {
+setDeleting(false);
+setRoleIdx((prev) => (prev + 1) % roles.length);
+}
 
-    return () => clearTimeout(timeout);
+}
 
-  }, [text, deleting, roleIdx]);
+return () => clearTimeout(timeout);
 
-  return (
+}, [text, deleting, roleIdx]);
+
+return (
 
 <section
 className={`relative min-h-screen flex items-center justify-center overflow-hidden transition-all duration-700 ease-in-out
@@ -66,23 +66,19 @@ lightMode
 `}
 >
 
-{/* Spotlight glow */}
+{/* Glow */}
 
 <div
-className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-[900px] h-[420px] blur-[180px] transition-all duration-700
-${
-lightMode
-? "bg-purple-300/30"
-: "bg-purple-500/30"
-}
+className={`absolute bottom-0 left-1/2 -translate-x-1/2 w-[900px] h-[420px] blur-[180px]
+${lightMode ? "bg-purple-300/30" : "bg-purple-500/30"}
 `}
 />
 
 <div className="container mx-auto px-6 relative z-10">
 
-<div className="grid md:grid-cols-2 gap-6 items-center">
+<div className="grid md:grid-cols-2 gap-10 items-center">
 
-{/* LEFT TEXT */}
+{/* LEFT SIDE */}
 
 <motion.div
 initial={{ opacity: 0, x: -40 }}
@@ -145,7 +141,8 @@ className="inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-medi
 </a>
 
 <a
-href="#"
+href="/resume.pdf"
+download
 className={`inline-flex items-center gap-2 px-6 py-3 rounded-md text-sm font-medium border transition ${
 lightMode
 ? "border-purple-300 text-purple-700 hover:bg-purple-100"
@@ -159,33 +156,23 @@ lightMode
 
 </motion.div>
 
-
 {/* RIGHT SIDE */}
 
-<div className="flex flex-col items-center md:items-end relative">
-
-{/* Avatar */}
+<div className="flex justify-center items-center relative">
 
 <motion.img
 src={lightMode ? developerAvatarLight : developerAvatar}
 alt="Hariom Acharya"
-className="relative z-20 w-[420px] md:w-[520px] object-contain"
-animate={{ y: [0, -15, 0] }}
+className="relative z-20 w-[500px] md:w-[650px] object-contain"
+animate={{ y: [0, -20, 0] }}
 transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
 />
 
-{/* Calendar */}
-
-<div className="mt-6 relative z-20">
-<LeetCodeCalendar />
-</div>
-
-{/* Particles behind avatar */}
+{/* particles */}
 
 <div className="avatar-particles absolute z-0">
 
 {particles.map((p,i)=>(
-
 <span
 key={i}
 className="spark"
@@ -196,7 +183,6 @@ animationDuration: p.duration,
 animationDelay: p.delay
 }}
 />
-
 ))}
 
 </div>
@@ -207,10 +193,10 @@ animationDelay: p.delay
 
 </div>
 
-{/* Scroll Indicator */}
+{/* Scroll */}
 
 <motion.div
-className="absolute left-1/2 -bottom-6 -translate-x-1/2 z-20"
+className="absolute left-1/2 -bottom-6 -translate-x-1/2"
 animate={{ y: [0, 12, 0] }}
 transition={{ duration: 2, repeat: Infinity }}
 >

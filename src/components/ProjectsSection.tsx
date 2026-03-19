@@ -54,7 +54,8 @@ export default function ProjectsSection({ lightMode }: any) {
         <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[900px] h-[400px] bg-purple-500/20 blur-[180px]" />
       )}
 
-      <div className="container mx-auto px-6" ref={ref}>
+      {/* ✅ FIXED PADDING */}
+      <div className="container mx-auto px-4 md:px-6" ref={ref}>
 
         <motion.h2
           initial={{ opacity: 0, y: 20 }}
@@ -72,14 +73,14 @@ export default function ProjectsSection({ lightMode }: any) {
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
-          className={`max-w-6xl mx-auto rounded-xl border ${
+          className={`max-w-6xl mx-auto rounded-xl border w-full ${
             lightMode
               ? "bg-white border-gray-200"
               : "bg-[#0d1117] border-[#30363d]"
           }`}
         >
 
-          {/* MacBook Header */}
+          {/* Header */}
           <div
             className={`flex items-center gap-2 px-4 py-3 border-b ${
               lightMode
@@ -96,10 +97,11 @@ export default function ProjectsSection({ lightMode }: any) {
             </span>
           </div>
 
-          {/* Content */}
-          <div className="p-10">
+          {/* ✅ FIXED PADDING */}
+          <div className="p-5 md:p-10">
 
-            <div className="grid md:grid-cols-2 gap-10 max-w-5xl mx-auto">
+            {/* ✅ FIXED GRID */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 max-w-5xl mx-auto">
 
               {projects.map((project, i) => {
 
@@ -115,7 +117,7 @@ export default function ProjectsSection({ lightMode }: any) {
                     initial={{ opacity: 0, y: 30 }}
                     animate={isInView ? { opacity: 1, y: 0 } : {}}
                     transition={{ delay: i * 0.15 }}
-                    className={`border rounded-lg p-8 transition-all ${
+                    className={`border rounded-lg p-5 md:p-8 w-full max-w-full transition-all ${
                       lightMode
                         ? "bg-gray-50 border-gray-200 hover:bg-gray-100"
                         : "bg-[#161b22] border-[#30363d] hover:bg-[#1c2128]"
@@ -128,7 +130,8 @@ export default function ProjectsSection({ lightMode }: any) {
                       {project.title}
                     </h3>
 
-                    <p className={`mb-6 leading-relaxed ${
+                    {/* ✅ FIX TEXT OVERFLOW */}
+                    <p className={`mb-6 leading-relaxed break-words ${
                       lightMode ? "text-gray-600" : "text-gray-400"
                     }`}>
                       {project.description}
@@ -187,7 +190,7 @@ export default function ProjectsSection({ lightMode }: any) {
                 <motion.div
                   initial={{ opacity: 0, y: 30 }}
                   animate={isInView ? { opacity: 1, y: 0 } : {}}
-                  className={`border rounded-lg p-8 transition-all ${
+                  className={`border rounded-lg p-5 md:p-8 w-full max-w-full transition-all ${
                     lightMode
                       ? "bg-gray-50 border-gray-200"
                       : "bg-[#161b22] border-[#30363d]"
@@ -203,7 +206,7 @@ export default function ProjectsSection({ lightMode }: any) {
                         {upcoming.title}
                       </h3>
 
-                      <p className={`mb-4 ${
+                      <p className={`mb-4 break-words ${
                         lightMode ? "text-gray-600" : "text-gray-400"
                       }`}>
                         {upcoming.description}
