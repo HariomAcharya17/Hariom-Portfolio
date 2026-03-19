@@ -17,7 +17,7 @@ export default function Footer({ lightMode }: any) {
             lightMode ? "text-gray-600" : "text-gray-400"
           }`}
         >
-          © 2024 Hariom Acharya. All rights reserved.
+          © 2026 Hariom Acharya. All rights reserved.
         </span>
 
         <div className="flex gap-4">
