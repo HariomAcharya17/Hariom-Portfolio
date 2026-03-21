@@ -2,12 +2,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useEffect, useState } from "react";
 
 const texts = [
-  "Hola",
-  "Bonjour",
-   "Hallo",
-  "Ciao",
-  "こんにちは",
-  "Welcome 🙏🏻",
   "नमस्ते",
 
   ]
