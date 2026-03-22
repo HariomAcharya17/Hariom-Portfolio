@@ -164,17 +164,7 @@ export default function ProjectsSection({ lightMode }: any) {
                         Code
                       </a>
 
-                      <a
-                        href={project.demo}
-                        className={`flex items-center gap-2 transition ${
-                          lightMode
-                            ? "text-gray-600 hover:text-black"
-                            : "text-gray-400 hover:text-white"
-                        }`}
-                      >
-                        <ExternalLink size={16}/>
-                        Demo
-                      </a>
+                     
 
                     </div>
 

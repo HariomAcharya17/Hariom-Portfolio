@@ -16,14 +16,14 @@ export default function CertificatesSection({ lightMode }: any) {
 
       const { data, error } = await supabase
         .from("certificates")
-        .select("*")
-        .order("issued_date", { ascending: false });
+        .select("*"); // ✅ FIX: removed order (was causing issue)
 
       if (error) {
         console.error("Certificates fetch error:", error);
       }
 
       if (data) {
+        console.log("Certificates:", data); // ✅ DEBUG
         setCertificates(data);
       }
 
@@ -38,7 +38,7 @@ export default function CertificatesSection({ lightMode }: any) {
 <section id="certificates" className="py-28 relative overflow-hidden">
 
 {/* purple spotlight */}
-<div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[900px] h-[400px] bg-purple-500/20 blur-[180px]" />
+<div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[900px] h-[400px] bg-purple-500/20 blur-[180px] pointer-events-none" /> {/* ✅ FIX: added pointer-events-none */}
 
 <div className="container mx-auto px-6" ref={ref}>
 
@@ -50,8 +50,6 @@ className="text-4xl md:text-5xl font-bold text-center mb-16"
 >
 Certificates
 </motion.h2>
-
-{/* Mac Window */}
 
 <motion.div
 initial={{ opacity: 0, y: 30 }}
@@ -122,9 +120,11 @@ ${lightMode ? "text-gray-600" : "text-gray-400"}
 </p>
 
 <a
-href={cert.pdf_url}
+href={cert.pdf_url || "#"} // ✅ FIX: fallback if null
 target="_blank"
-className="inline-flex items-center gap-2 text-sm px-4 py-2 rounded-md bg-purple-500 text-white hover:bg-purple-600 transition"
+rel="noopener noreferrer"
+className={`inline-flex items-center gap-2 text-sm px-4 py-2 rounded-md bg-purple-500 text-white hover:bg-purple-600 transition cursor-pointer
+${!cert.pdf_url ? "opacity-50 pointer-events-none" : ""}`} // ✅ disable if no URL
 >
 
 <FileText size={16}/>
