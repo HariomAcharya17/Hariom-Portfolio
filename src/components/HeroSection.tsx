@@ -111,11 +111,8 @@ lightMode ? "text-gray-700" : "text-gray-300"
 }`}>
 
 I'm a <span className="text-purple-400 font-semibold">
-B.Tech pre-final year student
-</span> at LDRP-ITR with a{" "}
-<span className="text-purple-400 font-semibold">
-CGPA of 8.52
-</span>.
+Full Stack & AI/ML Engineer
+</span> passionate about building intelligent, scalable systems that solve real-world problems.
 
 <br /><br />
 
