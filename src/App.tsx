@@ -5,6 +5,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AnimatePresence } from "framer-motion";
+import { Analytics } from "@vercel/analytics/react";
 
 import Loader from "@/components/Loader";
 import Index from "./pages/Index.tsx";
@@ -36,7 +37,9 @@ const App = () => {
               <Route path="/" element={<Index />} />
               <Route path="*" element={<NotFound />} />
             </Routes>
+            <Analytics />
           </BrowserRouter>
+          
         )}
 
       </TooltipProvider>
