@@ -1,6 +1,6 @@
 import { motion, useInView } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
-import { Github } from "lucide-react";
+import { Github, ExternalLink } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 
 export default function ProjectsSection({ lightMode }: any) {
@@ -129,15 +129,33 @@ export default function ProjectsSection({ lightMode }: any) {
                       </div>
 
                       <div className="flex gap-6 text-sm">
-                        <a
-                          href={card.github}
-                          className={`flex items-center gap-2 transition ${
-                            lightMode ? "text-gray-600 hover:text-black" : "text-gray-400 hover:text-white"
-                          }`}
-                        >
-                          <Github size={16} />
-                          Code
-                        </a>
+                        {card.github && (
+                          <a
+                            href={card.github}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={`flex items-center gap-2 transition ${
+                              lightMode ? "text-gray-600 hover:text-black" : "text-gray-400 hover:text-white"
+                            }`}
+                          >
+                            <Github size={16} />
+                            Code
+                          </a>
+                        )}
+                        
+                        {card.demo && (
+                          <a
+                            href={card.demo}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className={`flex items-center gap-2 transition ${
+                              lightMode ? "text-gray-600 hover:text-black" : "text-gray-400 hover:text-white"
+                            }`}
+                          >
+                            <ExternalLink size={16} />
+                            Live Demo
+                          </a>
+                        )}
                       </div>
                     </>
                   )}
