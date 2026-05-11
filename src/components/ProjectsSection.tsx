@@ -128,18 +128,18 @@ export default function ProjectsSection({ lightMode }: any) {
                         ))}
                       </div>
 
-                      <div className="flex gap-6 text-sm">
+                      <div className="flex gap-6 text-sm relative z-10">
                         {card.github && (
                           <a
                             href={card.github}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className={`flex items-center gap-2 transition ${
+                            className={`inline-flex items-center gap-2 transition pointer-events-auto cursor-pointer ${
                               lightMode ? "text-gray-600 hover:text-black" : "text-gray-400 hover:text-white"
                             }`}
                           >
                             <Github size={16} />
-                            Code
+                            <span>Code</span>
                           </a>
                         )}
                         
@@ -148,12 +148,12 @@ export default function ProjectsSection({ lightMode }: any) {
                             href={card.demo}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className={`flex items-center gap-2 transition ${
+                            className={`inline-flex items-center gap-2 transition pointer-events-auto cursor-pointer ${
                               lightMode ? "text-gray-600 hover:text-black" : "text-gray-400 hover:text-white"
                             }`}
                           >
                             <ExternalLink size={16} />
-                            Live Demo
+                            <span>Live Demo</span>
                           </a>
                         )}
                       </div>

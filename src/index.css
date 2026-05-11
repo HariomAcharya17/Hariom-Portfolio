@@ -267,14 +267,7 @@
   fill: #a78bfa;
 }
 
-body{
-cursor: default;
-}
 
-button,
-a{
-cursor: pointer;
-}
 @keyframes sparkMove {
 
 0% {
@@ -347,3 +340,8 @@ stroke-width: 3px;
 .color-scale-2 { fill: #9f1239; }
 .color-scale-3 { fill: #e11d48; }
 .color-scale-4 { fill: #fb7185; }
+
+/* HIDE SYSTEM CURSOR GLOBALLY */
+html, body, *, a, button, input, select, textarea {
+  cursor: none !important;
+}

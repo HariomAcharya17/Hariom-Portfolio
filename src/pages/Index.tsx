@@ -11,6 +11,7 @@ import FeedbackSection from "@/components/FeedbackSection";
 import Footer from "@/components/Footer";
 import CertificatesSection from "@/components/CertificatesSection";
 import NowBuilding from "@/components/NowBuilding";
+import CustomCursor from "@/components/CustomCursor";
 const Index = () => {
 
   const [lightMode, setLightMode] = useState(false);
@@ -19,15 +20,15 @@ const Index = () => {
 
     <div
       className={`relative min-h-screen overflow-x-hidden transition-all duration-700 ease-in-out
-      ${
-        lightMode
+      ${lightMode
           ? "bg-[linear-gradient(180deg,#faf8ff,#efe9ff)] text-gray-900"
           : "bg-[radial-gradient(circle_at_50%_100%,rgba(140,90,255,0.35),transparent_55%),linear-gradient(180deg,#0b0f2a,#1a1145,#0b0f2a)] text-white"
-      }
+        }
       `}
     >
-    
 
+
+      <CustomCursor />
       <Navbar lightMode={lightMode} setLightMode={setLightMode} />
 
       <HeroSection lightMode={lightMode} />
@@ -35,12 +36,12 @@ const Index = () => {
       <AboutSection lightMode={lightMode} />
 
       <SkillsSection lightMode={lightMode} />
-      
- 
+
+
       <CertificatesSection lightMode={lightMode} />
 
       <ProjectsSection lightMode={lightMode} />
-     
+
       <ExperienceSection lightMode={lightMode} />
       <NowBuilding lightMode={lightMode} />
 
