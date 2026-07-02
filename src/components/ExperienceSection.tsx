@@ -18,8 +18,18 @@ export default function ExperienceSection({ lightMode }: any) {
         .select("*")
         .order("year", { ascending: false });
 
+      const nstInternship = {
+        id: "nst-internship",
+        role: "Networking & Full Stack Intern",
+        org: "NST PVT LTD",
+        year: 2025,
+        description: "Engineered 'EaseExpense', a full-stack dashboard designed for daily financial asset and expense tracking. Configured secure local networking routing schemas and optimized database query pathways."
+      };
+
       if (!error && data) {
-        setExperiences(data);
+        setExperiences([nstInternship, ...data]);
+      } else {
+        setExperiences([nstInternship]);
       }
 
     };
