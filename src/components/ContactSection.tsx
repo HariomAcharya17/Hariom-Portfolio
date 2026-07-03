@@ -25,17 +25,19 @@ export default function ContactSection({ lightMode }: any) {
     }
 
     try {
-      const response = await fetch("https://formsubmit.co/ajax/hariomstudy1700@gmail.com", {
+      const response = await fetch("https://api.web3forms.com/submit", {
         method: "POST",
         headers: { 
             'Content-Type': 'application/json',
             'Accept': 'application/json'
         },
         body: JSON.stringify({
+            access_key: "66dc5cd9-d946-4a62-a272-4e0242a25b9f",
             name: form.name,
             email: form.email,
             message: form.message,
-            _subject: "New Portfolio Message from " + form.name
+            subject: "New Portfolio Message from " + form.name,
+            from_name: "Portfolio Contact Form"
         })
       });
 
