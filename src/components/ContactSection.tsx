@@ -57,50 +57,7 @@ export default function ContactSection({ lightMode }: any) {
     setForm({ name: "", email: "", message: "" });
   };
 
-  /* ================= CHAT TYPING ================= */
 
-  const messages = [
-    "Hello 👋, welcome to my portfolio! I'm glad you stopped by.",
-    "I specialize in Full-Stack Architecture, AI/ML pipelines, and Cloud Engineering.",
-    "My current focus is engineering low-latency interfaces and resilient backends.",
-    "I love building scalable software solutions that solve real-world problems ❤️",
-    "Always open to exciting internships, collaborations, or cloud architecture reviews.",
-    "Let’s connect and create something highly performant together ✨",
-    "Feel free to drop a message in the form below anytime! 😊"
-  ];
-
-  const [displayedText, setDisplayedText] = useState("");
-  const [messageIndex, setMessageIndex] = useState(0);
-  const [typing, setTyping] = useState(true);
-
-  useEffect(() => {
-
-    const current = messages[messageIndex];
-    let i = 0;
-
-    const typingInterval = setInterval(() => {
-
-      setDisplayedText(current.slice(0, i + 1));
-      i++;
-
-      if (i === current.length) {
-
-        clearInterval(typingInterval);
-        setTyping(false);
-
-        setTimeout(() => {
-          setTyping(true);
-          setDisplayedText("");
-          setMessageIndex((prev) => (prev + 1) % messages.length);
-        }, 2500);
-
-      }
-
-    }, 40);
-
-    return () => clearInterval(typingInterval);
-
-  }, [messageIndex]);
 
   return (
 
@@ -247,21 +204,7 @@ export default function ContactSection({ lightMode }: any) {
               {/* Right Column: AI status & Contact details */}
               <div className="space-y-6 md:pl-4">
                 
-                {/* AI Dialogue bubble */}
-                <div className="space-y-3">
-                  <h3 className="text-xs font-mono uppercase tracking-wider text-primary">
-                    AI Agent Status: Active
-                  </h3>
 
-                  <div className="flex">
-                    <div className="px-4 py-3.5 max-w-full font-mono text-xs leading-relaxed border border-border bg-input text-foreground">
-                      {displayedText}
-                      {typing && <span className="ml-1 animate-pulse text-blue-500">|</span>}
-                    </div>
-                  </div>
-                </div>
-
-                <hr className="border-border" />
 
                 {/* Direct info coordinates */}
                 <div className="space-y-4">
@@ -271,6 +214,13 @@ export default function ContactSection({ lightMode }: any) {
 
                   <div className="space-y-3 text-xs leading-relaxed">
 
+
+                    <div className="flex flex-col">
+                      <span className="text-gray-400">Email Address</span>
+                      <a href="mailto:hariomstudy1700@gmail.com" className="text-blue-500 font-medium hover:underline text-sm mt-0.5">
+                        hariomstudy1700@gmail.com
+                      </a>
+                    </div>
 
                     <div className="flex flex-col">
                       <span className="text-gray-400">Current Location</span>
