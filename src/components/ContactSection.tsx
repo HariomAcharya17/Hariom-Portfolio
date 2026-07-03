@@ -17,6 +17,13 @@ export default function ContactSection({ lightMode }: any) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    // Strict Email Validation to ensure real domains
+    const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailRegex.test(form.email)) {
+      alert("Please enter a valid email address so I can reply back to you!");
+      return;
+    }
+
     try {
       const response = await fetch("https://formsubmit.co/ajax/hariomstudy1700@gmail.com", {
         method: "POST",
