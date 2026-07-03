@@ -57,7 +57,7 @@ export default function Navbar(props: any) {
 
       {/* UI SHELL CONTAINER */}
       <div
-        className="px-6 py-3 flex items-center justify-between rounded-full border bg-layer text-foreground"
+        className="px-6 py-3 flex items-center justify-between rounded-full border bg-layer text-foreground w-[90vw] lg:w-auto max-w-5xl"
       >
 
         <div className="flex items-center">
@@ -70,7 +70,7 @@ export default function Navbar(props: any) {
           </a>
           <button
             onClick={() => setLightMode(!lightMode)}
-            className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-neutral-200/20 transition-colors text-foreground focus:outline-none outline-none"
+            className="theme-toggle w-10 h-10 flex items-center justify-center rounded-full hover:bg-neutral-200/20 transition-colors text-foreground focus:outline-none outline-none"
             aria-label="Toggle theme"
           >
             {lightMode ? <Moon size={18} /> : <Sun size={18} />}
@@ -78,7 +78,7 @@ export default function Navbar(props: any) {
         </div>
 
         {/* DESKTOP */}
-        <div className="hidden md:flex items-center gap-6 ml-auto mr-6">
+        <div className="hidden lg:flex items-center gap-6 ml-auto mr-6">
 
           {links.map((l) => {
 
@@ -112,7 +112,7 @@ export default function Navbar(props: any) {
 
         {/* MOBILE BUTTON */}
         <button
-          className={`md:hidden ${lightMode ? "text-black" : "text-blue-500"
+          className={`lg:hidden ${lightMode ? "text-black" : "text-blue-500"
             }`}
           onClick={() => setOpen(!open)}
         >
@@ -128,7 +128,7 @@ export default function Navbar(props: any) {
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 10 }}
             exit={{ opacity: 0, y: -20 }}
-            className="mt-3 px-6 py-4 rounded-none border bg-layer shadow-sm"
+            className="mt-3 px-6 py-4 rounded-2xl border bg-layer shadow-sm"
           >
 
             <div className="flex flex-col gap-4">
