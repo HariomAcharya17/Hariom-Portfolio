@@ -41,22 +41,22 @@ export function playUISound(type: "click" | "toggle") {
       const gain2 = ctx.createGain();
 
       osc.type = "sine";
-      osc.frequency.setValueAtTime(800, now);
-      gain.gain.setValueAtTime(0.08, now);
-      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.03);
+      osc.frequency.setValueAtTime(850, now);
+      gain.gain.setValueAtTime(0.18, now);
+      gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.04);
 
       osc.start(now);
-      osc.stop(now + 0.03);
+      osc.stop(now + 0.04);
 
       osc2.type = "sine";
-      osc2.frequency.setValueAtTime(600, now + 0.04);
-      gain2.gain.setValueAtTime(0.08, now + 0.04);
-      gain2.gain.exponentialRampToValueAtTime(0.0001, now + 0.07);
+      osc2.frequency.setValueAtTime(650, now + 0.05);
+      gain2.gain.setValueAtTime(0.18, now + 0.05);
+      gain2.gain.exponentialRampToValueAtTime(0.0001, now + 0.09);
 
       osc2.connect(gain2);
       gain2.connect(ctx.destination);
-      osc2.start(now + 0.04);
-      osc2.stop(now + 0.07);
+      osc2.start(now + 0.05);
+      osc2.stop(now + 0.09);
     }
   } catch (error) {
     // Fail silently to avoid interrupting user flows if AudioContext is blocked

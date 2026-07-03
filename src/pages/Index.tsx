@@ -26,7 +26,8 @@ const Index = () => {
       const interactiveEl = target.closest("a, button, input[type='submit'], [role='button'], .cursor-pointer");
       if (interactiveEl) {
         if (interactiveEl.classList.contains("theme-toggle") || interactiveEl.closest(".theme-toggle")) {
-          playUISound("toggle");
+          // Handled directly in the Navbar component to prevent detached DOM issues
+          return;
         } else {
           playUISound("click");
         }
