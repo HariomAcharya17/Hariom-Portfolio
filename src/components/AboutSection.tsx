@@ -59,7 +59,7 @@ export default function AboutSection({ lightMode }: any) {
             <div className="space-y-4">
               <SplitText
                 tag="p"
-                text="I am a prefinal year Computer Science and Engineering student passionate about Full-Stack Development and Cloud Computing. I love building real-world projects that leverage AI applications to solve practical problems, turning ideas into functional, scalable platforms."
+                text="I am a Final year Computer Science and Engineering student passionate about Full-Stack Development and Cloud Computing. I love building real-world projects that leverage AI applications to solve practical problems, turning ideas into functional, scalable platforms."
                 className="leading-relaxed text-base text-secondary_text"
                 textAlign="center"
                 delay={10}
