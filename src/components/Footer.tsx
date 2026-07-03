@@ -1,53 +1,26 @@
-import { Github, Linkedin } from "lucide-react";
+import SocialMediaGrid from "@/components/ui/SocialMediaGrid";
 
 export default function Footer({ lightMode }: any) {
 
   return (
 
     <footer
-      className={`py-8 border-t ${
-        lightMode ? "border-gray-200" : "border-[#30363d]"
-      }`}
+      className="py-8 border-t border-border bg-background"
     >
 
       <div className="container mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-4">
 
-        <span
-          className={`text-sm ${
-            lightMode ? "text-gray-600" : "text-gray-400"
-          }`}
-        >
-          © 2026 Hariom Acharya. All rights reserved.
-        </span>
+        <div className="flex flex-col gap-2">
+          <span className="text-sm text-secondary_text">
+            © 2026 Hariom Acharya. All rights reserved.
+          </span>
+          <span className="text-xs font-mono text-secondary_text">
+            Built with IBM Carbon Design System · IBM Plex Sans + Plex Mono
+          </span>
+        </div>
 
-        <div className="flex gap-4">
-
-          <a
-            href="https://github.com/HariomAcharya17"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`transition-colors ${
-              lightMode
-                ? "text-gray-600 hover:text-purple-600"
-                : "text-gray-400 hover:text-purple-400"
-            }`}
-          >
-            <Github size={20} />
-          </a>
-
-          <a
-            href="https://www.linkedin.com/in/hariom-a-218649318/overlay/about-this-profile/?lipi=urn%3Ali%3Apage%3Ad_flagship3_profile_view_base%3BDJ7lHxwLT%2BuV6z4SFkcuhA%3D%3D"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={`transition-colors ${
-              lightMode
-                ? "text-gray-600 hover:text-purple-600"
-                : "text-gray-400 hover:text-purple-400"
-            }`}
-          >
-            <Linkedin size={20} />
-          </a>
-
+        <div className="flex justify-end pr-8">
+          <SocialMediaGrid />
         </div>
 
       </div>

@@ -35,14 +35,14 @@ export default function Loader({ onFinish }: any) {
 
   return (
     <motion.div
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#0b0f2a] overflow-hidden"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-[#0c0c0c] overflow-hidden"
       initial={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       transition={{ duration: 1 }}
     >
       {/* Glow Background */}
       <motion.div
-        className="absolute w-[400px] h-[400px] bg-purple-500/30 rounded-full blur-[140px]"
+        className="absolute w-[400px] h-[400px] bg-blue-500/20 rounded-full blur-[140px]"
         animate={{ scale: [1, 1.5, 1] }}
         transition={{ duration: 3, repeat: Infinity }}
       />
@@ -53,7 +53,7 @@ export default function Loader({ onFinish }: any) {
         <AnimatePresence mode="wait">
           <motion.h1
             key={index}
-            className="text-3xl md:text-5xl font-semibold text-purple-400 tracking-wide"
+            className="text-3xl md:text-5xl font-semibold text-blue-500 tracking-wide"
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -30 }}
@@ -65,7 +65,7 @@ export default function Loader({ onFinish }: any) {
 
         {/* Underline glow */}
         <motion.div
-          className="mt-6 h-[3px] w-32 mx-auto bg-gradient-to-r from-purple-400 to-purple-600 rounded-full"
+          className="mt-6 h-[3px] w-32 mx-auto bg-gradient-to-r from-blue-500 to-blue-700 rounded-full"
           animate={{ scaleX: [0.5, 1, 0.5] }}
           transition={{ duration: 2, repeat: Infinity }}
         />

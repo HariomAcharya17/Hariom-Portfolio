@@ -2,150 +2,100 @@ import { motion, useInView } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
 import { FileText } from "lucide-react";
 import { supabase } from "@/lib/supabase";
+import ScrollFloat from "@/components/ui/ScrollFloat";
+import ViewCertificateButton from "@/components/ui/ViewCertificateButton";
 
 export default function CertificatesSection({ lightMode }: any) {
-
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
-
   const [certificates, setCertificates] = useState<any[]>([]);
 
   useEffect(() => {
-
     const fetchCertificates = async () => {
-
       const { data, error } = await supabase
         .from("certificates")
         .select("*"); // ✅ FIX: removed order (was causing issue)
 
-      if (error) {
-        console.error("Certificates fetch error:", error);
-      }
-
-      if (data) {
-        console.log("Certificates:", data); // ✅ DEBUG
+      if (data && data.length > 0) {
         setCertificates(data);
       }
-
     };
 
     fetchCertificates();
-
   }, []);
 
   return (
+    <section id="certificates" className="py-28 relative overflow-hidden">
+      <div className="container mx-auto px-6" ref={ref}>
+        
+        <ScrollFloat
+          containerClassName="mb-16 text-center"
+          textClassName="text-4xl md:text-5xl font-bold text-foreground"
+          stagger={0.04}
+        >
+          Certificates
+        </ScrollFloat>
 
-<section id="certificates" className="py-28 relative overflow-hidden">
+        <motion.div
+          initial={{ opacity: 0, y: 30 }}
+          animate={isInView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.6 }}
+          className="max-w-6xl mx-auto carbon-card overflow-hidden"
+        >
+          {/* window header */}
+          <div className="flex items-center px-4 py-3 border-b border-border bg-layer">
+            <span className="text-xs font-mono font-bold tracking-widest uppercase text-primary">
+              certificates.tsx
+            </span>
+          </div>
 
-{/* purple spotlight */}
-<div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[900px] h-[400px] bg-purple-500/20 blur-[180px] pointer-events-none" /> {/* ✅ FIX: added pointer-events-none */}
+          {/* content */}
+          <div className="p-10">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+              {certificates.map((cert, i) => (
+                <motion.div
+                  key={cert.id || i}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={isInView ? { opacity: 1, y: 0 } : {}}
+                  transition={{ delay: i * 0.1 }}
+                  className="carbon-card p-6 flex flex-col justify-between"
+                >
+                  <div>
+                    <h3 className="text-lg font-semibold mb-2 text-foreground">
+                      {cert.name}
+                    </h3>
 
-<div className="container mx-auto px-6" ref={ref}>
+                    <p className="text-xs mb-3 leading-relaxed text-secondary_text">
+                      {cert.description}
+                    </p>
 
-<motion.h2
-initial={{ opacity: 0, y: 20 }}
-animate={isInView ? { opacity: 1, y: 0 } : {}}
-transition={{ duration: 0.5 }}
-className="text-4xl md:text-5xl font-bold text-center mb-16"
->
-Certificates
-</motion.h2>
+                    {cert.highlights && (
+                      <ul className="list-disc pl-5 mb-4 space-y-1 text-xs leading-relaxed text-secondary_text">
+                        {cert.highlights.map((h: string, idx: number) => (
+                          <li key={idx}>{h}</li>
+                        ))}
+                      </ul>
+                    )}
 
-<motion.div
-initial={{ opacity: 0, y: 30 }}
-animate={isInView ? { opacity: 1, y: 0 } : {}}
-transition={{ duration: 0.6 }}
-className={`max-w-6xl mx-auto rounded-xl border shadow-2xl overflow-hidden
-${lightMode
-? "bg-white border-gray-200"
-: "bg-[#0d1117] border-[#30363d]"
-}
-`}
->
+                    <p className="text-xs text-blue-500 mb-5 font-mono">
+                      {cert.issuer} • {cert.issued_date}
+                    </p>
+                  </div>
 
-{/* window header */}
+                  <div>
+                    {cert.pdf_url && (
+                      <ViewCertificateButton href={cert.pdf_url}>
+                        View Certificate
+                      </ViewCertificateButton>
+                    )}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          </div>
+        </motion.div>
 
-<div className={`flex items-center gap-2 px-4 py-3 border-b
-${lightMode
-? "bg-gray-100 border-gray-200"
-: "bg-[#161b22] border-[#30363d]"
-}
-`}>
-
-<div className="w-3 h-3 rounded-full bg-red-500" />
-<div className="w-3 h-3 rounded-full bg-yellow-500" />
-<div className="w-3 h-3 rounded-full bg-green-500" />
-
-<span className="ml-4 text-sm text-gray-400 font-mono">
-certificates.tsx
-</span>
-
-</div>
-
-{/* content */}
-
-<div className="p-10">
-
-<div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-
-{certificates.map((cert, i) => (
-
-<motion.div
-key={cert.id}
-initial={{ opacity: 0, y: 20 }}
-animate={isInView ? { opacity: 1, y: 0 } : {}}
-transition={{ delay: i * 0.1 }}
-className={`rounded-lg border p-6 transition-all
-${lightMode
-? "bg-white border-gray-200 hover:bg-gray-50"
-: "bg-[#161b22] border-[#30363d] hover:bg-[#1c2128]"
-}
-`}
->
-
-<h3 className={`text-lg font-semibold mb-2
-${lightMode ? "text-gray-900" : "text-white"}
-`}>
-{cert.name}
-</h3>
-
-<p className={`text-sm mb-4
-${lightMode ? "text-gray-600" : "text-gray-400"}
-`}>
-{cert.description}
-</p>
-
-<p className="text-xs text-purple-400 mb-4 font-mono">
-{cert.issuer} • {cert.issued_date}
-</p>
-
-<a
-href={cert.pdf_url || "#"} // ✅ FIX: fallback if null
-target="_blank"
-rel="noopener noreferrer"
-className={`inline-flex items-center gap-2 text-sm px-4 py-2 rounded-md bg-purple-500 text-white hover:bg-purple-600 transition cursor-pointer
-${!cert.pdf_url ? "opacity-50 pointer-events-none" : ""}`} // ✅ disable if no URL
->
-
-<FileText size={16}/>
-View Certificate
-
-</a>
-
-</motion.div>
-
-))}
-
-</div>
-
-</div>
-
-</motion.div>
-
-</div>
-
-</section>
-
+      </div>
+    </section>
   );
-
 }

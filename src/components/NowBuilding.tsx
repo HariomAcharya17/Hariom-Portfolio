@@ -27,26 +27,13 @@ export default function NowBuilding({ lightMode }: any) {
   return (
     <section className="py-32 relative overflow-hidden">
 
-      {/* Background */}
-      <div className="absolute inset-0 -z-10 flex justify-center items-center">
-        <motion.div
-          animate={{ scale: [1, 1.05, 1] }}
-          transition={{ duration: 8, repeat: Infinity }}
-          className="w-[500px] h-[500px] bg-purple-500/20 blur-[140px] rounded-full"
-        />
-      </div>
-
       <div className="container mx-auto px-6 flex flex-col items-center">
 
         {/* Dynamic Island */}
         <motion.div
           layout
           transition={{ type: "spring", stiffness: 120, damping: 20 }}
-          className={`mb-20 px-6 md:px-10 py-4 rounded-full shadow-xl backdrop-blur-md flex items-center gap-4 md:gap-6 ${
-            lightMode
-              ? "bg-black text-white"
-              : "bg-white text-black"
-          }`}
+          className="mb-20 px-6 md:px-10 py-4 rounded-full shadow-xl bg-foreground text-background flex items-center gap-4 md:gap-6"
         >
 
           {/* TEXT */}
@@ -110,7 +97,7 @@ export default function NowBuilding({ lightMode }: any) {
         {/* Cards */}
         <div className="max-w-3xl w-full space-y-8 md:space-y-10">
 
-          {items.map((item, i) => (
+           {items.map((item, i) => (
 
             <motion.div
               key={i}
@@ -123,14 +110,10 @@ export default function NowBuilding({ lightMode }: any) {
 
               transition={{ type: "spring", stiffness: 200, damping: 18 }}
 
-              className={`flex items-center justify-between px-5 md:px-6 py-4 md:py-5 rounded-full border cursor-pointer ${
-                lightMode
-                  ? "bg-gray-100 border-gray-200"
-                  : "bg-[#161b22] border-[#30363d]"
-              }`}
+              className="flex items-center justify-center gap-4 px-5 md:px-6 py-4 md:py-5 bg-layer border border-border rounded-full shadow-[0_8px_16px_rgba(0,0,0,0.15)] dark:shadow-[0_8px_16px_rgba(0,0,0,0.4)] cursor-pointer transition-all hover:shadow-[0_12px_24px_rgba(0,0,0,0.25)] dark:hover:shadow-[0_12px_24px_rgba(0,0,0,0.6)]"
             >
 
-              <span className="text-sm md:text-lg">
+              <span className="text-sm md:text-lg text-foreground font-medium">
                 {item.title}
               </span>
 
