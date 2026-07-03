@@ -17,12 +17,27 @@ export default function ContactSection({ lightMode }: any) {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    const { error } = await supabase
-      .from("contact_form")
-      .insert([form]);
+    try {
+      const response = await fetch("https://formsubmit.co/ajax/hariomstudy1700@gmail.com", {
+        method: "POST",
+        headers: { 
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+            name: form.name,
+            email: form.email,
+            message: form.message,
+            _subject: "New Portfolio Message from " + form.name
+        })
+      });
 
-    if (error) {
+      if (!response.ok) {
+        throw new Error("Failed to send message");
+      }
+    } catch (error) {
       console.error(error);
+      alert("Failed to send message. Please try again later.");
       return;
     }
 
@@ -246,12 +261,7 @@ export default function ContactSection({ lightMode }: any) {
                   </h3>
 
                   <div className="space-y-3 text-xs leading-relaxed">
-                    <div className="flex flex-col">
-                      <span className="text-gray-400">Email Address</span>
-                      <a href="mailto:hariomacharya17@gmail.com" className="text-blue-500 font-medium hover:underline text-sm mt-0.5">
-                        hariomacharya17@gmail.com
-                      </a>
-                    </div>
+
 
                     <div className="flex flex-col">
                       <span className="text-gray-400">Current Location</span>
