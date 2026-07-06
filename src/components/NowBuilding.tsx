@@ -33,12 +33,12 @@ export default function NowBuilding({ lightMode }: any) {
         <motion.div
           layout
           transition={{ type: "spring", stiffness: 120, damping: 20 }}
-          className="mb-20 px-6 md:px-10 py-4 rounded-full shadow-xl bg-foreground text-background flex items-center gap-4 md:gap-6"
+          className="mb-20 px-4 md:px-10 py-3.5 md:py-4 rounded-2xl sm:rounded-full shadow-xl bg-foreground text-background flex items-center gap-3 md:gap-6 max-w-full mx-4"
         >
 
           {/* TEXT */}
           <div className="text-center">
-            <motion.div layout className="text-lg md:text-2xl font-semibold">
+            <motion.div layout className="text-xs sm:text-sm md:text-2xl font-semibold">
               {active === null
                 ? "Currently Building"
                 : items[active].title}
@@ -49,7 +49,7 @@ export default function NowBuilding({ lightMode }: any) {
                 layout
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="text-xs opacity-70"
+                className="text-[10px] sm:text-xs opacity-70 mt-0.5"
               >
                 {items[active].desc}
               </motion.p>

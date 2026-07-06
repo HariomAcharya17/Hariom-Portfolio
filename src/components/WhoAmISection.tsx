@@ -19,7 +19,7 @@ export default function WhoAmISection({ lightMode }: any) {
           className="max-w-5xl mx-auto flex flex-col lg:flex-row gap-12 items-center"
         >
           {/* Left: Orb */}
-          <div className="flex-1 w-full flex flex-col items-center justify-center relative min-h-[500px]">
+          <div className="flex-1 w-full flex flex-col items-center justify-center relative min-h-[300px] md:min-h-[500px]">
             {/* The Orb Background */}
             <div className="absolute inset-0 z-0 scale-125">
               <Orb
@@ -35,7 +35,7 @@ export default function WhoAmISection({ lightMode }: any) {
                 colors={["#40ffaa", "#4079ff", "#40ffaa", "#4079ff", "#40ffaa"]}
                 animationSpeed={3}
                 showBorder={false}
-                className="font-bold text-4xl md:text-5xl tracking-tight drop-shadow-md"
+                className="font-bold text-2xl sm:text-4xl md:text-5xl tracking-tight drop-shadow-md"
               >
                 Know More About Hariom...
               </GradientText>

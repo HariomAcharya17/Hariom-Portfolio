@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/lib/supabase";
 import CardSwap, { Card } from "@/components/ui/CardSwap";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const ACCENT_COLORS = [
   "#2563eb", // blue
@@ -70,6 +71,7 @@ interface FeedbackSectionProps {
 }
 
 export default function FeedbackSection({ lightMode }: FeedbackSectionProps) {
+  const isMobile = useIsMobile();
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
   const [rating, setRating] = useState(0);
@@ -120,7 +122,7 @@ export default function FeedbackSection({ lightMode }: FeedbackSectionProps) {
         )}
       </AnimatePresence>
 
-      <div className="container mx-auto px-6 flex flex-col md:flex-row gap-16 items-center justify-between">
+      <div className="container mx-auto px-4 md:px-6 flex flex-col md:flex-row gap-16 items-center justify-between">
 
         {/* LEFT — Form */}
         <div className="flex-1 max-w-md">
@@ -163,12 +165,12 @@ export default function FeedbackSection({ lightMode }: FeedbackSectionProps) {
 
         {/* RIGHT — CardSwap deck */}
         <div className="flex-1 flex items-center justify-center" style={{ minHeight: 420 }}>
-          <div style={{ position: "relative", width: 260, height: 340, marginRight: 200, marginTop: 60 }}>
+          <div style={{ position: "relative", width: 260, height: 340, marginRight: isMobile ? 40 : 200, marginTop: 60 }}>
             <CardSwap
               width={260}
               height={340}
-              cardDistance={52}
-              verticalDistance={58}
+              cardDistance={isMobile ? 20 : 52}
+              verticalDistance={isMobile ? 25 : 58}
               delay={3800}
               pauseOnHover={true}
               skewAmount={4}

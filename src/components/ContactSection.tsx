@@ -146,7 +146,7 @@ export default function ContactSection({ lightMode }: any) {
           </div>
 
           {/* Body */}
-          <div className="p-8">
+          <div className="p-4 md:p-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-start">
 
               {/* Left Column: Form */}

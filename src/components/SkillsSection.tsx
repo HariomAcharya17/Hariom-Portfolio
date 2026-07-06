@@ -177,11 +177,11 @@ const getCategoryDetails = (title: string): CategoryDetails => {
   
   // Fallback
   return {
-    desc: "Applying foundational computer engineering principles, hardware integration, and packet routing to solve complex software problems.",
+    desc: `Developing engineering solutions, integrating modern software practices, and building robust components in ${title}.`,
     highlights: [
-      "Hardware prototyping with <strong>ESP32</strong> microcontrollers and <strong>Arduino IDE</strong>.",
-      "Designing networking systems using <strong>Cisco Packet Tracer</strong> routers.",
-      "Structuring version control and CI/CD pipelines using Git and GitHub."
+      "Leveraging industry-standard tools and design patterns.",
+      "Structuring clean code, robust logic, and high-performance functionality.",
+      "Applying computer science fundamentals to solve complex problems."
     ]
   };
 };
@@ -277,7 +277,7 @@ export default function SkillsSection({ lightMode }: SkillsSectionProps) {
           </div>
 
           {/* Content */}
-          <div className="p-10">
+          <div className="p-4 md:p-10">
             <div className="grid md:grid-cols-2 gap-8">
               {activeSkillGroups.map((group, i) => {
                 const colors = getSkillGroupColors(group.title, !lightMode);

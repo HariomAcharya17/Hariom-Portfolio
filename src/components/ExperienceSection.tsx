@@ -10,6 +10,7 @@ interface ExperienceItem {
   org: string;
   year: number | string;
   description: string;
+  achievements?: string[];
 }
 
 interface ExperienceSectionProps {
@@ -57,8 +58,10 @@ export default function ExperienceSection({ lightMode }: ExperienceSectionProps)
     return Award;
   };
 
-  const getExperienceDetails = (org: string): string[] => {
-    const o = org.toLowerCase().trim();
+  const getExperienceDetails = (exp: ExperienceItem): string[] => {
+    if (exp.achievements && exp.achievements.length > 0) return exp.achievements;
+    
+    const o = exp.org.toLowerCase().trim();
     if (o.includes("nst")) {
       return [
         "Developed and shipped <strong>EaseExpense</strong>, a full-stack monthly budgeting and tracking dashboard.",
@@ -116,7 +119,7 @@ export default function ExperienceSection({ lightMode }: ExperienceSectionProps)
           </div>
 
           {/* content */}
-          <div className="p-6 md:p-10 relative">
+          <div className="p-4 md:p-10 relative">
             {/* Main vertical line connector */}
             <div className="absolute left-[24px] md:left-[40px] top-10 bottom-10 w-0.5 bg-border/60" />
 
@@ -197,7 +200,7 @@ export default function ExperienceSection({ lightMode }: ExperienceSectionProps)
                           >
                             <div className="mt-4 pt-4 border-t border-border/40">
                               <ul className="space-y-2.5">
-                                {getExperienceDetails(exp.org).map((bullet, idx) => (
+                                {getExperienceDetails(exp).map((bullet, idx) => (
                                   <li
                                     key={idx}
                                     className="text-xs leading-relaxed text-secondary_text font-normal flex items-start gap-2"

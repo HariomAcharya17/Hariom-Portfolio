@@ -123,7 +123,7 @@ export default function CertificatesSection({ lightMode }: CertificatesSectionPr
           </div>
 
           {/* content */}
-          <div className="p-10">
+          <div className="p-4 md:p-10">
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
               {certificates.map((cert, i) => {
                 const gradients = [

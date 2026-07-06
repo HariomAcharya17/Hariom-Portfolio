@@ -85,7 +85,7 @@ export default function ProjectsSection({ lightMode }: ProjectsSectionProps) {
             </span>
           </div>
 
-          <div className="p-5 md:p-10">
+          <div className="p-4 md:p-10">
             <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto relative bento-section">
 
               {allCards.map((card, i) => (
