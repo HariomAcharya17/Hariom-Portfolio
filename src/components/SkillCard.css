@@ -1,0 +1,151 @@
+/* SkillCard.css */
+
+.skill-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 2.25rem 2rem;
+  border-radius: 1.25rem;
+  background: var(--layer);
+  border: 1px solid var(--border);
+  box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.01);
+  transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+  overflow: hidden;
+  z-index: 1;
+}
+
+.skill-card::after {
+  content: "";
+  position: absolute;
+  bottom: -40px;
+  right: -40px;
+  width: 120px;
+  height: 120px;
+  background: var(--orb-color);
+  filter: blur(50px);
+  border-radius: 50%;
+  transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  opacity: 0.35;
+  pointer-events: none;
+  z-index: -1;
+}
+
+.skill-card::before {
+  content: "";
+  position: absolute;
+  bottom: -150%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 0;
+  height: 0;
+  background: var(--hover-bg);
+  filter: blur(60px);
+  border-radius: 50%;
+  transition: width 0.8s cubic-bezier(0.16, 1, 0.3, 1), 
+              height 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              bottom 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+              filter 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+  z-index: -1;
+}
+
+.skill-card:hover {
+  border-color: var(--orb-color);
+  transform: translateY(-4px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.04);
+}
+
+.dark .skill-card:hover {
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
+}
+
+.skill-card:hover::before {
+  bottom: -50%;
+  width: 900px;
+  height: 900px;
+  filter: blur(2px);
+}
+
+.skill-card-icon-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 10px;
+  background: var(--icon-bg);
+  color: var(--primary);
+  transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.skill-card:hover .skill-card-icon-container {
+  background: var(--hover-icon-bg);
+  color: var(--hover-icon-color) !important;
+}
+
+.skill-card-title {
+  color: var(--foreground);
+  font-size: 1.25rem;
+  font-weight: 600;
+  transition: color 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  margin: 1.25rem 0 0.5rem 0;
+  letter-spacing: -0.01em;
+}
+
+.skill-card-subtitle {
+  color: var(--secondary-text);
+  font-size: 0.8rem;
+  line-height: 1.5;
+  transition: color 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  margin-bottom: 1.25rem;
+  text-align: left;
+  font-weight: 400;
+}
+
+.skill-card:hover .skill-card-title {
+  color: var(--hover-text);
+}
+
+.skill-card:hover .skill-card-subtitle {
+  color: var(--hover-subtitle);
+}
+
+/* Bullet points styling */
+.skill-card-bullet {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.5rem;
+  transition: color 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.skill-card-bullet-text {
+  color: var(--secondary-text);
+  transition: color 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  font-weight: 400;
+}
+
+.skill-card-bullet-text strong {
+  color: var(--foreground);
+  transition: color 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.skill-card:hover .skill-card-bullet-text {
+  color: var(--hover-subtitle);
+}
+
+.skill-card:hover .skill-card-bullet-text strong {
+  color: var(--hover-text);
+}
+
+/* Smooth fade and swap for skill tags inside the card when hovered */
+.skill-card-tag {
+  transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease;
+}
+
+.skill-card:hover .skill-card-tag {
+  background: var(--background) !important;
+  border-color: var(--border) !important;
+  color: var(--foreground) !important;
+  opacity: 0.9;
+}

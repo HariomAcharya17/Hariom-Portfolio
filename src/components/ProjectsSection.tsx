@@ -7,13 +7,31 @@ import ScrollFloat from "@/components/ui/ScrollFloat";
 import ViewProjectButton from "@/components/ui/ViewProjectButton";
 import LiveDemoButton from "@/components/ui/LiveDemoButton";
 
-export default function ProjectsSection({ lightMode }: any) {
+interface ProjectItem {
+  id?: number | string;
+  title: string;
+  description: string;
+  achievements?: string[];
+  technologies?: string[];
+  tech?: string;
+  github?: string;
+  demo?: string;
+  link?: string;
+  reveal?: boolean;
+  _type?: "project" | "upcoming";
+}
+
+interface ProjectsSectionProps {
+  lightMode: boolean;
+}
+
+export default function ProjectsSection({ lightMode }: ProjectsSectionProps) {
   const ref = useRef(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true });
 
-  const [projects, setProjects] = useState<any[]>([]);
-  const [upcoming, setUpcoming] = useState<any[]>([]);
+  const [projects, setProjects] = useState<ProjectItem[]>([]);
+  const [upcoming, setUpcoming] = useState<ProjectItem[]>([]);
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -68,8 +86,7 @@ export default function ProjectsSection({ lightMode }: any) {
           </div>
 
           <div className="p-5 md:p-10">
-            <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-10 max-w-5xl mx-auto relative bento-section">
-              <GlobalSpotlight gridRef={gridRef} glowColor="37, 99, 235" />
+            <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto relative bento-section">
 
               {allCards.map((card, i) => (
                 <motion.div
@@ -79,87 +96,127 @@ export default function ProjectsSection({ lightMode }: any) {
                   transition={{ delay: i * 0.15 }}
                   className="w-full max-w-full"
                 >
-                  <ParticleCard
-                    glowColor="37, 99, 235"
-                    enableStars={false}
-                    className="carbon-card p-5 md:p-8 w-full max-w-full"
-                  >
+                  <div className="relative bg-layer/40 border border-border rounded-2xl p-6 md:p-8 flex flex-col justify-between h-full transition-all duration-300 hover:border-primary/50 hover:bg-layer/60 group shadow-sm hover:shadow-md overflow-hidden min-h-[360px]">
+                    {/* Subtle colored accent tag */}
+                    <div className="absolute top-0 left-0 h-1 w-12 bg-primary rounded-br-lg opacity-80" />
+
                     {/* Regular project card */}
                     {card._type === "project" && (
-                      <>
-                        <h3 className="text-xl font-semibold mb-3 text-foreground">
-                          {card.title}
-                        </h3>
-
-                        <p className="leading-relaxed break-words text-sm mb-4 text-secondary_text">
-                          {card.description}
-                        </p>
-
-                        {/* Achievements bullets */}
-                        {card.achievements && (
-                          <ul className="list-disc pl-5 space-y-1 mb-5 text-xs leading-relaxed text-secondary_text">
-                            {card.achievements.map((a: string, idx: number) => (
-                              <li key={idx}>{a}</li>
-                            ))}
-                          </ul>
-                        )}
-
-                        <div className="flex flex-wrap gap-2 mb-6">
-                          {(card.technologies || (typeof card.tech === "string" ? card.tech.split(",") : [])).map((t: string) => (
-                            <span
-                              key={t}
-                              className="text-xs px-3 py-1 font-mono font-medium border border-border bg-[#e0e0e0] text-black dark:bg-[#393939] dark:text-white"
-                            >
-                              {t.trim()}
+                      <div className="flex flex-col justify-between h-full flex-1">
+                        <div>
+                          {/* Card header */}
+                          <div className="flex items-center justify-between mb-4 pb-3 border-b border-border/40 select-none">
+                            <div className="flex items-center gap-2 text-primary">
+                              <svg viewBox="0 0 24 24" className="w-4 h-4 text-primary" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                              </svg>
+                              <span className="text-[9px] font-mono font-bold tracking-wider uppercase opacity-85">
+                                Featured Project
+                              </span>
+                            </div>
+                            <span className="text-[9px] font-mono px-2 py-0.5 rounded-full font-bold uppercase tracking-wide bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+                              Production
                             </span>
-                          ))}
+                          </div>
+
+                          <h3 className="text-xl font-bold mb-3 text-foreground font-sans">
+                            {card.title}
+                          </h3>
+
+                          <p className="leading-relaxed break-words text-sm mb-4 text-secondary_text font-sans">
+                            {card.description}
+                          </p>
+
+                          {/* Achievements bullets */}
+                          {card.achievements && (
+                            <ul className="space-y-1.5 mb-5 text-xs text-secondary_text">
+                              {card.achievements.map((a: string, idx: number) => (
+                                <li key={idx} className="flex items-start gap-2">
+                                  <svg viewBox="0 0 24 24" className="w-3.5 h-3.5 text-primary shrink-0 mt-0.5" fill="currentColor">
+                                    <path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z" />
+                                  </svg>
+                                  <span className="leading-relaxed text-left">{a}</span>
+                                </li>
+                              ))}
+                            </ul>
+                          )}
                         </div>
 
-                        <div className="flex flex-wrap gap-4 text-sm relative z-10">
-                          {card.github && (
-                            <ViewProjectButton href={card.github}>
-                              Code
-                            </ViewProjectButton>
-                          )}
-                          
-                          {(card.demo || card.link) && (
-                            <LiveDemoButton href={card.demo || card.link}>
-                              Live Demo
-                            </LiveDemoButton>
-                          )}
+                        <div>
+                          {/* Technology Stack */}
+                          <div className="flex flex-wrap gap-2 mb-6">
+                            {(card.technologies || (typeof card.tech === "string" ? card.tech.split(",") : [])).map((t: string) => (
+                              <span
+                                key={t}
+                                className="text-[10px] px-2.5 py-0.5 font-mono font-semibold border border-border/80 bg-background text-secondary_text rounded-lg transition-colors group-hover:border-primary/20"
+                              >
+                                {t.trim()}
+                              </span>
+                            ))}
+                          </div>
+
+                          {/* Action Buttons */}
+                          <div className="flex flex-wrap gap-4 text-sm relative z-10">
+                            {card.github && (
+                              <ViewProjectButton href={card.github}>
+                                Code
+                              </ViewProjectButton>
+                            )}
+                            
+                            {(card.demo || card.link) && (
+                              <LiveDemoButton href={card.demo || card.link}>
+                                Live Demo
+                              </LiveDemoButton>
+                            )}
+                          </div>
                         </div>
-                      </>
+                      </div>
                     )}
 
                     {/* Upcoming project card */}
                     {card._type === "upcoming" && (
-                      <>
-                        {card.reveal ? (
-                          <>
-                            <h3 className="text-xl font-semibold mb-3 text-foreground">
-                              {card.title}
-                            </h3>
-                            <p className="leading-relaxed break-words text-sm mb-6 text-secondary_text">
-                              {card.description}
-                            </p>
-                            <span className="inline-flex items-center text-xs px-2.5 py-0.5 font-mono bg-layer text-primary border border-primary font-medium">
-                              Upcoming Project
+                      <div className="flex flex-col justify-between h-full flex-1">
+                        <div className="flex flex-col h-full flex-1">
+                          {/* Category header */}
+                          <div className="flex items-center justify-between mb-4 pb-3 border-b border-border/40 select-none">
+                            <div className="flex items-center gap-2 text-amber-500">
+                              <svg viewBox="0 0 24 24" className="w-4 h-4 text-amber-500" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+                                <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+                              </svg>
+                              <span className="text-[9px] font-mono font-bold tracking-wider uppercase opacity-85">
+                                Classified System
+                              </span>
+                            </div>
+                            <span className="text-[9px] font-mono px-2 py-0.5 rounded-full font-bold uppercase tracking-wide bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20 animate-pulse">
+                              Pipeline
                             </span>
-                          </>
-                        ) : (
-                          <div className="flex flex-col items-center justify-center py-8 text-center">
-                            <span className="text-3xl mb-4">🚀</span>
-                            <h3 className="text-lg font-semibold mb-2 text-foreground">
-                              Classified Engine
-                            </h3>
-                            <p className="text-xs max-w-xs text-secondary_text">
-                              Under active development. Details will be unlocked soon.
-                            </p>
                           </div>
-                        )}
-                      </>
+
+                          {card.reveal ? (
+                            <>
+                              <h3 className="text-xl font-bold mb-3 text-foreground font-sans">
+                                {card.title}
+                              </h3>
+                              <p className="leading-relaxed break-words text-sm mb-6 text-secondary_text font-sans">
+                                {card.description}
+                              </p>
+                            </>
+                          ) : (
+                            <div className="flex-1 flex flex-col items-center justify-center py-10 text-center my-auto select-none">
+                              <span className="text-3xl mb-3">🔒</span>
+                              <h3 className="text-base font-bold mb-1.5 text-foreground font-sans">
+                                Engine Locked
+                              </h3>
+                              <p className="text-[11px] max-w-xs text-secondary_text leading-relaxed">
+                                Secure sandbox integration under active development. Core features will be unlocked soon.
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
                     )}
-                  </ParticleCard>
+                  </div>
                 </motion.div>
               ))}
             </div>

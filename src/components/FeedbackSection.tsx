@@ -56,11 +56,24 @@ function ReviewCard({ fb, accent }: { fb: typeof defaultFeedback[0]; accent: str
   );
 }
 
-export default function FeedbackSection({ lightMode }: any) {
+interface FeedbackItem {
+  id?: number | string;
+  name: string;
+  message: string;
+  rating: number;
+  approved?: boolean;
+  created_at?: string;
+}
+
+interface FeedbackSectionProps {
+  lightMode: boolean;
+}
+
+export default function FeedbackSection({ lightMode }: FeedbackSectionProps) {
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
   const [rating, setRating] = useState(0);
-  const [feedback, setFeedback] = useState<any[]>([]);
+  const [feedback, setFeedback] = useState<FeedbackItem[]>([]);
   const [toast, setToast] = useState(false);
 
   /* FETCH */
@@ -114,18 +127,17 @@ export default function FeedbackSection({ lightMode }: any) {
           <h2 className="text-4xl mb-10 font-bold text-foreground">
             Leave Feedback
           </h2>
-
           <input
             placeholder="Your name"
             value={name}
             onChange={e => setName(e.target.value)}
-            className="w-full mb-4 p-3 border-b border-border bg-input carbon-focus focus-within:border-primary text-foreground transition-colors outline-none"
+            className="w-full mb-4 px-4 py-3.5 rounded-2xl border border-border bg-input text-foreground transition-all duration-300 outline-none shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20 focus:-translate-y-[0.5px]"
           />
           <textarea
             placeholder="Your feedback"
             value={message}
             onChange={e => setMessage(e.target.value)}
-            className="w-full mb-6 p-3 border-b border-border bg-input carbon-focus focus-within:border-primary text-foreground resize-none transition-colors outline-none"
+            className="w-full mb-6 px-4 py-3.5 rounded-2xl border border-border bg-input text-foreground resize-none transition-all duration-300 outline-none shadow-sm focus:border-primary focus:ring-2 focus:ring-primary/20 focus:-translate-y-[0.5px]"
             rows={4}
           />
 
@@ -143,7 +155,7 @@ export default function FeedbackSection({ lightMode }: any) {
 
           <button
             onClick={submitFeedback}
-            className="carbon-btn-primary px-8"
+            className="carbon-btn-primary px-8 rounded-2xl py-3 hover:-translate-y-[1px] active:scale-95 shadow-md transition-all duration-300"
           >
             Submit Feedback
           </button>

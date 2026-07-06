@@ -1,0 +1,261 @@
+/* ExperienceCard.css */
+
+/* Core Wrap */
+.exp-card-wrap {
+  position: relative;
+  overflow: hidden;
+  height: 290px;
+  width: 100%;
+  border-radius: 1rem;
+  border: 1px solid var(--border);
+  background: var(--background);
+  transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  cursor: pointer;
+  user-select: none;
+}
+
+.exp-card-wrap:hover {
+  transform: translateY(-4px);
+  border-color: var(--primary);
+  box-shadow: 0 12px 20px -10px rgba(15, 98, 254, 0.15);
+}
+
+.dark .exp-card-wrap:hover {
+  box-shadow: 0 12px 20px -10px rgba(15, 98, 254, 0.35);
+}
+
+/* Sliding Overlay Container */
+.exp-card-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  background: var(--layer);
+  transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 10;
+}
+
+/* Left Sidebar (The static column when open) */
+.exp-card-sidebar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  width: 72px;
+  height: 100%;
+  padding: 1.25rem 0.5rem;
+  border-right: 1px solid var(--border);
+  background: var(--layer);
+  transition: transform 0.55s cubic-bezier(0.16, 1, 0.3, 1),
+              border-color 0.3s ease;
+  z-index: 12;
+}
+
+/* Vertical Text inside Sidebar */
+.exp-card-vertical-title {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--secondary-text);
+  margin-top: 1rem;
+}
+
+/* Right Content Area of Overlay (Gradient/Visual Panel) */
+.exp-card-image {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: calc(100% - 72px);
+  height: 100%;
+  padding: 1.5rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+  z-index: 11;
+  overflow: hidden;
+}
+
+/* Dark mesh pattern overlay for high-tech aesthetic */
+.exp-card-image::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(0, 0, 0, 0.1) 1px, transparent 0);
+  background-size: 16px 16px;
+  opacity: 0.4;
+  pointer-events: none;
+}
+
+.dark .exp-card-image::before {
+  background-image: radial-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 0);
+  opacity: 0.6;
+}
+
+/* Detail Text Container Sitting Behind Overlay */
+.exp-card-text {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: calc(100% - 82px); /* 72px sidebar + 10px gradient divider */
+  height: 100%;
+  padding: 1.5rem;
+  background: var(--background);
+  overflow-y: auto;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  opacity: 0;
+  transform: translateX(16px);
+  transition: opacity 0.45s cubic-bezier(0.16, 1, 0.3, 1),
+              transform 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
+}
+
+.exp-card-text::-webkit-scrollbar {
+  width: 4px;
+}
+
+.exp-card-text::-webkit-scrollbar-thumb {
+  background-color: var(--border);
+  border-radius: 2px;
+}
+
+/* Dots decoration container */
+.exp-card-dots {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  gap: 0.375rem;
+  transition: all 0.55s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.exp-card-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--secondary-text);
+  border-radius: 50%;
+  opacity: 0.4;
+  transition: all 0.55s ease;
+}
+
+/* OPENED STATE TRANSITIONS */
+.exp-card-wrap.is-open .exp-card-overlay {
+  transform: translateX(calc(-100% + 72px));
+}
+
+.exp-card-wrap.is-open .exp-card-sidebar {
+  transform: translateX(calc(100% - 72px));
+  border-right-color: transparent;
+  border-left: 1px solid var(--border);
+}
+
+.exp-card-wrap.is-open .exp-card-image {
+  width: 10px;
+  padding: 0;
+}
+
+/* Hide elements inside card image when collapsed/opened */
+.exp-card-wrap.is-open .exp-card-image > * {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s ease;
+}
+
+.exp-card-wrap.is-open .exp-card-text {
+  opacity: 1;
+  transform: translateX(0);
+  transition-delay: 0.08s;
+}
+
+.exp-card-wrap.is-open .exp-card-dot {
+  background: var(--primary);
+  opacity: 0.8;
+  transform: scale(1.2);
+}
+
+/* ANIMATIONS & DELAYS (Staggered Load Animation) */
+.exp-animate {
+  animation-duration: 0.65s;
+  animation-timing-function: cubic-bezier(0.25, 0.8, 0.25, 1.15);
+  animation-fill-mode: backwards;
+}
+
+/* Pop In */
+.exp-pop {
+  animation-name: exp-pop;
+}
+@keyframes exp-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0.7);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Slide In from Right */
+.exp-slide {
+  animation-name: exp-slide;
+}
+@keyframes exp-slide {
+  0% {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Slide In from Left */
+.exp-slide-left {
+  animation-name: exp-slide-left;
+}
+@keyframes exp-slide-left {
+  0% {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Slide Up */
+.exp-slide-up {
+  animation-name: exp-slide-up;
+}
+@keyframes exp-slide-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Delay Helpers */
+.exp-delay-1 { animation-delay: 0.1s; }
+.exp-delay-2 { animation-delay: 0.2s; }
+.exp-delay-3 { animation-delay: 0.3s; }
+.exp-delay-4 { animation-delay: 0.4s; }
+.exp-delay-5 { animation-delay: 0.5s; }
+.exp-delay-6 { animation-delay: 0.6s; }
+.exp-delay-7 { animation-delay: 0.7s; }
+.exp-delay-8 { animation-delay: 0.8s; }
