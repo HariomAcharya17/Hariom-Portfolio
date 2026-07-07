@@ -11,7 +11,7 @@
   border: 1px solid var(--border);
   box-shadow: 0px 4px 12px 0px rgba(0, 0, 0, 0.01);
   transition: all 0.7s cubic-bezier(0.16, 1, 0.3, 1);
-  overflow: hidden;
+  overflow: visible;
   z-index: 1;
 }
 
@@ -21,7 +21,16 @@
   }
 }
 
-.skill-card::after {
+.skill-card-bg {
+  position: absolute;
+  inset: 0;
+  border-radius: 1.25rem;
+  overflow: hidden;
+  z-index: -1;
+  pointer-events: none;
+}
+
+.skill-card-bg::after {
   content: "";
   position: absolute;
   bottom: -40px;
@@ -37,7 +46,7 @@
   z-index: -1;
 }
 
-.skill-card::before {
+.skill-card-bg::before {
   content: "";
   position: absolute;
   bottom: -150%;
@@ -66,7 +75,7 @@
   box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2);
 }
 
-.skill-card:hover::before {
+.skill-card:hover .skill-card-bg::before {
   bottom: -50%;
   width: 900px;
   height: 900px;
@@ -144,14 +153,83 @@
   color: var(--hover-text);
 }
 
-/* Smooth fade and swap for skill tags inside the card when hovered */
-.skill-card-tag {
-  transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease;
+/* Visual Skill Badge Styling */
+.skill-badge-container {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.4rem 0.75rem;
+  background: var(--layer-2, rgba(255, 255, 255, 0.03));
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  color: var(--foreground);
+  font-size: 0.8rem;
+  font-weight: 500;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  cursor: pointer;
+  user-select: none;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
 }
 
-.skill-card:hover .skill-card-tag {
-  background: var(--background) !important;
-  border-color: var(--border) !important;
-  color: var(--foreground) !important;
-  opacity: 0.9;
+.dark .skill-badge-container {
+  background: rgba(255, 255, 255, 0.02);
 }
+
+.skill-badge-container:hover {
+  background: var(--background);
+  border-color: var(--orb-color);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+}
+
+.skill-badge-logo {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.skill-badge-container:hover .skill-badge-logo {
+  transform: scale(1.2) rotate(4deg);
+}
+
+/* Tooltip popup styles */
+.skill-badge-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-bottom: 0.75rem;
+  z-index: 50;
+  width: 250px;
+  padding: 1rem;
+  border-radius: 1rem;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(226, 232, 240, 0.8);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.1);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  pointer-events: none;
+  text-align: left;
+}
+
+.dark .skill-badge-tooltip {
+  background: rgba(15, 23, 42, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.07);
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3);
+}
+
+.skill-badge-tooltip::after {
+  content: "";
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border-width: 6px;
+  border-style: solid;
+  border-color: rgba(255, 255, 255, 0.9) transparent transparent transparent;
+}
+
+.dark .skill-badge-tooltip::after {
+  border-color: rgba(15, 23, 42, 0.95) transparent transparent transparent;
+}
+

@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { useIsMobile } from "@/hooks/use-mobile";
 
 /**
- * PortfolioAI v3 - "Bespoke"
+ * PortfolioAI v4 - "Bespoke"
  * ============================================================================
  * A chat widget that answers questions about Hariom Acharya by calling the
  * Claude API directly (real answers, not just keyword matching). Falls back
@@ -14,17 +14,27 @@ import { useIsMobile } from "@/hooks/use-mobile";
 const HARIOM_SYSTEM_PROMPT = `
 You are Bespoke, Hariom Acharya's personal AI assistant, embedded in his portfolio site.
 
-TONE: Chill, warm, confident — like a friendly senior dev, not a corporate bot. Use emojis naturally but don't overdo it (1 per message, sometimes none). Occasionally sign off or greet with "Hare Krishna 🙏" when it fits naturally (e.g. first message, or a warm closing) — never force it into every reply.
+TONE: Chill, warm, confident — like a friendly senior dev, not a corporate bot. Use emojis naturally but sparingly (0-1 per message, not every message).
 
-RULES:
+CRITICAL RULE — MATCH ANSWER LENGTH TO THE QUESTION:
+This is the most important rule. Read what's actually being asked and answer exactly that, nothing more.
+- If someone asks a single specific fact ("spi", "cgpa", "github link", "email", "what's his stack") — reply with ONLY that fact in a short, direct line. No backstory, no extra context, no listing unrelated things.
+  Example: "spi" -> "9.29 this semester." That's it. Not his CGPA, not his degree, not his college.
+  Example: "cgpa" -> "8.64/10."
+  Example: "github" -> "github.com/HariomAcharya17"
+- If someone asks a broader question ("tell me about his projects", "what does he do") — give a fuller but still tight answer.
+- If someone says "tell me more", "explain", "how does X work", "go deeper" — now you can expand properly.
+- Never pad a narrow question with information nobody asked for. Precision over volume, always.
+
+OTHER RULES:
 1. Answer directly and confidently. You know Hariom's work well — don't hedge, don't say "I think."
-2. Keep answers short and punchy by default. Go deeper only if the person asks "tell me more" / "how does X work".
-3. Never ask a question back unless truly necessary to understand what's being asked.
-4. If something isn't in your knowledge, just say so plainly and move on — no over-apologizing.
-5. If asked about something that could look like a weakness (e.g. "why no Java?", "why isn't X finished?"), be honest but frame it as a deliberate choice or a project still in motion — don't be defensive or evasive, just real.
-6. Never share his phone number. If someone wants to reach him, point to email or LinkedIn.
-7. Use his real projects as examples when explaining his skills.
-8. Never use markdown formatting — no asterisks, no bold, no bullet points with *, no headers. Plain conversational text only, like a chat message. If you need to list things, use plain lines or commas, not markdown syntax.
+2. Never ask a question back unless truly necessary to understand what's being asked.
+3. If something isn't in your knowledge, say so plainly in one line and move on — no over-apologizing.
+4. If asked about something that could look like a weakness (e.g. "why no Java?", "why isn't X finished?"), be honest but frame it as a deliberate choice or a project still in motion — don't be defensive or evasive, just real.
+5. Never share his phone number. If someone wants to reach him, point to email or LinkedIn.
+6. Use his real projects as examples when explaining his skills, but only when relevant to what was asked.
+7. Never use markdown formatting — no asterisks, no bold, no bullet points with *, no headers. Plain conversational text only, like a chat message. If you need to list things, use plain lines or commas, not markdown syntax.
+8. For open-ended or speculative questions ("what's he building next", "what should he learn next", "is he good for a backend role") — don't just recite facts, actually reason using his skills, goals, and interests to give a real, specific answer. This is what makes you powerful — connect the dots instead of just retrieving data.
 
 ABOUT HARIOM:
 
@@ -69,8 +79,8 @@ Tools: Git/GitHub, VS Code, Postman, Arduino IDE/ESP32, Cisco Packet Tracer.
 - Python for Data Science (NPTEL) — done
 - AWS Certified Cloud Practitioner — currently studying via AWS Skill Builder
 
-## GOALS
-Mastering cloud architecture at scale, going deeper into networking/cybersecurity, shipping more AI-integrated full-stack products, and eventually leading a technical team.
+## GOALS & UPCOMING PLANS
+Mastering cloud architecture at scale (finishing the AWS Cloud Practitioner cert soon), going deeper into networking/cybersecurity, shipping more AI-integrated full-stack products, finishing and launching Vox-Hire with Hindi language support and a coding-round module, contributing to open source, and eventually leading a technical team.
 
 ## PERSONALITY & INTERESTS
 Chill, easygoing, but focused when building. Swims and hits the gym regularly. Into tech blogging and open source (planning to contribute more). Cares about building things that actually solve real problems, not just resume projects.
@@ -102,22 +112,40 @@ const getLocalAIResponse = (query: string): string => {
     return matrix[a.length][b.length];
   };
 
+  // Narrow, single-fact queries -> short direct answers, nothing extra
+  const directFacts: { keywords: string[]; response: string }[] = [
+    { keywords: ["spi"], response: "9.29 this semester." },
+    { keywords: ["cgpa", "gpa"], response: "8.64/10 cumulative." },
+    { keywords: ["github"], response: "github.com/HariomAcharya17" },
+    { keywords: ["linkedin"], response: "linkedin.com/in/hariom" },
+    { keywords: ["email", "mail", "gmail"], response: "hariomacharya2@gmail.com" },
+    { keywords: ["portfolio", "website"], response: "hariomacharya.vercel.app" },
+    { keywords: ["phone", "number", "mobile", "call"], response: "That's private — email's the best way to reach him: hariomacharya2@gmail.com" },
+    { keywords: ["location", "city", "based", "live"], response: "Gandhinagar, Gujarat, India." },
+    { keywords: ["degree", "branch"], response: "B.Tech in Computer Engineering." },
+    { keywords: ["college", "university", "ldrp"], response: "LDRP Institute of Technology & Research, Gandhinagar." },
+    { keywords: ["graduate", "graduation", "graduating", "year"], response: "2027 — currently in final year." },
+  ];
+
+  for (const fact of directFacts) {
+    if (words.some(w => fact.keywords.includes(w))) {
+      // only treat as a narrow query if the message is short (not a broader sentence)
+      if (words.length <= 4) return fact.response;
+    }
+  }
+
   const topics = [
     {
-      id: "academic", keywords: ["spi", "cgpa", "gpa", "marks", "grade", "grades", "academic", "result", "results", "score", "scores"],
-      response: "Hariom's SPI this semester is 9.29 and his cumulative CGPA is 8.64 🙂 — solid record in Computer Engineering."
-    },
-    {
       id: "education", keywords: ["college", "university", "education", "ldrp", "school", "degree", "btech", "b.tech", "engineering", "student"],
-      response: "He's doing B.Tech in Computer Engineering at LDRP-ITR, Gandhinagar — final year, graduating 2027."
+      response: "B.Tech in Computer Engineering at LDRP-ITR, Gandhinagar — final year, graduating 2027."
     },
     {
       id: "experience", keywords: ["internship", "experience", "nst", "job", "work", "professional", "intern", "employer", "career"],
-      response: "He just wrapped up a Tech Internship at NST Private Limited, where he built EaseExpense and picked up networking & security fundamentals. Open to new opportunities now!"
+      response: "Just wrapped up a Tech Internship at NST Private Limited, where he built EaseExpense and picked up networking & security fundamentals. Open to new opportunities now."
     },
     {
-      id: "projects", keywords: ["project", "projects", "build", "built", "app", "apps", "code", "github"],
-      response: "Main projects: PhishGuard (phishing detector), EaseExpense (budget tracker), an IoT failure predictor, and Vox-Hire (AI mock interviews). Ask about any one!"
+      id: "projects", keywords: ["project", "projects", "build", "built", "app", "apps", "code"],
+      response: "Main projects: PhishGuard (phishing detector), EaseExpense (budget tracker), an IoT failure predictor, and Vox-Hire (AI mock interviews). Ask about any one."
     },
     {
       id: "phishguard", keywords: ["phishguard", "phish", "phishing", "threat", "security", "url", "scan", "scanner", "malicious"],
@@ -133,7 +161,7 @@ const getLocalAIResponse = (query: string): string => {
     },
     {
       id: "vox-hire", keywords: ["vox-hire", "vox", "voxhire", "interview", "mock", "recruitment", "huggingface", "gemini"],
-      response: "Vox-Hire is his AI mock interview platform — React + FastAPI, OpenAI/Gemini for adaptive interviews. Still in progress, but it's his personal favorite project 🙌"
+      response: "Vox-Hire is his AI mock interview platform — React + FastAPI, OpenAI/Gemini for adaptive interviews. Still in progress, but it's his personal favorite project."
     },
     {
       id: "skills", keywords: ["skills", "stack", "tech", "technologies", "python", "javascript", "typescript", "react", "nextjs", "node", "fastapi", "supabase", "aws"],
@@ -152,12 +180,12 @@ const getLocalAIResponse = (query: string): string => {
       response: "Swims and hits the gym regularly to stay balanced outside of coding. Into tech blogging too."
     },
     {
-      id: "contact", keywords: ["contact", "hire", "email", "resume", "cv", "linkedin", "github", "reach", "gmail", "connect"],
+      id: "contact", keywords: ["contact", "hire", "resume", "cv", "reach", "connect"],
       response: "Best way to reach him is hariomacharya2@gmail.com, or check LinkedIn/GitHub linked on the portfolio."
     },
     {
-      id: "future", keywords: ["future", "plan", "plans", "goals", "goal", "ambition", "vision"],
-      response: "Goals: master cloud architecture on AWS, go deeper into networking/cybersecurity, ship more AI-integrated apps, and eventually lead a dev team."
+      id: "future", keywords: ["future", "plan", "plans", "goals", "goal", "ambition", "vision", "upcoming", "next"],
+      response: "Finishing the AWS Cloud Practitioner cert, launching Vox-Hire with Hindi support, going deeper into cybersecurity, and eventually leading a dev team."
     },
   ];
 
@@ -181,19 +209,49 @@ const getLocalAIResponse = (query: string): string => {
   if (maxScore > 0 && bestMatch) return bestMatch.response;
 
   const isGreeting = words.some(w => ["hi", "hello", "hey", "yo"].includes(w));
-  if (isGreeting) return "Hare Krishna 🙏 I'm Bespoke, Hariom's AI rep. Ask me about his projects, skills, education, or how to reach him!";
+  if (isGreeting) return "I'm Bespoke, Hariom's AI rep. Ask me about his projects, skills, education, or how to reach him.";
 
-  return "I've got the full picture on Hariom — his SPI/CGPA, the NST internship, projects (PhishGuard, EaseExpense, IoT detector, Vox-Hire), tech stack, and certifications. Try asking about any of those!";
+  return "I've got the full picture on Hariom — his SPI/CGPA, the NST internship, projects (PhishGuard, EaseExpense, IoT detector, Vox-Hire), tech stack, and certifications. Try asking about any of those.";
 };
+
+// ---- Idle-state animated tagline (fade in/out loop, shown until first message) ----
+const TAGLINES = [
+  "How can I help you?",
+  "I'm here to give insight about Hariom...",
+  "Ask about his skills, projects, or plans.",
+  "Curious about his SPI, stack, or what's next?"
+];
+
+function AnimatedIntro() {
+  const [index, setIndex] = useState(0);
+  const [visible, setVisible] = useState(true);
+
+  useEffect(() => {
+    const cycleTimer = setInterval(() => {
+      setVisible(false);
+      setTimeout(() => {
+        setIndex(prev => (prev + 1) % TAGLINES.length);
+        setVisible(true);
+      }, 500); // matches CSS transition duration below
+    }, 2800);
+    return () => clearInterval(cycleTimer);
+  }, []);
+
+  return (
+    <div className="flex-1 flex items-center justify-center px-6">
+      <p
+        className="text-base md:text-lg font-medium text-secondary_text text-center transition-opacity duration-500 ease-in-out"
+        style={{ opacity: visible ? 1 : 0 }}
+      >
+        {TAGLINES[index]}
+      </p>
+    </div>
+  );
+}
 
 export default function PortfolioAI({ lightMode = true }: { lightMode?: boolean }) {
   const isMobile = useIsMobile();
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      role: 'assistant',
-      text: "Hare Krishna 🙏 I'm Bespoke — I know pretty much everything about Hariom Acharya: his projects, tech stack, internship, you name it. What do you want to know?"
-    }
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -294,28 +352,34 @@ export default function PortfolioAI({ lightMode = true }: { lightMode?: boolean 
       </div>
 
       {/* Messages */}
-      <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 md:px-6 py-4 md:py-5 space-y-4 bg-layer/30">
-        {messages.map((msg, idx) => (
-          <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-            <div
-              className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap shadow-sm ${msg.role === 'user'
-                ? 'bg-primary text-white rounded-tr-none'
-                : 'bg-layer border border-border text-foreground rounded-tl-none'
-                }`}
-            >
-              {msg.text}
-            </div>
-          </div>
-        ))}
+      <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 md:px-6 py-4 md:py-5 space-y-4 bg-layer/30 flex flex-col">
+        {messages.length === 0 && !isLoading ? (
+          <AnimatedIntro />
+        ) : (
+          <>
+            {messages.map((msg, idx) => (
+              <div key={idx} className={`flex ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div
+                  className={`max-w-xs lg:max-w-md px-4 py-3 rounded-2xl text-sm leading-relaxed whitespace-pre-wrap shadow-sm ${msg.role === 'user'
+                    ? 'bg-primary text-white rounded-tr-none'
+                    : 'bg-layer border border-border text-foreground rounded-tl-none'
+                    }`}
+                >
+                  {msg.text}
+                </div>
+              </div>
+            ))}
 
-        {isLoading && (
-          <div className="flex justify-start">
-            <div className="bg-layer border border-border rounded-2xl rounded-tl-none px-4 py-3 flex items-center gap-1.5 shadow-sm">
-              <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
-              <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-              <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
-            </div>
-          </div>
+            {isLoading && (
+              <div className="flex justify-start">
+                <div className="bg-layer border border-border rounded-2xl rounded-tl-none px-4 py-3 flex items-center gap-1.5 shadow-sm">
+                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce"></div>
+                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                </div>
+              </div>
+            )}
+          </>
         )}
       </div>
 
