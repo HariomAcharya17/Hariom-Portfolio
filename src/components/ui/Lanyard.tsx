@@ -38,7 +38,8 @@ export default function Lanyard({
   backImage = nameSVG,
   imageFit = 'cover' as 'cover' | 'contain',
   lanyardImage = null,
-  lanyardWidth = 1
+  lanyardWidth = 1,
+  lightMode = true
 }) {
   const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth < 768);
 
@@ -66,6 +67,7 @@ export default function Lanyard({
             imageFit={imageFit}
             lanyardImage={lanyardImage}
             lanyardWidth={lanyardWidth}
+            lightMode={lightMode}
           />
         </Physics>
         <Environment blur={0.75}>
@@ -111,7 +113,8 @@ function Band({
   backImage = null as string | null,
   imageFit = 'cover' as 'cover' | 'contain',
   lanyardImage = null as string | null,
-  lanyardWidth = 1
+  lanyardWidth = 1,
+  lightMode = true
 }) {
   const band = useRef<any>(),
     fixed = useRef<any>(),
@@ -142,17 +145,19 @@ function Band({
     const ctx = canvas.getContext('2d');
     if (!ctx) return new THREE.Texture();
 
-    // Crisp White background strap
-    ctx.fillStyle = '#ffffff';
+    const isDark = !lightMode;
+
+    // Background strap color
+    ctx.fillStyle = isDark ? '#0f172a' : '#ffffff';
     ctx.fillRect(0, 0, 512, 128);
 
-    // Subtle gray borders
-    ctx.fillStyle = '#e5e5e5';
+    // Borders
+    ctx.fillStyle = isDark ? '#1e293b' : '#e5e5e5';
     ctx.fillRect(0, 0, 512, 6);
     ctx.fillRect(0, 122, 512, 6);
 
-    // Bold Red text — auto-shrunk to fit fully within the tile width
-    const text = 'Sita Ram';
+    // Bold text — auto-shrunk to fit fully within the tile width
+    const text = 'DevSecOps';
     const paddingX = 24; // px of breathing room on each side
     const maxTextWidth = canvas.width - paddingX * 2;
 
@@ -166,8 +171,29 @@ function Band({
       ctx.font = `bold ${fontSize}px "Arial Black", Gadget, sans-serif`;
     }
 
-    ctx.fillStyle = '#dc2626';
-    ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+    if (isDark) {
+      // Glow/Lightning effect only for the text in dark mode
+      ctx.shadowColor = '#00f0ff'; // Neon cyan glow
+      ctx.shadowBlur = 10;
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 0;
+      ctx.fillStyle = '#00f0ff';
+      ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+
+      // Layer 2 blur for intense lightning glow
+      ctx.shadowBlur = 20;
+      ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+
+      // Crisp bright text core
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = '#ffffff';
+      ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+    } else {
+      // Light mode: Clean bold red text (no glow)
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = '#dc2626';
+      ctx.fillText(text, canvas.width / 2, canvas.height / 2);
+    }
 
     const tex = new THREE.CanvasTexture(canvas);
     tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
@@ -179,7 +205,7 @@ function Band({
     tex.repeat.set(3, 1);
     tex.needsUpdate = true;
     return tex;
-  }, []);
+  }, [lightMode]);
 
   // Composite the front/back images into the card's texture atlas (front = left
   // half, back = right half). Each image is drawn aspect-preserving (no stretch).
@@ -273,7 +299,7 @@ function Band({
       band.current.geometry.setPoints(curve.getPoints(isMobile ? 16 : 32));
       ang.copy(card.current.angvel());
       rot.copy(card.current.rotation());
-      card.current.setAngvel({ x: ang.x, y: ang.y - rot.y * 0.25, z: ang.z });
+      card.current.setAngvel({ x: ang.x, y: ang.y - rot.y * 0.05, z: ang.z });
     }
   });
 
