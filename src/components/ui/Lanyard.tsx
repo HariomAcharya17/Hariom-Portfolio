@@ -27,7 +27,7 @@ const FRONT_UV_RECT = { x: 0, y: 0, w: 0.5, h: 0.755 };
 const BACK_UV_RECT = { x: 0.5, y: 0, w: 0.5, h: 0.757 };
 
 // Dynamically generate a name card texture SVG
-const nameSVG = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="420" viewBox="0 0 300 420"><rect width="300" height="420" fill="%23161b22" rx="20"/><text x="150" y="160" fill="white" font-family="Inter, sans-serif" font-size="28" font-weight="bold" text-anchor="middle">HARIOM</text><text x="150" y="200" fill="%233b82f6" font-family="Inter, sans-serif" font-size="22" font-weight="500" text-anchor="middle">ACHARYA</text><text x="150" y="270" fill="%239ca3af" font-family="Inter, sans-serif" font-size="14" text-anchor="middle">Prefinal Year Student</text><text x="150" y="300" fill="%236b7280" font-family="Inter, sans-serif" font-size="12" text-anchor="middle">AI / Full-Stack / Cloud</text><text x="150" y="380" fill="%234b5563" font-family="monospace" font-size="10" text-anchor="middle">ID: HA-2026-IITG</text></svg>`;
+const nameSVG = `data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="300" height="420" viewBox="0 0 300 420"><rect width="300" height="420" fill="%23161b22" rx="20"/><text x="150" y="160" fill="white" font-family="Inter, sans-serif" font-size="28" font-weight="bold" text-anchor="middle">HARIOM</text><text x="150" y="200" fill="%23ff5500" font-family="Inter, sans-serif" font-size="22" font-weight="500" text-anchor="middle">ACHARYA</text><text x="150" y="270" fill="%239ca3af" font-family="Inter, sans-serif" font-size="14" text-anchor="middle">Final Year Student</text><text x="150" y="300" fill="%236b7280" font-family="Inter, sans-serif" font-size="12" text-anchor="middle">AI / Full-Stack / Cloud</text><text x="150" y="380" fill="%234b5563" font-family="monospace" font-size="10" text-anchor="middle">ID: HA-2026-IITG</text></svg>`;
 
 export default function Lanyard({
   position = [0, 0, 30],
@@ -148,11 +148,11 @@ function Band({
     const isDark = !lightMode;
 
     // Background strap color
-    ctx.fillStyle = isDark ? '#0f172a' : '#ffffff';
+    ctx.fillStyle = isDark ? '#161616' : '#ffffff';
     ctx.fillRect(0, 0, 512, 128);
 
     // Borders
-    ctx.fillStyle = isDark ? '#1e293b' : '#e5e5e5';
+    ctx.fillStyle = isDark ? '#ff5500' : '#e5e5e5';
     ctx.fillRect(0, 0, 512, 6);
     ctx.fillRect(0, 122, 512, 6);
 
@@ -173,25 +173,26 @@ function Band({
 
     if (isDark) {
       // Glow/Lightning effect only for the text in dark mode
-      ctx.shadowColor = '#00f0ff'; // Neon cyan glow
-      ctx.shadowBlur = 10;
+      ctx.shadowColor = '#ff5500'; // Neon orange shadow glow
+      ctx.shadowBlur = 12;
       ctx.shadowOffsetX = 0;
       ctx.shadowOffsetY = 0;
-      ctx.fillStyle = '#00f0ff';
+      ctx.fillStyle = '#ff5500';
       ctx.fillText(text, canvas.width / 2, canvas.height / 2);
 
-      // Layer 2 blur for intense lightning glow
-      ctx.shadowBlur = 20;
+      // Layer 2 blur for rich orange glow
+      ctx.shadowBlur = 24;
       ctx.fillText(text, canvas.width / 2, canvas.height / 2);
 
-      // Crisp bright text core
-      ctx.shadowBlur = 0;
-      ctx.fillStyle = '#ffffff';
+      // Crisp inner core
+      ctx.shadowBlur = 2;
+      ctx.shadowColor = 'rgba(255, 255, 255, 0.4)';
+      ctx.fillStyle = '#ffffff'; // White core for realistic neon glow
       ctx.fillText(text, canvas.width / 2, canvas.height / 2);
     } else {
-      // Light mode: Clean bold red text (no glow)
+      // Light mode: Clean bold orange text (no glow)
       ctx.shadowBlur = 0;
-      ctx.fillStyle = '#dc2626';
+      ctx.fillStyle = '#ff5500';
       ctx.fillText(text, canvas.width / 2, canvas.height / 2);
     }
 

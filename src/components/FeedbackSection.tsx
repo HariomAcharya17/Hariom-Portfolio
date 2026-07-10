@@ -1,16 +1,7 @@
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { supabase } from "@/lib/supabase";
-import CardSwap, { Card } from "@/components/ui/CardSwap";
-import { useIsMobile } from "@/hooks/use-mobile";
-
-const ACCENT_COLORS = [
-  "#2563eb", // blue
-  "#dc2626", // red
-  "#16a34a", // green
-  "#7c3aed", // purple
-  "#b45309", // amber
-];
+import WalletFeedback from "@/components/ui/WalletFeedback";
 
 const defaultFeedback = [
   { name: "Aarav Sharma",  message: "Incredible attention to detail in cloud systems! Highly recommended developer.", rating: 5 },
@@ -19,43 +10,6 @@ const defaultFeedback = [
   { name: "Sneha Reddy",   message: "Excellent communication and flawless execution of every engineering milestone.", rating: 5 },
   { name: "Karan Mehta",   message: "The codebase is clean, well-documented, and a pleasure to collaborate on.", rating: 5 },
 ];
-
-/** Minimal reviewer card — banner, avatar, name, stars, message only */
-function ReviewCard({ fb, accent }: { fb: typeof defaultFeedback[0]; accent: string }) {
-  const initials = fb.name.split(" ").map(n => n[0]).join("");
-
-  return (
-    <div className="w-full h-full flex flex-col carbon-card overflow-hidden select-none">
-      {/* Coloured banner */}
-      <div className="relative flex-shrink-0 h-[90px]" style={{ background: accent }}>
-        <div
-          className="absolute left-1/2 -translate-x-1/2 bottom-0 translate-y-1/2 w-16 h-16 rounded-full border-[3px] border-layer flex items-center justify-center text-white font-bold text-xl shadow-md"
-          style={{ background: accent, filter: "brightness(0.82)" }}
-        >
-          {initials}
-        </div>
-      </div>
-
-      {/* Body */}
-      <div className="flex flex-col items-center px-5 pt-11 pb-5 flex-1">
-        {/* Name */}
-        <p className="font-bold text-foreground text-base leading-tight text-center mt-1">{fb.name}</p>
-
-        {/* Stars */}
-        <div className="flex gap-0.5 mt-2.5">
-          {[1,2,3,4,5].map(s => (
-            <span key={s} className={`text-xl ${s <= fb.rating ? "text-yellow-400" : "text-gray-200"}`}>★</span>
-          ))}
-        </div>
-
-        {/* Message */}
-        <p className="text-sm text-secondary_text text-center mt-3 leading-relaxed">
-          "{fb.message}"
-        </p>
-      </div>
-    </div>
-  );
-}
 
 interface FeedbackItem {
   id?: number | string;
@@ -71,7 +25,6 @@ interface FeedbackSectionProps {
 }
 
 export default function FeedbackSection({ lightMode }: FeedbackSectionProps) {
-  const isMobile = useIsMobile();
   const [name, setName] = useState("");
   const [message, setMessage] = useState("");
   const [rating, setRating] = useState(0);
@@ -163,26 +116,9 @@ export default function FeedbackSection({ lightMode }: FeedbackSectionProps) {
           </button>
         </div>
 
-        {/* RIGHT — CardSwap deck */}
+        {/* RIGHT — WalletFeedback deck */}
         <div className="flex-1 flex items-center justify-center" style={{ minHeight: 420 }}>
-          <div style={{ position: "relative", width: 260, height: 340, marginRight: isMobile ? 40 : 200, marginTop: 60 }}>
-            <CardSwap
-              width={260}
-              height={340}
-              cardDistance={isMobile ? 20 : 52}
-              verticalDistance={isMobile ? 25 : 58}
-              delay={3800}
-              pauseOnHover={true}
-              skewAmount={4}
-              easing="elastic"
-            >
-              {activeFeedback.map((fb, i) => (
-                <Card key={i}>
-                  <ReviewCard fb={fb} accent={ACCENT_COLORS[i % ACCENT_COLORS.length]} />
-                </Card>
-              ))}
-            </CardSwap>
-          </div>
+          <WalletFeedback feedbacks={activeFeedback} />
         </div>
 
       </div>

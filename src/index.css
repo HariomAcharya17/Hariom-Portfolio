@@ -121,3 +121,19 @@
   inset: 0;
   pointer-events: none;
 }
+
+/* SplitText Letter Hover Effect (Apple Style) */
+.split-char {
+  display: inline-block;
+  cursor: default;
+  transition: color 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+              text-shadow 0.35s cubic-bezier(0.2, 0.8, 0.2, 1),
+              transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+}
+
+.split-char:hover {
+  color: var(--primary) !important;
+  text-shadow: 0 0 10px rgba(15, 98, 254, 0.3);
+  transform: translateY(-2px) scale(1.15) !important;
+  z-index: 10;
+}

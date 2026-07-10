@@ -1,0 +1,315 @@
+/* Wallet Wrapper & Container */
+.wallet-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.wallet {
+  position: relative;
+  width: 280px;
+  height: 230px;
+  cursor: pointer;
+  perspective: 1000px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.wallet::after {
+  content: "Hover to reveal rating";
+  position: absolute;
+  bottom: -32px;
+  font-style: italic;
+  color: var(--secondary-text);
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+  pointer-events: none;
+}
+
+.wallet:hover::after {
+  opacity: 0;
+}
+
+/* Entry animation for cards */
+@keyframes slideIntoPocket {
+  0% {
+    transform: translateY(-120px) scale(0.9);
+    opacity: 0;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* Wallet Back Layer */
+.wallet-back {
+  position: absolute;
+  bottom: 0;
+  width: 280px;
+  height: 200px;
+  background: #2b1a0f; /* Premium dark leather brown */
+  border: 2px solid #3c2415;
+  border-radius: 22px 22px 50px 50px;
+  z-index: 5;
+  box-shadow:
+    inset 0 15px 30px rgba(0, 0, 0, 0.45),
+    inset 0 4px 10px rgba(0, 0, 0, 0.5),
+    0 10px 25px rgba(0, 0, 0, 0.25);
+  transition: border-color 0.3s ease, background-color 0.3s ease;
+}
+
+/* Base Card Styles */
+.wallet-card {
+  position: absolute;
+  width: 260px;
+  height: 142px;
+  left: 10px;
+  border-radius: 16px;
+  padding: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 4px 12px rgba(0, 0, 0, 0.06),
+    0 -2px 6px rgba(0, 0, 0, 0.02);
+  transition:
+    transform 0.65s cubic-bezier(0.25, 1.2, 0.35, 1.1),
+    bottom 0.65s cubic-bezier(0.25, 1.2, 0.35, 1.1),
+    z-index 0s,
+    opacity 0.65s ease;
+  animation: slideIntoPocket 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) backwards;
+  bottom: var(--card-bottom);
+  z-index: var(--card-z-index);
+}
+
+/* Inner elements */
+.wallet-card-inner {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.wallet-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.wallet-card-title {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  opacity: 0.85;
+}
+
+/* Golden Card Chip */
+.wallet-card-chip {
+  width: 30px;
+  height: 22px;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  position: relative;
+  overflow: hidden;
+}
+
+.wallet-card-chip::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: linear-gradient(90deg, transparent 45%, rgba(255,255,255,0.15) 50%, transparent 55%);
+  background-size: 6px 100%;
+}
+
+/* Middle Message Area */
+.wallet-card-middle {
+  margin-top: 8px;
+  margin-bottom: 6px;
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+}
+
+.wallet-card-message {
+  font-size: 10.5px;
+  line-height: 1.4;
+  font-style: italic;
+  opacity: 0.9;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Card Bottom Area */
+.wallet-card-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.wallet-card-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.wallet-card-label {
+  font-size: 7.5px;
+  opacity: 0.7;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 1px;
+}
+
+.wallet-card-value {
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  max-width: 140px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.wallet-card-stars {
+  font-size: 11px;
+  color: #fbbf24;
+  letter-spacing: 0.5px;
+}
+
+/* Pocket Layer */
+.pocket {
+  position: absolute;
+  bottom: 0;
+  width: 280px;
+  height: 160px;
+  z-index: 40;
+  filter: drop-shadow(0 12px 20px rgba(0, 0, 0, 0.35));
+}
+
+.pocket-svg {
+  width: 100%;
+  height: 100%;
+}
+
+.pocket-svg path:first-child {
+  fill: #352113; /* Premium mid-brown leather */
+  stroke: #2b1a0f;
+  stroke-width: 2;
+  transition: fill 0.3s ease, stroke 0.3s ease;
+}
+
+.pocket-svg path:last-child {
+  stroke: #8c6239; /* Beautiful tan stitch line */
+  stroke-width: 1.5;
+  transition: stroke 0.3s ease;
+}
+
+.pocket-content {
+  position: absolute;
+  top: 48px;
+  width: 100%;
+  text-align: center;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.balance-stars {
+  color: #8c6239;
+  font-size: 22px;
+  letter-spacing: 5px;
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+.balance-real {
+  color: #f4d0a4; /* Warm tan/gold color for rating text */
+  font-size: 20px;
+  font-weight: 700;
+  opacity: 0;
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translate(-50%, 8px);
+  transition: opacity 0.3s, transform 0.3s;
+  white-space: nowrap;
+}
+
+/* Eye Logic */
+.eye-icon-wrapper {
+  margin-top: 6px;
+  height: 20px;
+  width: 20px;
+  position: relative;
+  opacity: 0.5;
+  transition: opacity 0.3s;
+}
+
+.eye-icon {
+  position: absolute;
+  top: 0;
+  left: 0;
+  stroke: #c29970; /* Soft gold-tan stroke for eye icon */
+  transition: opacity 0.3s, transform 0.3s;
+}
+
+/* Hovers and Animations */
+.wallet:hover {
+  transform: translateY(-5px);
+}
+
+.wallet:hover .eye-icon-wrapper {
+  opacity: 1;
+}
+
+/* Hover fanning out of stack */
+.wallet:hover .wallet-card {
+  transform: translateY(var(--hover-translate-y)) rotate(var(--hover-rotate));
+}
+
+/* Hovering a specific card in the stack */
+.wallet-card:hover {
+  z-index: 100 !important;
+  transform: translateY(-90px) scale(1.05) rotate(0deg) !important;
+  box-shadow:
+    0 15px 30px rgba(0, 0, 0, 0.3),
+    inset 0 1px 1px rgba(255, 255, 255, 0.4);
+}
+
+.wallet:hover .balance-stars {
+  opacity: 0;
+}
+
+.wallet:hover .balance-real {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.wallet:hover .eye-slash {
+  opacity: 0;
+  transform: scale(0.6);
+}
+
+.wallet:hover .eye-open {
+  opacity: 1;
+  transform: scale(1.1);
+}
+
+/* Cycling Animation Slide Out */
+.wallet-card.sliding-out {
+  transform: translateY(-190px) rotate(-12deg) scale(0.9) !important;
+  opacity: 0;
+  z-index: 120 !important;
+  transition: transform 0.4s ease, opacity 0.4s ease;
+}
