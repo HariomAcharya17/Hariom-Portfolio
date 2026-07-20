@@ -147,8 +147,8 @@ function Band({
 
     const isDark = !lightMode;
 
-    // Background strap color
-    ctx.fillStyle = isDark ? '#161616' : '#ffffff';
+    // Background strap color (always white as requested)
+    ctx.fillStyle = '#ffffff';
     ctx.fillRect(0, 0, 512, 128);
 
     // Borders
@@ -173,21 +173,21 @@ function Band({
 
     if (isDark) {
       // Glow/Lightning effect only for the text in dark mode
-      ctx.shadowColor = '#ff5500'; // Neon orange shadow glow
+      ctx.shadowColor = '#ff5500'; // Glowing orange shadow glow
       ctx.shadowBlur = 12;
       ctx.shadowOffsetX = 0;
       ctx.shadowOffsetY = 0;
-      ctx.fillStyle = '#ff5500';
+      ctx.fillStyle = '#ff5500'; // Glowing orange text color
       ctx.fillText(text, canvas.width / 2, canvas.height / 2);
 
       // Layer 2 blur for rich orange glow
       ctx.shadowBlur = 24;
       ctx.fillText(text, canvas.width / 2, canvas.height / 2);
 
-      // Crisp inner core
+      // Decent uniform core: filled with same orange color #ff5500 with shadowBlur 2
       ctx.shadowBlur = 2;
-      ctx.shadowColor = 'rgba(255, 255, 255, 0.4)';
-      ctx.fillStyle = '#ffffff'; // White core for realistic neon glow
+      ctx.shadowColor = '#ff5500';
+      ctx.fillStyle = '#ff5500';
       ctx.fillText(text, canvas.width / 2, canvas.height / 2);
     } else {
       // Light mode: Clean bold orange text (no glow)

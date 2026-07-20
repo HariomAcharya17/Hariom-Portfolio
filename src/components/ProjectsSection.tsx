@@ -76,7 +76,7 @@ export default function ProjectsSection({ lightMode }: ProjectsSectionProps) {
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
-          className="max-w-6xl mx-auto carbon-card w-full overflow-hidden"
+          className="w-full max-w-none mx-auto carbon-card w-full overflow-hidden"
         >
           {/* Header bar */}
           <div className="flex items-center px-4 py-3 border-b border-border bg-layer">
@@ -86,7 +86,7 @@ export default function ProjectsSection({ lightMode }: ProjectsSectionProps) {
           </div>
 
           <div className="p-4 md:p-10">
-            <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto relative bento-section">
+            <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 max-w-none mx-auto relative bento-section">
 
               {allCards.map((card, i) => (
                 <motion.div

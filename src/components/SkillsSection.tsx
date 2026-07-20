@@ -486,7 +486,7 @@ export default function SkillsSection({ lightMode }: SkillsSectionProps) {
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
-          className="max-w-6xl mx-auto carbon-card overflow-visible"
+          className="w-full max-w-none mx-auto carbon-card overflow-visible"
         >
           {/* Window Header */}
           <div className="flex items-center px-4 py-3 border-b border-border bg-layer rounded-t-2xl">
@@ -497,7 +497,7 @@ export default function SkillsSection({ lightMode }: SkillsSectionProps) {
 
           {/* Content */}
           <div className="p-4 md:p-10">
-            <div className="grid md:grid-cols-2 gap-8">
+            <div className="grid md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-8">
               {activeSkillGroups.map((group, i) => {
                 const colors = getSkillGroupColors(group.title, !lightMode);
                 const IconComponent = getCategoryIcon(group.title);

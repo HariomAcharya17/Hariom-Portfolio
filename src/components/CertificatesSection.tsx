@@ -113,7 +113,7 @@ export default function CertificatesSection({ lightMode }: CertificatesSectionPr
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
-          className="max-w-6xl mx-auto carbon-card overflow-hidden"
+          className="w-full max-w-none mx-auto carbon-card overflow-hidden"
         >
           {/* window header */}
           <div className="flex items-center px-4 py-3 border-b border-border bg-layer">
@@ -124,7 +124,7 @@ export default function CertificatesSection({ lightMode }: CertificatesSectionPr
 
           {/* content */}
           <div className="p-4 md:p-10">
-            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 justify-items-center">
+            <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-8 justify-items-center">
               {certificates.map((cert, i) => {
                 const gradients = [
                   "from-[#1e3a8a] via-[#3b82f6] to-[#60a5fa]", // Classic Blue

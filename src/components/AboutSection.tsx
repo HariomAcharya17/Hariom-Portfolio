@@ -119,7 +119,7 @@ export default function AboutSection({ lightMode }: AboutSectionProps) {
           initial={{ opacity: 0, y: 40 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="max-w-5xl mx-auto carbon-card overflow-hidden"
+          className="w-full max-w-none mx-auto carbon-card overflow-hidden"
         >
           {/* window header */}
           <div className="flex items-center px-4 py-3 border-b border-border bg-layer">

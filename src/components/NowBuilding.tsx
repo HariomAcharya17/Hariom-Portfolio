@@ -95,7 +95,7 @@ export default function NowBuilding({ lightMode }: any) {
         </motion.div>
 
         {/* Cards */}
-        <div className="max-w-3xl w-full space-y-8 md:space-y-10">
+        <div className="max-w-5xl w-full space-y-8 md:space-y-10">
 
            {items.map((item, i) => (
 

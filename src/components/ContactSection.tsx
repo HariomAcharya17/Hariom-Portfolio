@@ -135,7 +135,7 @@ export default function ContactSection({ lightMode }: any) {
           initial={{ opacity: 0, y: 40 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
-          className="max-w-4xl mx-auto carbon-card overflow-hidden"
+          className="w-full max-w-none mx-auto carbon-card overflow-hidden"
         >
 
           {/* Header */}

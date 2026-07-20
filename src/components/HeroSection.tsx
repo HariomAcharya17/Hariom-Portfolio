@@ -65,7 +65,7 @@ return (
     <div className="flex flex-col lg:flex-row items-center justify-between gap-12 w-full">
 
       {/* LEFT ALIGNED CONTENT */}
-      <div className="flex flex-col items-start justify-center text-left max-w-3xl w-full lg:w-1/2">
+      <div className="flex flex-col items-start justify-center text-left max-w-none xl:max-w-4xl w-full lg:w-1/2">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -90,7 +90,7 @@ return (
             </span>
           </div>
 
-          <p className="max-w-2xl mb-8 leading-relaxed text-left text-secondary_text">
+          <p className="max-w-3xl xl:max-w-4xl mb-8 leading-relaxed text-left text-secondary_text">
 
             I'm a <span className="text-blue-500 font-semibold">
               Full Stack & AI/ML Engineer
@@ -127,7 +127,7 @@ return (
 
       {/* RESPONSIVE LANYARD CARD */}
       <div className="relative w-full max-w-[480px] h-[450px] sm:h-[600px] lg:h-[720px] z-30 pointer-events-auto flex items-center justify-center">
-        <Lanyard position={[0, 0, 30]} gravity={[0, -30, 0]} lanyardWidth={10} />
+        <Lanyard position={[0, 0, 30]} gravity={[0, -30, 0]} lanyardWidth={10} lightMode={lightMode} />
       </div>
 
     </div>

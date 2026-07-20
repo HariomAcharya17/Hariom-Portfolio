@@ -109,7 +109,7 @@ export default function ExperienceSection({ lightMode }: ExperienceSectionProps)
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
-          className="max-w-3xl mx-auto carbon-card overflow-hidden"
+          className="w-full max-w-none mx-auto carbon-card overflow-hidden"
         >
           {/* window header */}
           <div className="flex items-center px-4 py-3 border-b border-border bg-layer select-none">

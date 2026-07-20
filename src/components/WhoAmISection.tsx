@@ -16,7 +16,7 @@ export default function WhoAmISection({ lightMode }: any) {
           initial={{ opacity: 0, y: 30 }}
           animate={isInView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.6 }}
-          className="max-w-5xl mx-auto flex flex-col lg:flex-row gap-12 items-center"
+          className="w-full max-w-none mx-auto flex flex-col lg:flex-row gap-12 items-center"
         >
           {/* Left: Orb */}
           <div className="flex-1 w-full flex flex-col items-center justify-center relative min-h-[300px] md:min-h-[500px]">
@@ -43,7 +43,7 @@ export default function WhoAmISection({ lightMode }: any) {
           </div>
 
           {/* Right Chat Widget */}
-          <div className="flex-1 w-full max-w-md">
+          <div className="flex-1 w-full max-w-md lg:max-w-lg xl:max-w-xl">
             <PortfolioAI lightMode={lightMode} />
           </div>
         </motion.div>
