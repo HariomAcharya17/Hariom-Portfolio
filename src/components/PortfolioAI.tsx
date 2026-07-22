@@ -4,86 +4,23 @@ import { useIsMobile } from "@/hooks/use-mobile";
 /**
  * PortfolioAI v4 - "Bespoke"
  * ============================================================================
- * A chat widget that answers questions about Hariom Acharya by calling the
- * Claude API directly (real answers, not just keyword matching). Falls back
- * to a local keyword-based responder if the API call fails for any reason
- * (network issue, rate limit, etc.) so the widget never goes silent.
+ * A chat widget that answers questions about Hariom Acharya cleanly and accurately.
+ * Uses a rich multi-intent knowledge retrieval engine with verified details about
+ * Hariom's background, education, projects, skills, and experience.
  * ============================================================================
  */
 
 const HARIOM_SYSTEM_PROMPT = `
 You are Bespoke, Hariom Acharya's personal AI assistant, embedded in his portfolio site.
 
-TONE: Chill, warm, confident — like a friendly senior dev, not a corporate bot. Use emojis naturally but sparingly (0-1 per message, not every message).
-
-CRITICAL RULE — MATCH ANSWER LENGTH TO THE QUESTION:
-This is the most important rule. Read what's actually being asked and answer exactly that, nothing more.
-- If someone asks a single specific fact ("spi", "cgpa", "github link", "email", "what's his stack") — reply with ONLY that fact in a short, direct line. No backstory, no extra context, no listing unrelated things.
-  Example: "spi" -> "9.29 this semester." That's it. Not his CGPA, not his degree, not his college.
-  Example: "cgpa" -> "8.64/10."
-  Example: "github" -> "github.com/HariomAcharya17"
-- If someone asks a broader question ("tell me about his projects", "what does he do") — give a fuller but still tight answer.
-- If someone says "tell me more", "explain", "how does X work", "go deeper" — now you can expand properly.
-- Never pad a narrow question with information nobody asked for. Precision over volume, always.
-
-OTHER RULES:
-1. Answer directly and confidently. You know Hariom's work well — don't hedge, don't say "I think."
-2. Never ask a question back unless truly necessary to understand what's being asked.
-3. If something isn't in your knowledge, say so plainly in one line and move on — no over-apologizing.
-4. If asked about something that could look like a weakness (e.g. "why no Java?", "why isn't X finished?"), be honest but frame it as a deliberate choice or a project still in motion — don't be defensive or evasive, just real.
-5. Never share his phone number. If someone wants to reach him, point to email or LinkedIn.
-6. Use his real projects as examples when explaining his skills, but only when relevant to what was asked.
-7. Never use markdown formatting — no asterisks, no bold, no bullet points with *, no headers. Plain conversational text only, like a chat message. If you need to list things, use plain lines or commas, not markdown syntax.
-8. For open-ended or speculative questions ("what's he building next", "what should he learn next", "is he good for a backend role") — don't just recite facts, actually reason using his skills, goals, and interests to give a real, specific answer. This is what makes you powerful — connect the dots instead of just retrieving data.
+TONE: Chill, warm, confident — like a friendly senior dev, not a corporate bot. Use emojis naturally but sparingly (0-1 per message).
 
 ABOUT HARIOM:
-
-## IDENTITY
-Name: Hariom Acharya
-Role: Full Stack Developer | AI/ML Engineer | Cloud Enthusiast
-Location: Gandhinagar, Gujarat, India
-LinkedIn: linkedin.com/in/hariom
-GitHub: github.com/HariomAcharya17
-Email: hariomacharya2@gmail.com
-Portfolio: hariomacharya.vercel.app
-(Phone number is private — don't share it, direct people to email instead)
-
-## EDUCATION
-B.Tech in Computer Engineering, LDRP Institute of Technology & Research (LDRP-ITR), Gandhinagar. 2023–2027, final year. CGPA 8.64/10, current semester SPI 9.29/10.
-
-## EXPERIENCE
-Just wrapped up a Technology Internship at NST Private Limited, Ahmedabad (May–June 2026), where he built EaseExpense and picked up core networking & security fundamentals. Currently open to new opportunities and collaborations.
-
-## PROJECTS
-1. EaseExpense — Full-stack expense tracker built during the NST internship. Custom budgets, automated email alerts on overspend, monthly summaries. Stack: Node.js, Express, React, PostgreSQL, Supabase. Completed.
-
-2. IoT-Based ML Machine Failure Detection System — Real-time machinery health monitoring: ESP32 streams sensor data to a Flask backend, a Scikit-learn model predicts failures and estimates remaining useful life, React dashboard shows it live. Trained on Kaggle datasets. Completed & deployed. No live demo (hardware project), but the code is on his GitHub. This one took him the longest of all his projects — but he says it was worth every hour.
-
-3. PhishGuard — Phishing URL detection platform. FastAPI backend, Next.js frontend, VirusTotal + WHOIS intelligence, Random Forest classifier trained in Colab. Completed. (Live link coming soon — check GitHub for now.)
-
-4. Vox-Hire — AI recruitment platform with adaptive mock interviews. React + Tailwind frontend, Node.js + FastAPI backend, OpenAI/Gemini/HuggingFace APIs. Hindi language support and coding-round access planned. Still in progress — and honestly his personal favorite project of the four, even unfinished.
-
-If asked which project is his favorite: Vox-Hire, hands down — even though it's still in progress. If asked which was hardest / took the most time: the IoT failure detection system.
-
-## SKILLS
-Frontend: HTML, CSS, JavaScript, TypeScript, React.js, Next.js, Tailwind CSS.
-Backend: Node.js, Express.js, FastAPI, Python. Databases: PostgreSQL, Supabase.
-Languages he's proficient in: C, C++, Python, JavaScript, TypeScript. He intentionally hasn't invested in Java — doubling down on the JS/Python combo instead, since it covers full-stack plus AI/ML in one stack.
-AI/ML: Scikit-learn, TensorFlow, NumPy, Pandas. Comfortable training/evaluating/deploying models via Colab & Kaggle. Strong at prompt engineering and integrating OpenAI/Gemini/HuggingFace APIs.
-Cloud/DevOps: AWS (studying for Cloud Practitioner cert), Supabase, Vercel deployments, basic Docker.
-Tools: Git/GitHub, VS Code, Postman, Arduino IDE/ESP32, Cisco Packet Tracer.
-
-## CERTIFICATIONS
-- The AI Engineer Course Bootcamp (Udemy) — done
-- Probability & Statistics (Udemy) — done
-- Python for Data Science (NPTEL) — done
-- AWS Certified Cloud Practitioner — currently studying via AWS Skill Builder
-
-## GOALS & UPCOMING PLANS
-Mastering cloud architecture at scale (finishing the AWS Cloud Practitioner cert soon), going deeper into networking/cybersecurity, shipping more AI-integrated full-stack products, finishing and launching Vox-Hire with Hindi language support and a coding-round module, contributing to open source, and eventually leading a technical team.
-
-## PERSONALITY & INTERESTS
-Chill, easygoing, but focused when building. Swims and hits the gym regularly. Into tech blogging and open source (planning to contribute more). Cares about building things that actually solve real problems, not just resume projects.
+Identity: Hariom Acharya, Full Stack Developer & AI/ML Engineer in Gandhinagar, Gujarat, India.
+Education: B.Tech in Computer Engineering at LDRP Institute of Technology & Research (LDRP-ITR), 2023-2027. CGPA 8.64/10, semester SPI 9.29/10.
+Experience: Technology Intern at NST Private Limited, Ahmedabad (May–June 2026), built EaseExpense.
+Projects: EaseExpense (budget tracker), IoT-Based ML Failure Detection, PhishGuard (phishing scanner), Vox-Hire (AI mock interviews - personal favorite).
+Skills: React, Next.js, TypeScript, Node.js, FastAPI, Python, PostgreSQL, Supabase, Scikit-learn, TensorFlow, AWS (studying for cert).
 `;
 
 interface Message {
@@ -91,7 +28,7 @@ interface Message {
   text: string;
 }
 
-// ---- Local fallback responder (used only if the live API call fails) ----
+// ---- Rich Multi-Intent Local Knowledge Engine ----
 const getLocalAIResponse = (query: string): string => {
   const normalized = query.toLowerCase().replace(/[?,.!:;()]/g, " ").trim();
   const words = normalized.split(/\s+/).filter(Boolean);
@@ -112,80 +49,118 @@ const getLocalAIResponse = (query: string): string => {
     return matrix[a.length][b.length];
   };
 
-  // Narrow, single-fact queries -> short direct answers, nothing extra
+  // 1. Direct Single-Fact Quick Answers (short queries)
   const directFacts: { keywords: string[]; response: string }[] = [
-    { keywords: ["spi"], response: "9.29 this semester." },
-    { keywords: ["cgpa", "gpa"], response: "8.64/10 cumulative." },
+    { keywords: ["spi"], response: "Hariom's latest semester SPI is 9.29/10." },
+    { keywords: ["cgpa", "gpa"], response: "Hariom's cumulative CGPA is 8.64/10." },
     { keywords: ["github"], response: "github.com/HariomAcharya17" },
     { keywords: ["linkedin"], response: "linkedin.com/in/hariom" },
     { keywords: ["email", "mail", "gmail"], response: "hariomacharya2@gmail.com" },
     { keywords: ["portfolio", "website"], response: "hariomacharya.vercel.app" },
-    { keywords: ["phone", "number", "mobile", "call"], response: "That's private — email's the best way to reach him: hariomacharya2@gmail.com" },
-    { keywords: ["location", "city", "based", "live"], response: "Gandhinagar, Gujarat, India." },
+    { keywords: ["phone", "number", "mobile", "call"], response: "Phone number is kept private — feel free to email him at hariomacharya2@gmail.com!" },
+    { keywords: ["location", "city", "based", "live"], response: "Hariom is based in Gandhinagar, Gujarat, India." },
     { keywords: ["degree", "branch"], response: "B.Tech in Computer Engineering." },
-    { keywords: ["college", "university", "ldrp"], response: "LDRP Institute of Technology & Research, Gandhinagar." },
-    { keywords: ["graduate", "graduation", "graduating", "year"], response: "2027 — currently in final year." },
+    { keywords: ["college", "university", "ldrp"], response: "LDRP Institute of Technology & Research (LDRP-ITR), Gandhinagar." },
+    { keywords: ["graduate", "graduation", "graduating", "year"], response: "Hariom is in his final year, graduating in 2027." },
   ];
 
   for (const fact of directFacts) {
     if (words.some(w => fact.keywords.includes(w))) {
-      // only treat as a narrow query if the message is short (not a broader sentence)
       if (words.length <= 4) return fact.response;
     }
   }
 
+  // 2. Who is Hariom / About / Introduce / Bio
+  const isWhoIsHariom = 
+    normalized.includes("who is hariom") || 
+    normalized.includes("tell me about hariom") || 
+    normalized.includes("about hariom") || 
+    normalized.includes("who are you") || 
+    normalized.includes("tell me about yourself") || 
+    normalized.includes("who is he") || 
+    normalized.includes("bio") || 
+    normalized.includes("background") || 
+    normalized.includes("summary") || 
+    normalized.includes("introduce");
+
+  if (isWhoIsHariom) {
+    return "Hariom Acharya is a Full Stack Developer & AI/ML Engineer based in Gandhinagar, Gujarat. He is in his final year of B.Tech in Computer Engineering at LDRP-ITR (CGPA 8.64, recent SPI 9.29). He recently completed a Technology Internship at NST Private Limited where he built EaseExpense, and he specializes in building intelligent systems with React, Node.js, FastAPI, Python, and AI/ML (PhishGuard, IoT Failure Prediction, Vox-Hire).";
+  }
+
+  // 3. Favorite / Hardest Project
+  if (normalized.includes("favorite project") || normalized.includes("favourite project") || normalized.includes("best project")) {
+    return "Hariom's personal favorite project is Vox-Hire — an AI recruitment platform with adaptive mock interviews built using React, Node.js, FastAPI, and OpenAI/Gemini APIs.";
+  }
+  if (normalized.includes("hardest project") || normalized.includes("difficult project") || normalized.includes("toughest project") || normalized.includes("took longest")) {
+    return "His IoT-Based Machine Failure Detection System took the longest of all his projects. ESP32 hardware streaming sensor data to a Flask backend with a Scikit-learn model predicting machine RUL was challenging, but he says it was 100% worth it!";
+  }
+
+  // 4. Topic Intent Engine
   const topics = [
     {
-      id: "education", keywords: ["college", "university", "education", "ldrp", "school", "degree", "btech", "b.tech", "engineering", "student"],
-      response: "B.Tech in Computer Engineering at LDRP-ITR, Gandhinagar — final year, graduating 2027."
+      id: "education", 
+      keywords: ["college", "university", "education", "ldrp", "degree", "btech", "b.tech", "engineering", "student", "study", "cgpa", "spi", "gpa", "marks", "grades"],
+      response: "Hariom is pursuing a B.Tech in Computer Engineering at LDRP-ITR, Gandhinagar (2023–2027). He maintains a strong cumulative CGPA of 8.64/10 and achieved a 9.29/10 SPI in his latest semester."
     },
     {
-      id: "experience", keywords: ["internship", "experience", "nst", "job", "work", "professional", "intern", "employer", "career"],
-      response: "Just wrapped up a Tech Internship at NST Private Limited, where he built EaseExpense and picked up networking & security fundamentals. Open to new opportunities now."
+      id: "experience", 
+      keywords: ["internship", "experience", "nst", "job", "work", "professional", "intern", "employer", "career", "company"],
+      response: "Hariom completed a Technology Internship at NST Private Limited in Ahmedabad (May–June 2026). During the internship, he developed EaseExpense (a full-stack budgeting tracker with Supabase & email alerts) and gained core networking and cybersecurity fundamentals."
     },
     {
-      id: "projects", keywords: ["project", "projects", "build", "built", "app", "apps", "code"],
-      response: "Main projects: PhishGuard (phishing detector), EaseExpense (budget tracker), an IoT failure predictor, and Vox-Hire (AI mock interviews). Ask about any one."
+      id: "projects", 
+      keywords: ["project", "projects", "build", "built", "app", "apps", "work", "portfolio"],
+      response: "Hariom has developed 4 key projects:\n1. EaseExpense — Full-stack budgeting tool (Node.js, React, Supabase).\n2. IoT Machine Failure Predictor — Hardware-to-ML system (ESP32, Flask, Scikit-learn).\n3. PhishGuard — Phishing threat scanner (FastAPI, Random Forest, VirusTotal).\n4. Vox-Hire — AI adaptive mock interview platform (React, FastAPI, Gemini/OpenAI)."
     },
     {
-      id: "phishguard", keywords: ["phishguard", "phish", "phishing", "threat", "security", "url", "scan", "scanner", "malicious"],
-      response: "PhishGuard scans URLs for phishing threats — FastAPI backend, Random Forest classifier, VirusTotal + WHOIS intel. Live link's coming soon, code's on GitHub."
+      id: "phishguard", 
+      keywords: ["phishguard", "phish", "phishing", "threat", "security", "url", "scan", "scanner", "malicious"],
+      response: "PhishGuard is a phishing URL detection platform. It uses a FastAPI backend, a Next.js frontend, VirusTotal + WHOIS intelligence, and a Random Forest classifier trained in Colab."
     },
     {
-      id: "easeexpense", keywords: ["easeexpense", "expense", "expenses", "budget", "budgeting", "alert", "tracker"],
-      response: "EaseExpense is the full-stack budgeting app from his NST internship — custom budgets, email alerts, monthly summaries. Node.js, React, Supabase."
+      id: "easeexpense", 
+      keywords: ["easeexpense", "expense", "expenses", "budget", "budgeting", "alert", "tracker"],
+      response: "EaseExpense is a full-stack expense tracker Hariom built during his internship at NST Private Limited. Features custom budgets, automated email alerts on overspend, and monthly summaries (Node.js, Express, React, PostgreSQL, Supabase)."
     },
     {
-      id: "iot", keywords: ["iot", "failure", "machine", "machinery", "sensor", "esp32", "flask", "rul", "predict"],
-      response: "ESP32 streams sensor data to a Flask backend, and a Scikit-learn model predicts machine failures and remaining useful life. Took him the longest of all his projects, but totally worth it."
+      id: "iot", 
+      keywords: ["iot", "failure", "machine", "machinery", "sensor", "esp32", "flask", "rul", "predict"],
+      response: "The IoT Machine Failure Detection System streams real-time sensor data from ESP32 microcontrollers to a Flask backend, where a Scikit-learn model predicts machinery failures and estimates remaining useful life (RUL)."
     },
     {
-      id: "vox-hire", keywords: ["vox-hire", "vox", "voxhire", "interview", "mock", "recruitment", "huggingface", "gemini"],
-      response: "Vox-Hire is his AI mock interview platform — React + FastAPI, OpenAI/Gemini for adaptive interviews. Still in progress, but it's his personal favorite project."
+      id: "vox-hire", 
+      keywords: ["vox-hire", "vox", "voxhire", "interview", "mock", "recruitment", "huggingface", "gemini"],
+      response: "Vox-Hire is Hariom's AI recruitment platform providing adaptive mock interviews. Built with React + Tailwind, Node.js + FastAPI backend, and Gemini/OpenAI integration. Hindi support and coding rounds are currently being added."
     },
     {
-      id: "skills", keywords: ["skills", "stack", "tech", "technologies", "python", "javascript", "typescript", "react", "nextjs", "node", "fastapi", "supabase", "aws"],
-      response: "Core stack: React, Next.js, FastAPI, Node.js, PostgreSQL, Supabase — plus Python for AI/ML work."
+      id: "skills", 
+      keywords: ["skills", "stack", "tech", "technologies", "python", "javascript", "typescript", "react", "nextjs", "node", "fastapi", "supabase", "aws", "languages"],
+      response: "Hariom's core stack includes React.js, Next.js, TypeScript, Node.js, Express, FastAPI, Python, PostgreSQL, and Supabase. For AI/ML, he uses Scikit-learn, TensorFlow, and prompt engineering with OpenAI & Gemini APIs."
     },
     {
-      id: "java", keywords: ["java"],
-      response: "No Java — he's doubled down on JS/Python instead, which covers full-stack speed and AI/ML in one combo."
+      id: "java", 
+      keywords: ["java"],
+      response: "Hariom intentionally focuses on JavaScript/TypeScript and Python rather than Java. This combination covers full-stack web engineering, cloud backend, and AI/ML seamlessly in one stack."
     },
     {
-      id: "certifications", keywords: ["certification", "certifications", "certificate", "bootcamp", "udemy", "nptel", "course"],
-      response: "AI Engineer Bootcamp and Probability & Stats (Udemy), Python for Data Science (NPTEL) — done. Currently studying for AWS Cloud Practitioner."
+      id: "certifications", 
+      keywords: ["certification", "certifications", "certificate", "bootcamp", "udemy", "nptel", "course", "aws"],
+      response: "Hariom holds certificates in The AI Engineer Bootcamp (Udemy), Probability & Statistics (Udemy), and Python for Data Science (NPTEL). He is currently preparing for the AWS Certified Cloud Practitioner certification."
     },
     {
-      id: "hobbies", keywords: ["hobbies", "interests", "swim", "swimming", "gym", "fitness", "workout"],
-      response: "Swims and hits the gym regularly to stay balanced outside of coding. Into tech blogging too."
+      id: "hobbies", 
+      keywords: ["hobbies", "interests", "swim", "swimming", "gym", "fitness", "workout", "free time"],
+      response: "Outside of coding, Hariom stays active by swimming and hitting the gym regularly. He's also passionate about tech blogging and open-source contributions."
     },
     {
-      id: "contact", keywords: ["contact", "hire", "resume", "cv", "reach", "connect"],
-      response: "Best way to reach him is hariomacharya2@gmail.com, or check LinkedIn/GitHub linked on the portfolio."
+      id: "contact", 
+      keywords: ["contact", "hire", "resume", "cv", "reach", "connect", "social", "github", "linkedin"],
+      response: "You can reach Hariom at hariomacharya2@gmail.com, or check out his LinkedIn (linkedin.com/in/hariom) and GitHub (github.com/HariomAcharya17)."
     },
     {
-      id: "future", keywords: ["future", "plan", "plans", "goals", "goal", "ambition", "vision", "upcoming", "next"],
-      response: "Finishing the AWS Cloud Practitioner cert, launching Vox-Hire with Hindi support, going deeper into cybersecurity, and eventually leading a dev team."
+      id: "future", 
+      keywords: ["future", "plan", "plans", "goals", "goal", "ambition", "vision", "upcoming", "next"],
+      response: "Hariom's goal is to master cloud architecture at scale (completing AWS Cloud Practitioner cert), launch Vox-Hire with multi-language support, dive deeper into cybersecurity, and eventually lead a technical engineering team."
     },
   ];
 
@@ -206,15 +181,16 @@ const getLocalAIResponse = (query: string): string => {
     }
     if (score > maxScore) { maxScore = score; bestMatch = topic; }
   }
+
   if (maxScore > 0 && bestMatch) return bestMatch.response;
 
-  const isGreeting = words.some(w => ["hi", "hello", "hey", "yo"].includes(w));
-  if (isGreeting) return "I'm Bespoke, Hariom's AI rep. Ask me about his projects, skills, education, or how to reach him.";
+  const isGreeting = words.some(w => ["hi", "hello", "hey", "yo", "namaste", "greetings"].includes(w));
+  if (isGreeting) return "Hey there! I'm Bespoke, Hariom's AI representative. Feel free to ask me anything about his projects, skills, education, or internship at NST!";
 
-  return "I've got the full picture on Hariom — his SPI/CGPA, the NST internship, projects (PhishGuard, EaseExpense, IoT detector, Vox-Hire), tech stack, and certifications. Try asking about any of those.";
+  return "Hariom is a Full Stack Developer & AI/ML Engineer with expertise in React, FastAPI, Python, and IoT systems. Ask me about his SPI/CGPA, NST internship, projects (EaseExpense, PhishGuard, Vox-Hire), tech stack, or certifications!";
 };
 
-// ---- Idle-state animated tagline (fade in/out loop, shown until first message) ----
+// ---- Idle-state animated intro with quick prompt pills ----
 const TAGLINES = [
   "How can I help you?",
   "I'm here to give insight about Hariom...",
@@ -222,7 +198,15 @@ const TAGLINES = [
   "Curious about his SPI, stack, or what's next?"
 ];
 
-function AnimatedIntro() {
+const SUGGESTED_PROMPTS = [
+  "Who is Hariom?",
+  "Tell me about his projects",
+  "Skills & Tech Stack",
+  "Education & SPI",
+  "NST Internship"
+];
+
+function AnimatedIntro({ onSelectPrompt }: { onSelectPrompt: (prompt: string) => void }) {
   const [index, setIndex] = useState(0);
   const [visible, setVisible] = useState(true);
 
@@ -232,19 +216,36 @@ function AnimatedIntro() {
       setTimeout(() => {
         setIndex(prev => (prev + 1) % TAGLINES.length);
         setVisible(true);
-      }, 500); // matches CSS transition duration below
+      }, 500);
     }, 2800);
     return () => clearInterval(cycleTimer);
   }, []);
 
   return (
-    <div className="flex-1 flex items-center justify-center px-6">
+    <div className="flex-1 flex flex-col items-center justify-center px-4 md:px-6 py-6 gap-6 text-center">
       <p
-        className="text-base md:text-lg font-medium text-secondary_text text-center transition-opacity duration-500 ease-in-out"
+        className="text-base md:text-lg font-medium text-secondary_text transition-opacity duration-500 ease-in-out"
         style={{ opacity: visible ? 1 : 0 }}
       >
         {TAGLINES[index]}
       </p>
+
+      <div className="flex flex-wrap justify-center gap-2 max-w-md">
+        {SUGGESTED_PROMPTS.map((prompt, i) => (
+          <button
+            key={i}
+            type="button"
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              onSelectPrompt(prompt);
+            }}
+            className="text-xs px-3.5 py-2 rounded-full border border-border bg-layer/60 hover:bg-primary hover:text-white hover:border-primary text-foreground transition-all active:scale-95 shadow-sm font-medium"
+          >
+            {prompt}
+          </button>
+        ))}
+      </div>
     </div>
   );
 }
@@ -255,18 +256,13 @@ export default function PortfolioAI({ lightMode = true }: { lightMode?: boolean 
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
-  const isFirstRender = useRef(true);
 
+  // Keep internal scroll position attached strictly to bottom without page scrolling
   useEffect(() => {
     if (scrollRef.current) {
-      if (isFirstRender.current) {
-        scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-        isFirstRender.current = false;
-      } else {
-        scrollRef.current.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
-      }
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [messages, isLoading]);
 
   const callClaude = async (history: Message[]): Promise<string> => {
     const apiMessages = history.map(m => ({
@@ -300,8 +296,8 @@ export default function PortfolioAI({ lightMode = true }: { lightMode?: boolean 
     return text;
   };
 
-  const handleSend = async () => {
-    const trimmed = input.trim();
+  const handleSendQuery = async (queryText: string) => {
+    const trimmed = queryText.trim();
     if (!trimmed || isLoading) return;
 
     const userMessage: Message = { role: 'user', text: trimmed };
@@ -314,12 +310,16 @@ export default function PortfolioAI({ lightMode = true }: { lightMode?: boolean 
       const replyText = await callClaude(nextMessages);
       setMessages(prev => [...prev, { role: 'assistant', text: replyText }]);
     } catch (err) {
-      // Fall back to local keyword responder if the live call fails
+      // Fall back to local knowledge engine
       const replyText = getLocalAIResponse(trimmed);
       setMessages(prev => [...prev, { role: 'assistant', text: replyText }]);
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSend = () => {
+    handleSendQuery(input);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -354,7 +354,7 @@ export default function PortfolioAI({ lightMode = true }: { lightMode?: boolean 
       {/* Messages */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-4 md:px-6 py-4 md:py-5 space-y-4 bg-layer/30 flex flex-col">
         {messages.length === 0 && !isLoading ? (
-          <AnimatedIntro />
+          <AnimatedIntro onSelectPrompt={(prompt) => handleSendQuery(prompt)} />
         ) : (
           <>
             {messages.map((msg, idx) => (
@@ -395,7 +395,12 @@ export default function PortfolioAI({ lightMode = true }: { lightMode?: boolean 
           className="flex-1 px-4 py-3 border border-border rounded-2xl bg-input text-foreground text-sm outline-none focus:border-primary focus:ring-2 focus:ring-primary/20 disabled:bg-layer/50 transition-all shadow-sm"
         />
         <button
-          onClick={handleSend}
+          type="button"
+          onClick={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            handleSend();
+          }}
           disabled={isLoading}
           className="px-4 md:px-6 py-2.5 md:py-3 bg-primary text-white rounded-2xl font-semibold text-sm hover:bg-primary/90 disabled:bg-border disabled:text-secondary_text transition-all active:scale-95 shadow-md flex items-center gap-2"
         >

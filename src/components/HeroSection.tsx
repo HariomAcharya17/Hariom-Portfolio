@@ -126,7 +126,7 @@ return (
       </div>
 
       {/* RESPONSIVE LANYARD CARD */}
-      <div className="relative w-full max-w-[480px] h-[450px] sm:h-[600px] lg:h-[720px] z-30 pointer-events-auto flex items-center justify-center">
+      <div className="relative w-full max-w-[480px] h-[300px] sm:h-[500px] lg:h-[720px] z-20 flex items-center justify-center pointer-events-auto touch-pan-y">
         <Lanyard position={[0, 0, 30]} gravity={[0, -30, 0]} lanyardWidth={10} lightMode={lightMode} />
       </div>
 

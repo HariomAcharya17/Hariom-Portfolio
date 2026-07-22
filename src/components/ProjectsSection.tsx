@@ -7,6 +7,8 @@ import ScrollFloat from "@/components/ui/ScrollFloat";
 import ViewProjectButton from "@/components/ui/ViewProjectButton";
 import LiveDemoButton from "@/components/ui/LiveDemoButton";
 
+import TechBadge, { getTechCategory } from "@/components/ui/TechBadge";
+
 interface ProjectItem {
   id?: number | string;
   title: string;
@@ -58,6 +60,71 @@ export default function ProjectsSection({ lightMode }: ProjectsSectionProps) {
     ...projects.map((p) => ({ ...p, _type: "project" })),
     ...upcoming.map((u) => ({ ...u, _type: "upcoming" })),
   ];
+
+  const getTechList = (card: ProjectItem): string[] => {
+    let raw: string[] = [];
+    if (Array.isArray(card.technologies) && card.technologies.length > 0) {
+      raw = card.technologies.map(t => t.trim()).filter(Boolean);
+    } else if (typeof card.tech === "string" && card.tech.trim()) {
+      raw = card.tech.split(",").map(t => t.trim()).filter(Boolean);
+    }
+
+    const cleaned: string[] = [];
+    raw.forEach(item => {
+      // Split embedded category headers like "Framer Motion Backend: Python" or "scikit-learn Deployment: Vercel"
+      const parts = item
+        .replace(/(Frontend|Backend|Database|Deployment|Stack|Tech|Cloud|DevOps|Frameworks):\s*/gi, ", ")
+        .split(",");
+      parts.forEach(p => {
+        const trimmed = p.trim();
+        if (trimmed && !cleaned.includes(trimmed)) {
+          cleaned.push(trimmed);
+        }
+      });
+    });
+
+    return cleaned;
+  };
+
+  const renderCategorizedTech = (card: ProjectItem) => {
+    const techList = getTechList(card);
+    if (techList.length === 0) return null;
+
+    const categories: Record<string, string[]> = {
+      "Frontend": [],
+      "Backend": [],
+      "Database": [],
+      "AI / ML": [],
+      "Tools & Cloud": []
+    };
+
+    techList.forEach(t => {
+      const cat = getTechCategory(t);
+      if (!categories[cat]) categories[cat] = [];
+      if (!categories[cat].includes(t)) {
+        categories[cat].push(t);
+      }
+    });
+
+    const activeCategories = Object.entries(categories).filter(([_, items]) => items.length > 0);
+
+    return (
+      <div className="space-y-3 mb-6 text-left border-t border-border/40 pt-4">
+        {activeCategories.map(([category, items]) => (
+          <div key={category} className="flex flex-row items-center gap-3 text-xs">
+            <span className="font-mono text-[11px] font-bold uppercase text-primary tracking-wider min-w-[115px] w-[115px] shrink-0 text-left select-none">
+              {category} :-
+            </span>
+            <div className="flex flex-wrap gap-1.5 items-center flex-1">
+              {items.map((t, idx) => (
+                <TechBadge key={`${category}-${t}-${idx}`} name={t} />
+              ))}
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  };
 
   return (
     <section id="projects" className="py-28 relative overflow-hidden">
@@ -143,17 +210,8 @@ export default function ProjectsSection({ lightMode }: ProjectsSectionProps) {
                         </div>
 
                         <div>
-                          {/* Technology Stack */}
-                          <div className="flex flex-wrap gap-2 mb-6">
-                            {(card.technologies || (typeof card.tech === "string" ? card.tech.split(",") : [])).map((t: string) => (
-                              <span
-                                key={t}
-                                className="text-[10px] px-2.5 py-0.5 font-mono font-semibold border border-border/80 bg-background text-secondary_text rounded-lg transition-colors group-hover:border-primary/20"
-                              >
-                                {t.trim()}
-                              </span>
-                            ))}
-                          </div>
+                          {/* Categorized Technology Stack with Universal Brand Icons */}
+                          {renderCategorizedTech(card)}
 
                           {/* Action Buttons */}
                           <div className="flex flex-wrap gap-4 text-sm relative z-10">
