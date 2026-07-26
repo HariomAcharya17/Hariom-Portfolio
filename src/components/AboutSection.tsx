@@ -1,158 +1,166 @@
-import { motion } from "framer-motion";
-import { useInView } from "framer-motion";
 import { useRef } from "react";
-import { Brain, Cloud, Cpu, Code2, MapPin } from "lucide-react";
-import ScrollFloat from "@/components/ui/ScrollFloat";
-import SplitText from "@/components/ui/SplitText";
-import CapabilityCard from "@/components/CapabilityCard";
+import { motion, useInView } from "framer-motion";
+import {
+  MapPin,
+  GraduationCap,
+  Briefcase,
+  Sparkles,
+  CheckCircle2,
+  UserCheck,
+  Hammer,
+  Target,
+  ArrowRight
+} from "lucide-react";
+import developerPhoto from "@/assets/developer-photo.jpg";
 
-const cards = [
-  {
-    icon: Brain,
-    title: "AI Development",
-    sidebarLabel: "AI DEV",
-    desc: "Architecting modular artificial intelligence solutions, agentic workflows, and natural language interfaces utilizing state-of-the-art LLM APIs and vector embeddings.",
-    badgeText: "Agentic Systems",
-    gradientClass: "from-indigo-100/50 via-purple-100/50 to-blue-50/50 dark:from-indigo-950/30 dark:via-purple-950/30 dark:to-blue-950/30",
-    details: [
-      "I construct robust agentic workflows and conversational engines. For example, in <strong>Vox-Hire</strong>, I integrated multiple LLM APIs (OpenAI, Gemini, Hugging Face) to create an adaptive, mock interview system.",
-      "I focus on precise model integration, prompt engineering, and utilizing structured outputs to guarantee consistent, type-safe JSON payloads for backend processing.",
-      "In <strong>PhishGuard</strong>, I combined threat feeds with custom classifiers to evaluate URL security, showcasing the practical intersection of AI/ML with real-time cybersecurity."
-    ]
-  },
-  {
-    icon: Cloud,
-    title: "Cloud Systems",
-    sidebarLabel: "CLOUD",
-    desc: "Designing secure, high-availability cloud-native architectures, containerized Docker microservices, serverless worker nodes, and scalable persistent storage layers.",
-    badgeText: "Cloud-Native",
-    gradientClass: "from-sky-100/50 via-cyan-100/50 to-teal-50/50 dark:from-sky-950/30 dark:via-cyan-950/30 dark:to-teal-950/30",
-    details: [
-      "My cloud work concentrates on high-availability configurations and secure data persistence. I leverage <strong>Supabase</strong> and <strong>PostgreSQL</strong> to manage user state, security logs, and expense telemetry.",
-      "I containerize service environments using <strong>Docker</strong> to achieve consistency between local development, staging environments, and hosting endpoints.",
-      "I am currently preparing for the <strong>AWS Certified Cloud Practitioner</strong> certification to deepen my mastery of secure VPC design, IAM principles, load balancing, and serverless compute."
-    ]
-  },
-  {
-    icon: Cpu,
-    title: "Machine Learning",
-    sidebarLabel: "ML ENG",
-    desc: "Training custom statistical models, cleaning and processing complex multi-dimensional datasets, and building low-latency data pipelines for scalable batch calculations.",
-    badgeText: "Data Science",
-    gradientClass: "from-rose-100/50 via-fuchsia-100/50 to-indigo-50/50 dark:from-rose-950/30 dark:via-fuchsia-950/30 dark:to-indigo-950/30",
-    details: [
-      "I train and evaluate custom statistical models using libraries like <strong>Scikit-learn</strong>, <strong>NumPy</strong>, and <strong>Pandas</strong> inside Google Colab environments.",
-      "In my <strong>IoT Machine Failure Detection System</strong>, I streamed ESP32 microcontroller telemetry into a Flask-based pipeline running classifier models to estimate remaining useful life (RUL).",
-      "I emphasize building low-latency inference pipelines, processing incoming multi-dimensional data, and implementing robust anomaly detection routines."
-    ]
-  },
-  {
-    icon: Code2,
-    title: "Full Stack",
-    sidebarLabel: "STACK",
-    desc: "Developing fast, responsive React interfaces backed by optimized Node.js servers, Web Audio nodes, secure REST/GraphQL endpoints, and high-performance databases.",
-    badgeText: "Full-Stack Dev",
-    gradientClass: "from-blue-100/50 via-indigo-100/50 to-emerald-50/50 dark:from-blue-950/30 dark:via-indigo-950/30 dark:to-emerald-950/30",
-    details: [
-      "I create clean, responsive interfaces. For <strong>EaseExpense</strong>, built during my NST internship, I structured a React frontend interacting with a Node.js/Express API and Supabase.",
-      "I write clean APIs in <strong>FastAPI</strong> (Python) and <strong>Express</strong> (TypeScript) that incorporate role-based auth, secure validation, and rate-limiting schemas.",
-      "I prioritize user experience, implementing responsive web structures, state-driven UI animations, custom layout wrappers, and robust sound/visual design."
-    ]
-  },
-];
-
-interface AboutSectionProps {
-  lightMode: boolean;
-}
-
-export default function AboutSection({ lightMode }: AboutSectionProps) {
-  const ref = useRef(null);
-  const isInView = useInView(ref, { once: true, margin: "-100px" });
+export default function AboutSection({ lightMode }: { lightMode?: boolean }) {
+  const containerRef = useRef(null);
+  const isInView = useInView(containerRef, { once: true, margin: "-50px" });
 
   return (
-    <section id="about" className="py-28 relative overflow-hidden">
-      <div className="container mx-auto px-6" ref={ref}>
+    <section id="about" className="py-12 md:py-20 relative overflow-hidden">
+      <div className="container mx-auto px-4 md:px-6 max-w-4xl" ref={containerRef}>
 
-        {/* CENTERED HEADING & BIO */}
-        <div className="max-w-3xl mx-auto text-center space-y-6 mb-16">
+        {/* SINGLE FLOWING CONTAINER */}
+        <div className="space-y-12">
+
+          {/* SECTION 1: INTRO HEADLINE & PROFILE PHOTO */}
           <motion.div
-            initial={{ opacity: 0, y: 30 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
-            transition={{ duration: 0.6 }}
-            className="space-y-4"
+            transition={{ duration: 0.5 }}
+            className="grid grid-cols-1 md:grid-cols-12 gap-8 items-center border-b border-border/50 pb-10"
           >
-            <ScrollFloat
-              textClassName="text-4xl md:text-5xl font-bold text-foreground"
-              stagger={0.04}
-            >
-              About Me
-            </ScrollFloat>
+            {/* INTRO TEXT (8 COLS ON DESKTOP) */}
+            <div className="md:col-span-8 space-y-4">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 text-xs font-mono font-bold uppercase tracking-wider">
+                <Sparkles size={14} /> Full-Stack & AI/ML Engineer
+              </div>
 
-            <div className="flex items-center justify-center gap-2 text-secondary_text">
-              <MapPin size={16} className="text-blue-500" />
-              <span className="font-medium text-sm">Gandhinagar, India</span>
+              <h1 className="text-3xl md:text-5xl font-bold text-foreground tracking-tight leading-tight">
+                Hi, I'm Hariom Acharya.
+              </h1>
+
+              <p className="text-base md:text-lg text-secondary_text leading-relaxed">
+                I build full-stack applications and AI-integrated systems. I'm currently a final-year B.Tech Computer Engineering student at <strong className="text-foreground">LDRP Institute of Technology and Research</strong> in Gandhinagar, Gujarat, with a CGPA of 8.64 (SPI 9.29). Alongside my coursework, I completed a software development internship at <strong className="text-foreground">NST Private Limited</strong>, where I built EaseExpense, a full-stack expense-tracking platform using React, Node.js, and Supabase.
+              </p>
             </div>
 
-            <div className="space-y-4">
-              <SplitText
-                tag="p"
-                text="I am a final-year Computer Science and Engineering student at LDRP-ITR, based in Gandhinagar, India. I build full-stack web applications and AI/ML systems — including Vox-Hire, an AI-powered mock interview platform, and PhishGuard, a real-time phishing detection tool."
-                className="leading-relaxed text-base text-secondary_text"
-                textAlign="center"
-                delay={10}
-                duration={0.7}
-              />
-              <SplitText
-                tag="p"
-                text="I completed a software development internship at NST, where I built EaseExpense, a React and Node.js expense-tracking platform. I also work on IoT projects, including a Machine Failure Detection System using ESP32 microcontrollers and classifier models."
-                className="leading-relaxed text-base text-secondary_text"
-                textAlign="center"
-                delay={10}
-                duration={0.7}
-              />
+            {/* PROFILE PHOTO (4 COLS ON DESKTOP) */}
+            <div className="md:col-span-4 flex justify-center">
+              <div className="relative w-48 h-56 md:w-52 md:h-60 rounded-2xl overflow-hidden border border-border bg-layer shadow-md">
+                <img
+                  src={developerPhoto}
+                  alt="Hariom Acharya Profile Photo"
+                  className="w-full h-full object-cover"
+                />
+              </div>
             </div>
           </motion.div>
-        </div>
 
-        {/* CENTERED CARBON TILE */}
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          animate={isInView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="w-full max-w-none mx-auto carbon-card overflow-hidden"
-        >
-          {/* window header */}
-          <div className="flex items-center px-4 py-3 border-b border-border bg-layer">
-            <span className="text-xs font-mono font-bold tracking-widest uppercase text-primary">
-              capabilities.tsx
-            </span>
-          </div>
+          {/* SECTION 2: QUICK FACTS */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5, delay: 0.1 }}
+            className="space-y-3"
+          >
+            <h2 className="text-xs font-mono font-bold uppercase tracking-wider text-secondary_text">
+              Quick Facts
+            </h2>
 
-          {/* content */}
-          <div className="p-8">
-            <div className="grid md:grid-cols-2 gap-6">
-              {cards.map((card, i) => (
-                <motion.div
-                  key={card.title}
-                  initial={{ opacity: 0, y: 40 }}
-                  animate={isInView ? { opacity: 1, y: 0 } : {}}
-                  transition={{ duration: 0.5, delay: 0.1 * i }}
-                >
-                  <CapabilityCard
-                    icon={card.icon}
-                    title={card.title}
-                    sidebarLabel={card.sidebarLabel}
-                    desc={card.desc}
-                    details={card.details}
-                    gradientClass={card.gradientClass}
-                    badgeText={card.badgeText}
-                    index={i}
-                  />
-                </motion.div>
-              ))}
+            <div className="flex flex-wrap gap-x-6 gap-y-3 text-xs md:text-sm text-secondary_text">
+              <div className="flex items-center gap-1.5">
+                <MapPin size={15} className="text-blue-500 shrink-0" />
+                <span><strong className="text-foreground">Location:</strong> Gandhinagar, India</span>
+              </div>
+
+              <div className="flex items-center gap-1.5">
+                <GraduationCap size={15} className="text-blue-500 shrink-0" />
+                <span><strong className="text-foreground">Education:</strong> B.Tech CSE (LDRP-ITR)</span>
+              </div>
+
+              <div className="flex items-center gap-1.5">
+                <span className="font-mono text-blue-500 font-bold">📊</span>
+                <span><strong className="text-foreground">Academics:</strong> CGPA 8.64 / SPI 9.29</span>
+              </div>
+
+              <div className="flex items-center gap-1.5">
+                <Briefcase size={15} className="text-blue-500 shrink-0" />
+                <span><strong className="text-foreground">Internship:</strong> NST Private Limited</span>
+              </div>
+
+              <div className="flex items-center gap-1.5">
+                <CheckCircle2 size={15} className="text-emerald-500 shrink-0" />
+                <span><strong className="text-foreground">Status:</strong> Final-Year Student (Open for Engineering Roles)</span>
+              </div>
             </div>
-          </div>
-        </motion.div>
+          </motion.div>
+
+          {/* SECTION 3: PERSONAL BIO DESCRIPTION */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="space-y-6 text-secondary_text leading-relaxed text-sm md:text-base border-t border-border/50 pt-10"
+          >
+            <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+              <UserCheck size={22} className="text-primary" /> Personal Bio & Engineering Focus
+            </h2>
+
+            <p>
+              My focus sits at the intersection of clean frontend engineering, robust backend systems, and practical machine learning — I'm not interested in AI as a checkbox; I look for places where it genuinely makes a project more capable. That same instinct pulls me toward hardware and IoT, where I've built systems like an ESP32-based Machine Failure Detection pipeline that streams live telemetry into classifier models to estimate remaining useful life.
+            </p>
+
+            <p>
+              My journey here hasn't been purely academic. I've built <strong className="text-foreground">Vox-Hire</strong>, an AI-powered mock interview platform integrating multiple LLM APIs, and <strong className="text-foreground">PhishGuard</strong>, a real-time phishing detection system combining threat feeds with custom classifiers — the kind of projects that taught me more about shipping software than any single course did. I approach all of this with a structured, SDLC-driven mindset — understanding the problem thoroughly, planning before building, and testing rigorously rather than shipping and hoping.
+            </p>
+          </motion.div>
+
+          {/* SECTION 4: CURRENTLY BUILDING */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="space-y-4 border-t border-border/50 pt-10"
+          >
+            <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+              <Hammer size={20} className="text-primary" /> Currently Building
+            </h2>
+
+            <p className="text-secondary_text leading-relaxed text-sm md:text-base p-4 rounded-2xl bg-layer/40 border border-border">
+              Wrapping up my final year while continuing to sharpen my full-stack and AI/ML skills through hands-on projects — most recently focused on tighter AI integration across my existing work and deepening my grasp of cloud infrastructure.
+            </p>
+          </motion.div>
+
+          {/* SECTION 5: THE KIND OF WORK I'M AFTER */}
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5, delay: 0.4 }}
+            className="space-y-4 border-t border-border/50 pt-10"
+          >
+            <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
+              <Target size={20} className="text-primary" /> The Kind of Work I'm After
+            </h2>
+
+            <ul className="space-y-3 text-secondary_text text-sm md:text-base">
+              <li className="flex items-start gap-3 p-3.5 rounded-2xl bg-layer/40 border border-border">
+                <ArrowRight size={18} className="text-primary shrink-0 mt-0.5" />
+                <span>A full-time <strong className="text-foreground">Software Engineer / Full-Stack Developer</strong> role as I graduate.</span>
+              </li>
+              <li className="flex items-start gap-3 p-3.5 rounded-2xl bg-layer/40 border border-border">
+                <ArrowRight size={18} className="text-primary shrink-0 mt-0.5" />
+                <span>Teams that care about <strong className="text-foreground">clean, maintainable code</strong> as much as fast delivery.</span>
+              </li>
+              <li className="flex items-start gap-3 p-3.5 rounded-2xl bg-layer/40 border border-border">
+                <ArrowRight size={18} className="text-primary shrink-0 mt-0.5" />
+                <span>Room to keep working across the <strong className="text-foreground">full stack — frontend, backend, and wherever it fits, AI/ML and IoT.</strong></span>
+              </li>
+            </ul>
+          </motion.div>
+
+        </div>
 
       </div>
     </section>

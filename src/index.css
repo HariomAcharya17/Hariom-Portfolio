@@ -53,12 +53,17 @@
 
   html {
     scroll-behavior: smooth;
+    overflow-x: hidden;
+    max-width: 100vw;
+    width: 100%;
   }
 
-  body {
+  body, #root {
     @apply bg-background text-foreground;
     font-family: var(--font-display);
-    /* Very subtle base transition for theme toggle */
+    overflow-x: hidden;
+    max-width: 100vw;
+    width: 100%;
     transition: background-color 150ms ease, color 150ms ease;
   }
 }
@@ -137,3 +142,159 @@
   transform: translateY(-2px) scale(1.15) !important;
   z-index: 10;
 }
+
+/* React Calendar Heatmap Custom Blue Scale & Styles */
+.react-calendar-heatmap text {
+  fill: var(--secondary-text);
+  font-size: 8px;
+}
+
+.react-calendar-heatmap rect {
+  rx: 2px;
+  ry: 2px;
+}
+
+.react-calendar-heatmap .color-empty {
+  fill: var(--layer);
+}
+
+.react-calendar-heatmap .color-scale-1 {
+  fill: #93c5fd;
+}
+
+.react-calendar-heatmap .color-scale-2 {
+  fill: #60a5fa;
+}
+
+.react-calendar-heatmap .color-scale-3 {
+  fill: #2563eb;
+}
+
+.react-calendar-heatmap .color-scale-4 {
+  fill: #1d4ed8;
+}
+
+.dark .react-calendar-heatmap .color-empty {
+  fill: #262626;
+}
+
+.dark .react-calendar-heatmap .color-scale-1 {
+  fill: #1e3a8a;
+}
+
+.dark .react-calendar-heatmap .color-scale-2 {
+  fill: #1d4ed8;
+}
+
+.dark .react-calendar-heatmap .color-scale-3 {
+  fill: #2563eb;
+}
+
+.dark .react-calendar-heatmap .color-scale-4 {
+  fill: #60a5fa;
+}
+
+/* ==========================================================================
+   Uiverse Power Theme Switch Button
+   ========================================================================== */
+#theme-power-checkbox {
+  display: none;
+}
+
+.power-switch-wrapper {
+  transform: scale(0.45);
+  transform-origin: center;
+  margin: -18px -18px;
+}
+
+.power-switch {
+  position: relative;
+  width: 70px;
+  height: 70px;
+  background-color: rgb(99, 99, 99);
+  border-radius: 50%;
+  z-index: 1;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid rgb(126, 126, 126);
+  box-shadow: 0px 0px 3px rgb(2, 2, 2) inset;
+  transition: all 0.3s ease;
+}
+.power-switch svg {
+  width: 1.2em;
+}
+.power-switch svg path {
+  fill: rgb(48, 48, 48);
+  transition: fill 0.3s ease;
+}
+#theme-power-checkbox:checked + .power-switch {
+  box-shadow: 0px 0px 1px rgb(151, 243, 255) inset,
+    0px 0px 2px rgb(151, 243, 255) inset, 0px 0px 10px rgb(151, 243, 255) inset,
+    0px 0px 40px rgb(151, 243, 255), 0px 0px 100px rgb(151, 243, 255),
+    0px 0px 5px rgb(151, 243, 255);
+  border: 2px solid rgb(255, 255, 255);
+  background-color: rgb(146, 180, 184);
+}
+#theme-power-checkbox:checked + .power-switch svg {
+  filter: drop-shadow(0px 0px 5px rgb(151, 243, 255));
+}
+#theme-power-checkbox:checked + .power-switch svg path {
+  fill: rgb(255, 255, 255);
+}
+
+/* ==========================================================================
+   Uiverse Scroll To Top Floating Button
+   ========================================================================== */
+.scroll-top-button {
+  height: 50px;
+  width: 50px;
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 50%;
+  background-color: white;
+  border: 2px solid #0c0c0c;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+  display: flex;
+  position: relative;
+  transition: all 0.5s;
+  justify-content: center;
+  align-items: center;
+}
+.scroll-top-button::after {
+  content: "Top";
+  position: absolute;
+  width: auto;
+  background-color: white;
+  color: #0c0c0c;
+  font-weight: bold;
+  font-size: 0.9em;
+  box-sizing: border-box;
+  padding: 6px 12px;
+  border-radius: 25px;
+  top: -45px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+  transition: all 0.5s;
+  transform: scale(0);
+  pointer-events: none;
+}
+.scroll-top-svg {
+  transition: all 0.5s;
+}
+.scroll-top-button:hover {
+  transform: translateY(-3px);
+  background-color: #0c0c0c;
+}
+.scroll-top-button:hover .scroll-top-svg {
+  fill: white;
+  transform: scale(1.2);
+}
+.scroll-top-button:hover::after {
+  transform: scale(1);
+}
+.scroll-top-button:active {
+  transform: translateY(2px);
+}
+
+

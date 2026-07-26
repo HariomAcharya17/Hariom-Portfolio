@@ -14,11 +14,11 @@ interface WalletFeedbackProps {
 }
 
 const CARD_THEMES = [
-  { bg: "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)", text: "#334155", stars: "#eab308" }, // Crisp slate white
-  { bg: "linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)", text: "#0369a1", stars: "#0284c7" }, // Soft ice blue
-  { bg: "linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%)", text: "#6b21a8", stars: "#8b5cf6" }, // Soft lavender
-  { bg: "linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)", text: "#15803d", stars: "#16a34a" }, // Soft mint green
-  { bg: "linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)", text: "#c2410c", stars: "#f97316" }, // Soft cream orange
+  { bg: "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)", text: "#0f172a", stars: "#eab308" },
+  { bg: "linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%)", text: "#0369a1", stars: "#0284c7" },
+  { bg: "linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%)", text: "#6b21a8", stars: "#8b5cf6" },
+  { bg: "linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%)", text: "#15803d", stars: "#16a34a" },
+  { bg: "linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%)", text: "#c2410c", stars: "#f97316" },
 ];
 
 export default function WalletFeedback({ feedbacks, delay = 4000 }: WalletFeedbackProps) {
@@ -41,16 +41,15 @@ export default function WalletFeedback({ feedbacks, delay = 4000 }: WalletFeedba
     const frontCardIdx = order[order.length - 1];
     setAnimatingIndex(frontCardIdx);
 
-    // Wait for the slide-out transition to complete (400ms matching CSS transition)
     setTimeout(() => {
       setOrder((prev) => {
         if (prev.length < 2) return prev;
         const copy = [...prev];
         const last = copy.pop()!;
-        return [last, ...copy]; // Move front-most card to the bottom/back
+        return [last, ...copy];
       });
       setAnimatingIndex(null);
-    }, 400);
+    }, 380);
   };
 
   // Auto-cycle logic
@@ -76,43 +75,40 @@ export default function WalletFeedback({ feedbacks, delay = 4000 }: WalletFeedba
 
   if (feedbacks.length === 0) return null;
 
-  // Calculate statistics for the pocket
-  const totalCount = feedbacks.length;
-  const avgRating = (feedbacks.reduce((acc, curr) => acc + curr.rating, 0) / totalCount).toFixed(1);
-
   return (
-    <div className="wallet-container">
+    <div className="wallet-container select-none">
       <div
-        className="wallet"
+        className={`wallet ${isHovered ? "is-hovered" : ""}`}
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
+        onTouchStart={() => setIsHovered(true)}
+        onTouchEnd={() => {
+          // Trigger card cycle on mobile tap
+          cycleDeck();
+          setTimeout(() => setIsHovered(false), 1500);
+        }}
         onClick={cycleDeck}
       >
         {/* Wallet Back */}
         <div className="wallet-back" />
 
-        {/* Cards */}
+        {/* Cards Stack */}
         {feedbacks.map((fb, idx) => {
           const stackIndex = order.indexOf(idx);
-
-          // If the card is not in the active stack order list (e.g. initial render mismatch), hide it
           if (stackIndex === -1) return null;
 
           const isFront = stackIndex === feedbacks.length - 1;
           const isAnimating = animatingIndex === idx;
 
-          // Dynamically compute positioning variables based on stack index
           const N = feedbacks.length;
           const pct = N > 1 ? stackIndex / (N - 1) : 1;
 
-          // Unhovered: bottom base layout from 90px (back) to 40px (front)
-          const bottomVal = N > 1 ? 90 - pct * 50 : 65;
+          // Unhovered base positioning
+          const bottomVal = N > 1 ? 85 - pct * 45 : 65;
 
-          // Hovered: fans out from -75px (back) to -10px (front)
+          // Hovered fan out positioning
           const hoverTranslateY = N > 1 ? -75 + pct * 65 : -40;
-
-          // Hovered: rotation fans from -3deg to +3deg
-          const hoverRotate = N > 1 ? -4 + pct * 8 : 0;
+          const hoverRotate = N > 1 ? -4.5 + pct * 9 : 0;
 
           const theme = CARD_THEMES[idx % CARD_THEMES.length];
           const cardStyle = {
@@ -130,8 +126,6 @@ export default function WalletFeedback({ feedbacks, delay = 4000 }: WalletFeedba
               className={`wallet-card ${isAnimating ? "sliding-out" : ""}`}
               style={cardStyle}
               onClick={(e) => {
-                // If it is the front card, trigger manual cycle on click.
-                // Prevent event propagation so clicking individual card cycles once.
                 e.stopPropagation();
                 if (isFront) {
                   cycleDeck();
@@ -139,7 +133,7 @@ export default function WalletFeedback({ feedbacks, delay = 4000 }: WalletFeedba
               }}
             >
               <div className="wallet-card-inner">
-                {/* Top Section: Stars rating */}
+                {/* Top Section: Rating Stars */}
                 <div className="wallet-card-top">
                   <div className="wallet-card-stars" style={{ color: theme.stars }}>
                     {Array.from({ length: fb.rating }).map((_, i) => (
@@ -148,12 +142,12 @@ export default function WalletFeedback({ feedbacks, delay = 4000 }: WalletFeedba
                   </div>
                 </div>
 
-                {/* Middle Message Section */}
+                {/* Middle Section: Feedback Message */}
                 <div className="wallet-card-middle">
                   <p className="wallet-card-message">"{fb.message}"</p>
                 </div>
 
-                {/* Bottom Section: Reviewer Name only */}
+                {/* Bottom Section: Reviewer Name */}
                 <div className="wallet-card-bottom">
                   <span className="wallet-card-value font-bold text-xs tracking-wider">{fb.name}</span>
                 </div>
@@ -174,47 +168,10 @@ export default function WalletFeedback({ feedbacks, delay = 4000 }: WalletFeedba
             />
           </svg>
 
+          {/* Pocket Content Label strictly Feedbacks */}
           <div className="pocket-content">
-            <div style={{ position: "relative", height: 24, width: "100%" }}>
-              <div className="balance-stars">★★★★★</div>
-              <div className="balance-real">{avgRating} ★ ({totalCount} Reviews)</div>
-            </div>
-            <div style={{ color: "var(--secondary-text)", fontSize: 11, fontWeight: 600, letterSpacing: 0.5, textTransform: "uppercase" }}>
-              Overall Rating
-            </div>
-
-            {/* Eye Icon Wrapper */}
-            <div className="eye-icon-wrapper">
-              {/* Eye Slash */}
-              <svg
-                className="eye-icon eye-slash"
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
-                <line x1="1" y1="1" x2="23" y2="23" />
-              </svg>
-
-              {/* Eye Open */}
-              <svg
-                className="eye-icon eye-open"
-                style={{ opacity: 0 }}
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              >
-                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                <circle cx="12" cy="12" r="3" />
-              </svg>
+            <div className="pocket-label">
+              Feedbacks
             </div>
           </div>
         </div>

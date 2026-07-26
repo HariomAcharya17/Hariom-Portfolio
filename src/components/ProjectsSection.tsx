@@ -1,6 +1,7 @@
 import { motion, useInView } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import { supabase } from "@/lib/supabase";
 import { ParticleCard, GlobalSpotlight } from "@/components/ui/ParticleCard";
 import ScrollFloat from "@/components/ui/ScrollFloat";
@@ -24,10 +25,11 @@ interface ProjectItem {
 }
 
 interface ProjectsSectionProps {
-  lightMode: boolean;
+  lightMode?: boolean;
+  isHomePreview?: boolean;
 }
 
-export default function ProjectsSection({ lightMode }: ProjectsSectionProps) {
+export default function ProjectsSection({ lightMode, isHomePreview = false }: ProjectsSectionProps) {
   const ref = useRef(null);
   const gridRef = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true });
@@ -60,6 +62,8 @@ export default function ProjectsSection({ lightMode }: ProjectsSectionProps) {
     ...projects.map((p) => ({ ...p, _type: "project" })),
     ...upcoming.map((u) => ({ ...u, _type: "upcoming" })),
   ];
+
+  const displayedCards = isHomePreview ? allCards.slice(0, 3) : allCards;
 
   const getTechList = (card: ProjectItem): string[] => {
     let raw: string[] = [];
@@ -155,7 +159,7 @@ export default function ProjectsSection({ lightMode }: ProjectsSectionProps) {
           <div className="p-4 md:p-10">
             <div ref={gridRef} className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8 max-w-none mx-auto relative bento-section">
 
-              {allCards.map((card, i) => (
+              {displayedCards.map((card, i) => (
                 <motion.div
                   key={`${card._type}-${card.id ?? i}`}
                   initial={{ opacity: 0, y: 30 }}
@@ -214,7 +218,25 @@ export default function ProjectsSection({ lightMode }: ProjectsSectionProps) {
                           {renderCategorizedTech(card)}
 
                           {/* Action Buttons */}
-                          <div className="flex flex-wrap gap-4 text-sm relative z-10">
+                          <div className="flex flex-wrap items-center gap-3 text-sm relative z-10">
+                            {card.title?.toLowerCase().includes("vox-hire") && (
+                              <Link
+                                to="/projects/vox-hire"
+                                className="px-3 py-1.5 rounded-xl bg-primary/10 text-primary hover:bg-primary/20 text-xs font-bold flex items-center gap-1 transition-colors border border-primary/20"
+                              >
+                                Read Case Study →
+                              </Link>
+                            )}
+
+                            {card.title?.toLowerCase().includes("phishguard") && (
+                              <Link
+                                to="/projects/phish-guard"
+                                className="px-3 py-1.5 rounded-xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 text-xs font-bold flex items-center gap-1 transition-colors border border-emerald-500/20"
+                              >
+                                Read Case Study →
+                              </Link>
+                            )}
+
                             {card.github && (
                               <ViewProjectButton href={card.github}>
                                 Code
@@ -278,6 +300,19 @@ export default function ProjectsSection({ lightMode }: ProjectsSectionProps) {
                 </motion.div>
               ))}
             </div>
+
+            {/* View All Projects link in home preview mode */}
+            {isHomePreview && (
+              <div className="mt-12 flex justify-center">
+                <Link
+                  to="/projects"
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary text-primary-foreground font-semibold hover:opacity-90 transition-all shadow-md group"
+                >
+                  View All Projects
+                  <ArrowRight size={18} className="transition-transform group-hover:translate-x-1" />
+                </Link>
+              </div>
+            )}
           </div>
         </motion.div>
 

@@ -2,7 +2,7 @@ import { motion, AnimatePresence, useInView } from "framer-motion";
 import { useRef, useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import ScrollFloat from "@/components/ui/ScrollFloat";
-import { Briefcase, Camera, HeartHandshake, Award, ChevronDown } from "lucide-react";
+import { Briefcase, Camera, HeartHandshake, Award, ChevronDown, Code, CheckCircle2 } from "lucide-react";
 
 interface ExperienceItem {
   id?: number | string;
@@ -11,32 +11,95 @@ interface ExperienceItem {
   year: number | string;
   description: string;
   achievements?: string[];
+  projectDetails?: {
+    name: string;
+    stack: string;
+    highlights: string[];
+  };
 }
 
-interface ExperienceSectionProps {
-  lightMode: boolean;
-}
+const defaultExperiences: ExperienceItem[] = [
+  {
+    id: "nst-internship",
+    role: "Software Engineering Intern",
+    org: "NST Private Limited",
+    year: "2024",
+    description: "Built EaseExpense, a full-stack financial tracking platform with automated budget calculations, role-based auth, and interactive analytics.",
+    achievements: [
+      "Engineered <strong>EaseExpense</strong> from architectural design to deployment using <strong>React</strong>, <strong>Node.js/Express</strong>, and <strong>Supabase/PostgreSQL</strong>.",
+      "Designed secure REST APIs handling multi-currency calculations, expense category filtering, and monthly budget overage thresholds.",
+      "Built interactive data visualization charts with automated email notifications for budget limit alerts.",
+      "Gained hands-on experience in networking fundamentals, secure JWT validation, and containerized Docker development."
+    ],
+    projectDetails: {
+      name: "EaseExpense Internship Platform",
+      stack: "React, Node.js, Express, Supabase, PostgreSQL, Tailwind CSS",
+      highlights: [
+        "Architected relational database tables for expense logs, category limits, and user sessions.",
+        "Implemented client-side caching and optimistic UI updates for instantaneous financial calculations.",
+        "Delivered full technical documentation and pull request walk-throughs for internal engineering reviews."
+      ]
+    }
+  },
+  {
+    id: "vox-hire-dev",
+    role: "Lead Full-Stack & AI Developer",
+    org: "Vox-Hire (AI Recruitment Platform)",
+    year: "2024",
+    description: "Architected Vox-Hire, an intelligent AI mock interview engine providing adaptive technical questions and real-time candidate evaluation.",
+    achievements: [
+      "Integrated multiple LLM API providers (<strong>OpenAI GPT-4</strong>, <strong>Google Gemini</strong>) with structured output schemas for consistent JSON payloads.",
+      "Built Web Audio recording nodes and real-time speech-to-text processing pipelines.",
+      "Structured FastAPI microservices for latency-optimized prompt evaluation and scoring rubrics."
+    ]
+  },
+  {
+    id: "phishguard-dev",
+    role: "Cybersecurity & ML Developer",
+    org: "PhishGuard (Threat Scanner)",
+    year: "2024",
+    description: "Engineered a real-time phishing URL threat scanner leveraging Random Forest machine learning models and threat intelligence feeds.",
+    achievements: [
+      "Trained custom statistical classifiers on multi-dimensional lexical and host-based URL feature vectors.",
+      "Connected <strong>FastAPI</strong> endpoints with VirusTotal APIs for instant multi-engine threat scores.",
+      "Achieved high precision in detecting malicious domain patterns and credential harvesting redirects."
+    ]
+  },
+  {
+    id: "sttp-photo",
+    role: "Photography Committee Lead",
+    org: "STTP Workshop Committee",
+    year: "2023",
+    description: "Managed photography committee logistics, visual media coverage, and post-event highlight compilations.",
+    achievements: [
+      "Captured and edited high-resolution event photographs and video highlight reels.",
+      "Coordinated with session speakers and organizers to ensure full visual curriculum coverage."
+    ]
+  }
+];
 
-export default function ExperienceSection({ lightMode }: ExperienceSectionProps) {
+export default function ExperienceSection({ lightMode }: { lightMode?: boolean }) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
-  const [experiences, setExperiences] = useState<ExperienceItem[]>([]);
-  const [expandedIds, setExpandedIds] = useState<Record<string | number, boolean>>({});
+  const [experiences, setExperiences] = useState<ExperienceItem[]>(defaultExperiences);
+  const [expandedIds, setExpandedIds] = useState<Record<string | number, boolean>>({
+    "nst-internship": true,
+    "vox-hire-dev": true
+  });
 
   useEffect(() => {
     const fetchExp = async () => {
-      const { data } = await supabase
-        .from("experience")
-        .select("*")
-        .order("year", { ascending: false });
+      try {
+        const { data } = await supabase
+          .from("experience")
+          .select("*")
+          .order("year", { ascending: false });
 
-      if (data && data.length > 0) {
-        setExperiences(data);
-        // Expand the first item (e.g. Software Intern) by default for better visual onboarding
-        if (data[0]) {
-          const firstId = data[0].id || 0;
-          setExpandedIds({ [firstId]: true });
+        if (data && data.length > 0) {
+          setExperiences(data);
         }
+      } catch (e) {
+        // Fall back to defaultExperiences
       }
     };
 
@@ -53,56 +116,30 @@ export default function ExperienceSection({ lightMode }: ExperienceSectionProps)
   const getExperienceIcon = (org: string) => {
     const o = org.toLowerCase().trim();
     if (o.includes("nst")) return Briefcase;
-    if (o.includes("sttp")) return Camera; // Photography Committee
-    if (o.includes("chiropractic")) return HeartHandshake; // Seminar Volunteer
+    if (o.includes("vox") || o.includes("phish")) return Code;
+    if (o.includes("sttp")) return Camera;
     return Award;
   };
 
   const getExperienceDetails = (exp: ExperienceItem): string[] => {
     if (exp.achievements && exp.achievements.length > 0) return exp.achievements;
-    
-    const o = exp.org.toLowerCase().trim();
-    if (o.includes("nst")) {
-      return [
-        "Developed and shipped <strong>EaseExpense</strong>, a full-stack monthly budgeting and tracking dashboard.",
-        "Integrated <strong>React</strong> with a <strong>Node.js/Express</strong> REST API and a <strong>PostgreSQL/Supabase</strong> database layer.",
-        "Implemented automated budget overage <strong>email alerts</strong> and graphical summary reports.",
-        "Gained hands-on experience in networking fundamentals, secure data flow, and modern backend architectures."
-      ];
-    }
-    if (o.includes("sttp")) {
-      return [
-        "Served in the <strong>Photography Committee</strong>, managing visual media coverage and recording of sessions.",
-        "Captured and edited high-resolution event photographs and video highlights for social media promotions.",
-        "Coordinated with organizers to ensure visual content aligns with the official workshop curriculum.",
-        "Designed highlight compilation material and post-event flyers."
-      ];
-    }
-    if (o.includes("chiropractic")) {
-      return [
-        "Volunteered as a lead organizer assisting guest chiropractors and speakers during session schedules.",
-        "Managed registration desk databases, attendee inquiries, resource kit distribution, and seminar logistics.",
-        "Maintained coordination of post-event feedback collections and certificate distributions.",
-        "Ensured overall session transitions and event venue readiness remained precisely on track."
-      ];
-    }
     return [
-      "Contributed actively as a team member, helping coordinate logistics and daily operations.",
-      "Worked on collaborative projects, aligning technical tasks with overall operational goals.",
-      "Learned and applied industry practices to resolve challenges and deliver high-quality outcomes."
+      "Contributed actively as a technical lead and core developer.",
+      "Designed scalable software architectures and user interfaces.",
+      "Learned and applied industry practices to deliver high-quality outcomes."
     ];
   };
 
   return (
-    <section id="experience" className="py-28 relative overflow-hidden">
-      <div className="container mx-auto px-6" ref={ref}>
+    <section id="experience" className="py-20 relative overflow-hidden">
+      <div className="container mx-auto px-4 md:px-6 max-w-5xl" ref={ref}>
 
         <ScrollFloat
-          containerClassName="mb-16 text-center"
+          containerClassName="mb-12 text-center"
           textClassName="text-4xl md:text-5xl font-bold text-foreground"
           stagger={0.04}
         >
-          Experience
+          Experience & Projects Breakdown
         </ScrollFloat>
 
         <motion.div
@@ -128,6 +165,7 @@ export default function ExperienceSection({ lightMode }: ExperienceSectionProps)
                 const expId = exp.id || i;
                 const isExpanded = !!expandedIds[expId];
                 const Icon = getExperienceIcon(exp.org);
+                const bullets = getExperienceDetails(exp);
 
                 return (
                   <motion.div
@@ -169,11 +207,9 @@ export default function ExperienceSection({ lightMode }: ExperienceSectionProps)
                         </div>
 
                         <div className="flex items-center gap-3 self-start sm:self-center">
-                          {/* Year Pill */}
                           <span className="text-[10px] font-mono font-bold text-secondary_text bg-background border border-border/80 px-2 py-0.5 rounded">
                             {exp.year}
                           </span>
-                          {/* Expand/Collapse Chevron Indicator */}
                           <ChevronDown
                             size={16}
                             className={`text-secondary_text transition-transform duration-300 shrink-0 ${
@@ -184,11 +220,11 @@ export default function ExperienceSection({ lightMode }: ExperienceSectionProps)
                       </div>
 
                       {/* Short Description */}
-                      <p className="text-xs sm:text-sm leading-relaxed text-secondary_text max-w-[95%]">
+                      <p className="text-xs sm:text-sm leading-relaxed text-secondary_text max-w-[95%] mb-2">
                         {exp.description}
                       </p>
 
-                      {/* Expandable detailed accomplishments list */}
+                      {/* Expandable Detailed Accomplishments & Project Info */}
                       <AnimatePresence initial={false}>
                         {isExpanded && (
                           <motion.div
@@ -198,18 +234,41 @@ export default function ExperienceSection({ lightMode }: ExperienceSectionProps)
                             transition={{ duration: 0.3, ease: "easeInOut" }}
                             className="overflow-hidden"
                           >
-                            <div className="mt-4 pt-4 border-t border-border/40">
-                              <ul className="space-y-2.5">
-                                {getExperienceDetails(exp).map((bullet, idx) => (
-                                  <li
-                                    key={idx}
-                                    className="text-xs leading-relaxed text-secondary_text font-normal flex items-start gap-2"
-                                  >
-                                    <span className="text-primary mt-0.5 shrink-0 select-none">•</span>
-                                    <span dangerouslySetInnerHTML={{ __html: bullet }} className="text-left" />
-                                  </li>
-                                ))}
-                              </ul>
+                            <div className="mt-4 pt-4 border-t border-border/40 space-y-4">
+                              <div>
+                                <h5 className="text-xs font-mono font-bold uppercase tracking-wider text-foreground mb-2">
+                                  Key Contributions & Technical Accomplishments:
+                                </h5>
+                                <ul className="space-y-2">
+                                  {bullets.map((bullet, idx) => (
+                                    <li
+                                      key={idx}
+                                      className="text-xs leading-relaxed text-secondary_text font-normal flex items-start gap-2"
+                                    >
+                                      <CheckCircle2 size={14} className="text-primary mt-0.5 shrink-0" />
+                                      <span dangerouslySetInnerHTML={{ __html: bullet }} className="text-left" />
+                                    </li>
+                                  ))}
+                                </ul>
+                              </div>
+
+                              {exp.projectDetails && (
+                                <div className="p-4 rounded-xl bg-background/80 border border-border/60 space-y-2">
+                                  <div className="flex items-center justify-between">
+                                    <span className="text-xs font-bold text-foreground">
+                                      Project: {exp.projectDetails.name}
+                                    </span>
+                                    <span className="text-[10px] font-mono text-primary bg-primary/10 px-2 py-0.5 rounded">
+                                      {exp.projectDetails.stack}
+                                    </span>
+                                  </div>
+                                  <ul className="space-y-1 text-xs text-secondary_text list-disc list-inside pl-1">
+                                    {exp.projectDetails.highlights.map((h, hIdx) => (
+                                      <li key={hIdx}>{h}</li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
                             </div>
                           </motion.div>
                         )}

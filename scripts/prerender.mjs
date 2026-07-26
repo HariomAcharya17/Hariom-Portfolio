@@ -25,7 +25,20 @@ const PORT = 4173;
 // Add every route your site has. For a single-page portfolio this is
 // probably just "/". If you add routes like /projects or /about later,
 // list them here too.
-const ROUTES = ['/'];
+const ROUTES = [
+    '/',
+    '/about',
+    '/projects',
+    '/projects/vox-hire',
+    '/projects/phish-guard',
+    '/experience',
+    '/skills',
+    '/now',
+    '/leetcode',
+    '/resume',
+    '/contact',
+    '/ai'
+];
 
 // Common local Chrome paths (macOS / Linux / Windows) used only when
 // NOT running on Vercel, so local builds still work.
@@ -68,7 +81,10 @@ async function getBrowser() {
 async function main() {
     // 1. Serve the built dist/ folder locally
     const server = createServer((req, res) =>
-        handler(req, res, { public: distDir })
+        handler(req, res, {
+            public: distDir,
+            rewrites: [{ source: '**', destination: '/index.html' }],
+        })
     );
     await new Promise((resolve) => server.listen(PORT, resolve));
     console.log(`Serving dist/ at http://localhost:${PORT}`);

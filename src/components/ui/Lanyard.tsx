@@ -7,7 +7,7 @@ import { MeshLineGeometry, MeshLineMaterial } from 'meshline';
 
 import cardGLB from '@/assets/card.glb';
 import lanyard from '@/assets/lanyard.png';
-import developerPhoto from '@/assets/developer-photo.jpg';
+import lanyardPhoto from '@/assets/lanyard-photo.jpg';
 
 import * as THREE from 'three';
 import './Lanyard.css';
@@ -34,7 +34,7 @@ export default function Lanyard({
   gravity = [0, -40, 0] as [number, number, number],
   fov = 20,
   transparent = true,
-  frontImage = developerPhoto,
+  frontImage = lanyardPhoto,
   backImage = nameSVG,
   imageFit = 'cover' as 'cover' | 'contain',
   lanyardImage = null,

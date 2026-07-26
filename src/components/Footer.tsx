@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import SocialMediaGrid from "@/components/ui/SocialMediaGrid";
 import "./Footer.css";
@@ -19,7 +20,7 @@ const toolsData: ToolData[] = [
   {
     id: "git",
     name: "Git & GitHub",
-    color: "#e11d48", // Rose Red
+    color: "#e11d48",
     desc: "Collaborative code version control, package releases, action deployment integrations, and security checks.",
     icon: (
       <svg viewBox="0 0 24 24" className="w-10 h-10 text-[#e11d48] select-none" fill="currentColor">
@@ -30,7 +31,7 @@ const toolsData: ToolData[] = [
   {
     id: "motion",
     name: "Framer Motion",
-    color: "#f472b6", // Pink
+    color: "#f472b6",
     desc: "Declarative React animation library used to build entry transitions, physics spring states, and layout transitions.",
     icon: (
       <svg viewBox="0 0 24 24" className="w-10 h-10 text-[#f472b6] select-none" fill="currentColor">
@@ -41,18 +42,16 @@ const toolsData: ToolData[] = [
   {
     id: "colab",
     name: "Colab & Kaggle",
-    color: "#fb923c", // Orange
+    color: "#fb923c",
     desc: "Cloud sandboxes utilized to train classifiers, run GPU statistical pipelines, and compute machine learning models.",
     icon: (
       <svg viewBox="0 0 24 24" className="w-10 h-10 select-none" fill="none">
-        {/* Colab on the left */}
         <g transform="translate(-1, 5) scale(0.52)">
           <path d="M16.9414 4.9757a7.033 7.033 0 0 0-4.9308 2.0646 7.033 7.033 0 0 0-.1232 9.8068l2.395-2.395a3.6455 3.6455 0 0 1 5.1497-5.1478l2.397-2.3989a7.033 7.033 0 0 0-4.8877-1.9297z" fill="#F9AB00"/>
           <path d="M7.07 4.9855a7.033 7.033 0 0 0-4.8878 1.9316l2.3911 2.3911a3.6434 3.6434 0 0 1 5.0227.1271l2.4048-2.4048A7.033 7.033 0 0 0 7.07 4.9855z" fill="#E87115"/>
           <path d="M12.0127 14.3218a7.033 7.033 0 0 0-.1232-9.8068l-2.395 2.395a3.6455 3.6455 0 0 1-5.1497 5.1478l-2.397 2.3989a7.033 7.033 0 0 0 10.0649-.1349z" fill="#F9AB00"/>
           <path d="M16.93 19.0145a7.033 7.033 0 0 0 4.8878-1.9316l-2.3911-2.3911a3.6434 3.6434 0 0 1-5.0227-.1271l-2.4048 2.4048a7.033 7.033 0 0 0 4.9308 1.98z" fill="#E87115"/>
         </g>
-        {/* Kaggle on the right */}
         <g transform="translate(11, 4) scale(0.68)">
           <path d="M18.825 21.85h-3.045l-5.696-7.85-2.093 2.016v5.834H5.195V2.15h2.796v11.166l7.39-7.234h3.693l-7.218 7.025 7.17 8.743z" fill="#20BEFF"/>
         </g>
@@ -62,7 +61,7 @@ const toolsData: ToolData[] = [
   {
     id: "js",
     name: "JavaScript",
-    color: "#facc15", // Yellow
+    color: "#facc15",
     desc: "Core scripting logic powering visual DOM transformations, client states, and asynchronous requests.",
     icon: (
       <svg viewBox="0 0 24 24" className="w-10 h-10 text-[#facc15] select-none" fill="currentColor">
@@ -73,7 +72,7 @@ const toolsData: ToolData[] = [
   {
     id: "node",
     name: "Node.js",
-    color: "#84cc16", // Lime
+    color: "#84cc16",
     desc: "Chrome's V8 runtime engine server runtime hosting API routes and routing local filesystem operations.",
     icon: (
       <svg viewBox="0 0 24 24" className="w-10 h-10 text-[#84cc16] select-none" fill="currentColor">
@@ -84,7 +83,7 @@ const toolsData: ToolData[] = [
   {
     id: "supabase",
     name: "Supabase",
-    color: "#10b981", // Emerald
+    color: "#10b981",
     desc: "Open-source cloud backend platform utilized to manage PostgreSQL relational instances, secure API authentication, and store credentials.",
     icon: (
       <svg viewBox="0 0 24 24" className="w-10 h-10 text-emerald-500 select-none" fill="currentColor">
@@ -95,7 +94,7 @@ const toolsData: ToolData[] = [
   {
     id: "docker",
     name: "Docker",
-    color: "#0ea5e9", // Sky Blue
+    color: "#0ea5e9",
     desc: "Creating isolated container environments to package backend APIs, Node.js applications, and database engines for zero-friction staging deployments.",
     icon: (
       <svg viewBox="0 0 24 24" className="w-10 h-10 text-[#0db7ed] select-none" fill="currentColor">
@@ -107,7 +106,7 @@ const toolsData: ToolData[] = [
   {
     id: "react",
     name: "React & Next.js",
-    color: "#3b82f6", // Blue
+    color: "#3b82f6",
     desc: "Modern user interface frameworks built on top of state engines, code-splitting routers, and server-side rendering nodes.",
     icon: (
       <svg viewBox="-11.5 -10.23174 23 20.46348" className="w-10 h-10 text-[#61dafb] select-none" fill="none">
@@ -123,22 +122,11 @@ const toolsData: ToolData[] = [
   {
     id: "ts",
     name: "TypeScript",
-    color: "#8b5cf6", // Violet
+    color: "#8b5cf6",
     desc: "A type-safe dialect of JavaScript validating objects, API parameters, and interface props before browser compilation.",
     icon: (
       <svg viewBox="0 0 24 24" className="w-10 h-10 text-[#3178c6] select-none" fill="currentColor">
         <path d="M1.125 0C.502 0 0 .502 0 1.125v21.75C0 23.498.502 24 1.125 24h21.75c.623 0 1.125-.502 1.125-1.125V1.125C24 .502 23.498 0 22.875 0zm17.363 9.75c.612 0 1.154.037 1.627.111a6.38 6.38 0 0 1 1.306.34v2.458a3.95 3.95 0 0 0-.643-.361 5.093 5.093 0 0 0-.717-.26 5.453 5.453 0 0 0-1.426-.2c-.3 0-.573.028-.819.086a2.1 2.1 0 0 0-.623.242c-.17.104-.3.229-.393.374a.888.888 0 0 0-.14.49c0 .196.053.373.156.529.104.156.252.304.443.444s.423.276.696.41c.273.135.582.274.926.416.47.197.892.407 1.266.628.374.222.695.473.963.753.268.279.472.598.614.957.142.359.214.776.214 1.253 0 .657-.125 1.21-.373 1.656a3.033 3.033 0 0 1-1.012 1.085 4.38 4.38 0 0 1-1.487.596c-.566.12-1.163.18-1.79.18a9.916 9.916 0 0 1-1.84-.164 5.544 5.544 0 0 1-1.512-.493v-2.63a5.033 5.033 0 0 0 3.237 1.2c.333 0 .624-.03.872-.09.249-.06.456-.144.623-.25.166-.108.29-.234.373-.38a1.023 1.023 0 0 0-.074-1.089 2.12 2.12 0 0 0-.537-.5 5.597 5.597 0 0 0-.807-.444 27.72 27.72 0 0 0-1.007-.436c-.918-.383-1.602-.852-2.053-1.405-.45-.553-.676-1.222-.676-2.005 0-.614.123-1.141.369-1.582.246-.441.58-.804 1.004-1.089a4.494 4.494 0 0 1 1.47-.629 7.536 7.536 0 0 1 1.77-.201zm-15.113.188h9.563v2.166H9.506v9.646H6.789v-9.646H3.375z" />
-      </svg>
-    )
-  },
-  {
-    id: "claude",
-    name: "Claude AI",
-    color: "#a78bfa", // Lavender
-    desc: "Anthropic's LLM assistant utilized for interactive pair programming, refactoring modular components, and writing clean mock datasets.",
-    icon: (
-      <svg viewBox="0 0 24 24" className="w-10 h-10 text-[#d97706] dark:text-[#f59e0b] select-none" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-        <path d="M12 3v18M3 12h18M5.636 5.636l12.728 12.728M5.636 18.364L18.364 5.636" />
       </svg>
     )
   }
@@ -150,85 +138,144 @@ export default function Footer({ lightMode }: FooterProps) {
   const selectedTool = toolsData.find((t) => t.id === selectedToolId);
 
   return (
-    <footer className="py-8 border-t border-border bg-background relative z-20">
-      <div className="container mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-6">
-        
-        {/* Left Side: copyright */}
-        <div className="flex flex-col gap-1 text-center md:text-left md:w-1/4">
-          <span className="text-sm text-secondary_text">
-            © 2026 Hariom Acharya. All rights reserved.
-          </span>
-          <span className="text-xs font-mono text-secondary_text text-secondary_text/85">
-            Built with IBM Carbon Design System · IBM Plex
-          </span>
-        </div>
-
-        {/* Center: Comic Color Palette Swatches & Tool Info Card */}
-        <div className="flex flex-col items-center gap-1 md:w-2/4">
-          <div className="flex flex-col items-center gap-1.5">
-            <span className="text-[9px] font-mono tracking-wider text-secondary_text uppercase font-semibold opacity-80">
-              My Core Dev Toolstack (Click to View)
+    <footer className="py-12 border-t border-border bg-background relative z-20">
+      <div className="container mx-auto px-6 max-w-6xl">
+        {/* 4-COLUMN FOOTER GRID */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+          
+          {/* COLUMN 1: IDENTITY & SOCIALS */}
+          <div className="flex flex-col gap-3">
+            <span className="font-bold text-base text-foreground tracking-tight">
+              Hariom Acharya
             </span>
-            <div className="comic-panel">
-              <div className="container-items">
-                {toolsData.map((tool) => (
-                  <button
-                    key={tool.id}
-                    onClick={() => {
-                      // Toggle active selection on click
-                      setSelectedToolId(selectedToolId === tool.id ? null : tool.id);
-                    }}
-                    className="item-color"
-                    style={{ "--color": tool.color } as React.CSSProperties}
-                    aria-color={tool.name}
-                    title={tool.name}
-                  />
-                ))}
+            <p className="text-xs text-secondary_text leading-relaxed max-w-xs">
+              Full-Stack & AI/ML Engineer passionate about building intelligent, scalable web applications and cloud solutions.
+            </p>
+            <div className="mt-2">
+              <SocialMediaGrid />
+            </div>
+          </div>
+
+          {/* COLUMN 2: STRUCTURAL NAVIGATION */}
+          <div className="flex flex-col gap-2.5 text-xs">
+            <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-foreground opacity-90 mb-1">
+              Navigate
+            </span>
+            <Link to="/" className="text-secondary_text hover:text-primary transition-colors">
+              Home
+            </Link>
+            <Link to="/about" className="text-secondary_text hover:text-primary transition-colors">
+              About
+            </Link>
+            <Link to="/projects" className="text-secondary_text hover:text-primary transition-colors">
+              Projects
+            </Link>
+            <Link to="/experience" className="text-secondary_text hover:text-primary transition-colors">
+              Experience
+            </Link>
+            <Link to="/contact" className="text-secondary_text hover:text-primary transition-colors">
+              Contact
+            </Link>
+          </div>
+
+          {/* COLUMN 3: READ & RESOURCES + INTERACTIVE TOOLSTACK */}
+          <div className="flex flex-col gap-2.5 text-xs">
+            <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-foreground opacity-90 mb-1">
+              Read & Resources
+            </span>
+            <Link to="/skills" className="text-secondary_text hover:text-primary transition-colors">
+              Skills & Tools
+            </Link>
+            <Link to="/now" className="text-secondary_text hover:text-primary transition-colors">
+              Now Building
+            </Link>
+            <Link to="/leetcode" className="text-secondary_text hover:text-primary transition-colors">
+              LeetCode Tracker
+            </Link>
+            <Link to="/resume" className="text-secondary_text hover:text-primary transition-colors">
+              Curriculum Vitae / Resume
+            </Link>
+            <Link to="/ai" className="text-secondary_text hover:text-primary transition-colors">
+              Ask AI Assistant
+            </Link>
+
+            {/* Interactive Toolstack Swatches */}
+            <div className="mt-2 flex flex-col gap-1.5">
+              <span className="text-[10px] font-mono text-secondary_text opacity-85">
+                Toolstack Swatches:
+              </span>
+              <div className="comic-panel">
+                <div className="container-items">
+                  {toolsData.map((tool) => (
+                    <button
+                      key={tool.id}
+                      onClick={() => {
+                        setSelectedToolId(selectedToolId === tool.id ? null : tool.id);
+                      }}
+                      className="item-color"
+                      style={{ "--color": tool.color } as React.CSSProperties}
+                      aria-color={tool.name}
+                      title={tool.name}
+                    />
+                  ))}
+                </div>
               </div>
             </div>
           </div>
 
-          {/* Expanded Tool Showcase Panel with dynamic heights */}
-          <div className="w-full max-w-sm flex justify-center">
-            <AnimatePresence initial={false}>
-              {selectedTool && (
-                <motion.div
-                  initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                  animate={{ opacity: 1, height: "auto", marginTop: 12 }}
-                  exit={{ opacity: 0, height: 0, marginTop: 0 }}
-                  transition={{ duration: 0.25, ease: "easeInOut" }}
-                  className="w-full overflow-hidden"
-                >
-                  <div className="flex items-center gap-4 p-3 bg-layer border border-border rounded-2xl text-left shadow-sm min-h-[80px] h-auto relative">
-                    <button
-                      onClick={() => setSelectedToolId(null)}
-                      className="absolute top-2 right-3 text-secondary_text hover:text-foreground text-[10px] font-bold"
-                      title="Close"
-                    >
-                      ✕
-                    </button>
-                    <div className="shrink-0 flex items-center justify-center p-2 rounded-xl bg-background border border-border/80 shadow-inner">
-                      {selectedTool.icon}
-                    </div>
-                    <div className="flex flex-col min-w-0 pr-4">
-                      <span className="text-xs font-bold text-foreground tracking-wide">
-                        {selectedTool.name}
-                      </span>
-                      <span className="text-[10px] text-secondary_text leading-relaxed mt-0.5 line-clamp-2">
-                        {selectedTool.desc}
-                      </span>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+          {/* COLUMN 4: COLOPHON */}
+          <div className="flex flex-col gap-2 text-xs">
+            <span className="font-mono text-[11px] font-bold uppercase tracking-wider text-foreground opacity-90 mb-1">
+              Colophon
+            </span>
+            <p className="text-secondary_text leading-relaxed">
+              Built with React, Vite, Tailwind CSS, and Framer Motion. Hosted on Vercel.
+            </p>
+            <p className="text-[11px] font-mono text-emerald-600 dark:text-emerald-400 font-semibold flex items-center gap-1 mt-0.5">
+              ⚡ 100/100 Verified Lighthouse Performance
+            </p>
+            <p className="text-[11px] font-mono text-secondary_text/85 leading-relaxed mt-0.5">
+              Design System: IBM Carbon · IBM Plex
+            </p>
+            <span className="text-[11px] text-secondary_text opacity-80 mt-1">
+              © 2026 Hariom Acharya. All rights reserved.
+            </span>
           </div>
         </div>
 
-        {/* Right Side: social media links */}
-        <div className="flex justify-end md:pr-8 md:w-1/4">
-          <SocialMediaGrid />
-        </div>
+        {/* EXPANDED TOOL SHOWCASE PANEL */}
+        <AnimatePresence initial={false}>
+          {selectedTool && (
+            <motion.div
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: "auto" }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.25, ease: "easeInOut" }}
+              className="w-full overflow-hidden border-t border-border pt-4"
+            >
+              <div className="flex items-center gap-4 p-4 bg-layer border border-border rounded-2xl text-left shadow-sm max-w-lg mx-auto relative">
+                <button
+                  onClick={() => setSelectedToolId(null)}
+                  className="absolute top-2.5 right-3 text-secondary_text hover:text-foreground text-xs font-bold"
+                  title="Close"
+                >
+                  ✕
+                </button>
+                <div className="shrink-0 flex items-center justify-center p-2.5 rounded-xl bg-background border border-border/80 shadow-inner">
+                  {selectedTool.icon}
+                </div>
+                <div className="flex flex-col min-w-0 pr-4">
+                  <span className="text-xs font-bold text-foreground tracking-wide">
+                    {selectedTool.name}
+                  </span>
+                  <span className="text-[11px] text-secondary_text leading-relaxed mt-0.5">
+                    {selectedTool.desc}
+                  </span>
+                </div>
+              </div>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
       </div>
     </footer>

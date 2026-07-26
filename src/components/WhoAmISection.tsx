@@ -4,7 +4,7 @@ import PortfolioAI from "@/components/PortfolioAI";
 import Orb from "@/components/ui/Orb";
 import GradientText from "@/components/ui/GradientText";
 
-export default function WhoAmISection({ lightMode }: any) {
+export default function WhoAmISection({ lightMode, showOrb = false }: any) {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
 
@@ -18,16 +18,20 @@ export default function WhoAmISection({ lightMode }: any) {
           transition={{ duration: 0.6 }}
           className="w-full max-w-none mx-auto flex flex-col lg:flex-row gap-12 items-center"
         >
-          {/* Left: Orb */}
+          {/* Left: Orb / Decorative Glow */}
           <div className="flex-1 w-full flex flex-col items-center justify-center relative min-h-[300px] md:min-h-[500px]">
-            {/* The Orb Background */}
-            <div className="absolute inset-0 z-0 scale-125">
-              <Orb
-                hue={lightMode ? 210 : 210}
-                hoverIntensity={0.5}
-                rotateOnHover={false}
-                forceHoverState={false}
-              />
+            {/* Background Graphic */}
+            <div className="absolute inset-0 z-0 flex items-center justify-center scale-125">
+              {showOrb ? (
+                <Orb
+                  hue={lightMode ? 210 : 210}
+                  hoverIntensity={0.5}
+                  rotateOnHover={false}
+                  forceHoverState={false}
+                />
+              ) : (
+                <div className="w-64 h-64 sm:w-80 sm:h-80 rounded-full bg-gradient-to-tr from-blue-500/20 via-primary/30 to-teal-400/20 blur-3xl opacity-60" />
+              )}
             </div>
             {/* The Overlay Text */}
             <div className="absolute inset-0 flex items-center justify-center z-10 pointer-events-none p-6 text-center">
