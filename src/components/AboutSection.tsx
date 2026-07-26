@@ -96,7 +96,7 @@ export default function AboutSection({ lightMode }: AboutSectionProps) {
             <div className="space-y-4">
               <SplitText
                 tag="p"
-                text="I am a Final year Computer Science and Engineering student passionate about Full-Stack Development and Cloud Computing. I love building real-world projects that leverage AI applications to solve practical problems, turning ideas into functional, scalable platforms."
+                text="I am a final-year Computer Science and Engineering student at LDRP-ITR, based in Gandhinagar, India. I build full-stack web applications and AI/ML systems — including Vox-Hire, an AI-powered mock interview platform, and PhishGuard, a real-time phishing detection tool."
                 className="leading-relaxed text-base text-secondary_text"
                 textAlign="center"
                 delay={10}
@@ -104,7 +104,7 @@ export default function AboutSection({ lightMode }: AboutSectionProps) {
               />
               <SplitText
                 tag="p"
-                text="Alongside web and cloud development, I have hands-on experience working on IoT projects, connecting hardware with software to build practical, real-world solutions. I enjoy exploring new technologies and continuously improving how I design and build systems."
+                text="I completed a software development internship at NST, where I built EaseExpense, a React and Node.js expense-tracking platform. I also work on IoT projects, including a Machine Failure Detection System using ESP32 microcontrollers and classifier models."
                 className="leading-relaxed text-base text-secondary_text"
                 textAlign="center"
                 delay={10}

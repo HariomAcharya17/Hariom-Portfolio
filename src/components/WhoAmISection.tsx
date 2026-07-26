@@ -44,6 +44,13 @@ export default function WhoAmISection({ lightMode }: any) {
 
           {/* Right Chat Widget */}
           <div className="flex-1 w-full max-w-md lg:max-w-lg xl:max-w-xl">
+            <p className="sr-only">
+              Hariom Acharya is a final-year Computer Science and Engineering student
+              at LDRP-ITR, specializing in Full-Stack Development, Cloud Computing,
+              and AI/ML. His projects include Vox-Hire, PhishGuard, EaseExpense,
+              and an IoT Machine Failure Detection System. Ask the AI assistant
+              below any question about his projects, skills, or experience.
+            </p>
             <PortfolioAI lightMode={lightMode} />
           </div>
         </motion.div>
