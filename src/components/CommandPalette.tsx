@@ -84,9 +84,9 @@ export default function CommandPalette({ open: externalOpen, onOpenChange }: Com
             <Clock size={16} className="text-primary" />
             <span>Now Building</span>
           </CommandItem>
-          <CommandItem onSelect={() => handleSelect("/leetcode")} className="cursor-pointer gap-2.5">
+          <CommandItem onSelect={() => handleSelect("/activity")} className="cursor-pointer gap-2.5">
             <Code2 size={16} className="text-primary" />
-            <span>LeetCode Tracker</span>
+            <span>GitHub Activity</span>
           </CommandItem>
           <CommandItem onSelect={() => handleSelect("/resume")} className="cursor-pointer gap-2.5">
             <FileText size={16} className="text-primary" />
