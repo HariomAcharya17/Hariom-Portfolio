@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import NowBuilding from "@/components/NowBuilding";
-import GitHubActivity from "@/components/GitHubActivity";
 
 export default function NowPage() {
   useEffect(() => {
@@ -17,7 +16,6 @@ export default function NowPage() {
   return (
     <div className="pt-16 lg:pt-20 pb-12">
       <NowBuilding />
-      <GitHubActivity />
     </div>
   );
 }

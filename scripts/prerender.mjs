@@ -34,7 +34,6 @@ const ROUTES = [
     '/experience',
     '/skills',
     '/now',
-    '/activity',
     '/resume',
     '/contact',
     '/ai'

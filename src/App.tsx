@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -21,7 +21,6 @@ import NowPage from "./pages/NowPage.tsx";
 import ResumePage from "./pages/ResumePage.tsx";
 import ContactPage from "./pages/ContactPage.tsx";
 import AIPage from "./pages/AIPage.tsx";
-import GitHubActivityPage from "./pages/GitHubActivityPage.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
 const queryClient = new QueryClient();
@@ -56,8 +55,6 @@ const App = () => {
                 <Route path="/experience" element={<ExperiencePage />} />
                 <Route path="/skills" element={<SkillsPage />} />
                 <Route path="/now" element={<NowPage />} />
-                <Route path="/activity" element={<GitHubActivityPage />} />
-                <Route path="/leetcode" element={<Navigate to="/activity" replace />} />
                 <Route path="/resume" element={<ResumePage />} />
                 <Route path="/contact" element={<ContactPage />} />
                 <Route path="/ai" element={<AIPage />} />
