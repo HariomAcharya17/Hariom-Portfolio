@@ -11,27 +11,20 @@ export default async function handler(
   req: VercelRequest,
   res: VercelResponse
 ) {
-  // ------------------------------------------------------------------
-  // 1. Method restriction — this endpoint only ever needs to be read
-  // ------------------------------------------------------------------
-  if (req.method !== "GET") {
-    res.setHeader("Allow", "GET");
+  // Method restriction — this endpoint only ever needs to be read
+  if (req.method !== "GET" && req.method !== "HEAD") {
+    res.setHeader("Allow", "GET, HEAD");
     return res.status(405).json({ error: "Method not allowed" });
   }
 
-  // ------------------------------------------------------------------
-  // 2. Caching — 5 minutes fresh, serve stale for up to 1 hour while
-  //    revalidating in the background. Keeps data reasonably current
-  //    without risking GitHub's API rate limit under real traffic.
-  // ------------------------------------------------------------------
+  // Caching — 5 minutes fresh, serve stale for up to 1 hour while revalidating
   res.setHeader(
     "Cache-Control",
     "s-maxage=300, stale-while-revalidate=3600"
   );
   res.setHeader("Content-Type", "application/json");
 
-  // Defensive headers — this endpoint returns read-only public data,
-  // but these cost nothing and reduce attack surface generally.
+  // Defensive headers
   res.setHeader("X-Content-Type-Options", "nosniff");
   res.setHeader("Referrer-Policy", "no-referrer");
 
@@ -58,10 +51,6 @@ export default async function handler(
     repositories: [] as unknown[],
   };
 
-  // ------------------------------------------------------------------
-  // 3. Fail safely and clearly if the token isn't configured.
-  //    Never echo the token value itself anywhere in the response.
-  // ------------------------------------------------------------------
   if (!token) {
     return res.status(200).json({
       ...EMPTY_PAYLOAD,
@@ -69,16 +58,13 @@ export default async function handler(
     });
   }
 
-  // ------------------------------------------------------------------
-  // 4. Validate and sanitize query params before using them.
-  //    Reject anything malformed instead of passing it through.
-  // ------------------------------------------------------------------
+  // Validate and sanitize query params
   const { from, to } = req.query;
 
   let fromStr: string | undefined;
   let toStr: string | undefined;
 
-  if (from !== undefined) {
+  if (from !== undefined && from !== "") {
     if (!isValidDateStr(from)) {
       return res
         .status(400)
@@ -87,7 +73,7 @@ export default async function handler(
     fromStr = from;
   }
 
-  if (to !== undefined) {
+  if (to !== undefined && to !== "") {
     if (!isValidDateStr(to)) {
       return res
         .status(400)
@@ -96,9 +82,6 @@ export default async function handler(
     toStr = to;
   }
 
-  // Guard against an unreasonably large range being requested
-  // (defensive limit — GitHub's own API also caps this, but fail
-  // fast and cheaply before spending a GraphQL call on it).
   if (fromStr && toStr) {
     const days =
       (new Date(toStr).getTime() - new Date(fromStr).getTime()) /
@@ -111,6 +94,7 @@ export default async function handler(
     }
   }
 
+  // Exact GitHub GraphQL Query (using ownerAffiliations: [OWNER] as an array enum)
   const query = `
     query($username: String!, $from: DateTime, $to: DateTime) {
       user(login: $username) {
@@ -142,7 +126,7 @@ export default async function handler(
         repositories(
           first: 6
           orderBy: { field: PUSHED_AT, direction: DESC }
-          ownerAffiliations: OWNER
+          ownerAffiliations: [OWNER]
           privacy: PUBLIC
         ) {
           nodes {
@@ -161,13 +145,8 @@ export default async function handler(
     }
   `;
 
-  // ------------------------------------------------------------------
-  // 5. Timeout guard — don't let a hung GitHub API call hang this
-  //    function indefinitely (Vercel has its own limits too, but fail
-  //    faster and more predictably on our side).
-  // ------------------------------------------------------------------
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 10_000); // 10s
+  const timeout = setTimeout(() => controller.abort(), 10_000); // 10s timeout
 
   try {
     const response = await fetch("https://api.github.com/graphql", {
@@ -191,9 +170,8 @@ export default async function handler(
     clearTimeout(timeout);
 
     if (!response.ok) {
-      // Don't leak raw upstream error bodies to the client — log
-      // server-side only, return a generic message externally.
-      console.error("GitHub API HTTP error:", response.status, await response.text());
+      const errBody = await response.text();
+      console.error("GitHub API HTTP error:", response.status, errBody);
       return res.status(200).json({
         ...EMPTY_PAYLOAD,
         error: `GitHub API returned an error (status ${response.status})`,
@@ -203,10 +181,10 @@ export default async function handler(
     const result = await response.json();
 
     if (result.errors && result.errors.length > 0) {
-      console.error("GitHub GraphQL error:", result.errors);
+      console.error("GitHub GraphQL error details:", JSON.stringify(result.errors));
       return res.status(200).json({
         ...EMPTY_PAYLOAD,
-        error: "GitHub GraphQL query error",
+        error: result.errors[0]?.message || "GitHub GraphQL query error",
       });
     }
 
@@ -272,13 +250,10 @@ export default async function handler(
       });
     }
 
-    // Log the real error server-side for debugging, but never expose
-    // internal error details (which could include stack traces or
-    // other implementation info) to the client.
     console.error("Unexpected error querying GitHub GraphQL API:", err);
     return res.status(200).json({
       ...EMPTY_PAYLOAD,
-      error: "Failed to query GitHub API",
+      error: err.message || "Failed to query GitHub API",
     });
   }
 }
