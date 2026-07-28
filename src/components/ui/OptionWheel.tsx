@@ -2,16 +2,16 @@ import { useRef, useState, useCallback, useEffect } from 'react';
 import './OptionWheel.css';
 
 const DEFAULT_ITEMS = [
-  'Full-Stack Developer',
-  'AI/ML Engineer',
-  'IoT & Hardware Enthusiast',
-  'Cloud Engineer',
-  'Problem Solver',
-  'Building Real-World Solutions',
-  'AI-Integrated Systems Builder'
+  'Turning Ideas Into Code',
+  'Bridging Hardware & Software',
+  'Building Scalable Systems',
+  'Engineering Intelligent Applications',
+  'From Prototype to Production',
+  'Cloud-Native Thinker',
+  'Systems That Think & Scale'
 ];
 
-interface OptionWheelProps {
+export interface OptionWheelProps {
   items?: string[];
   defaultSelected?: number;
   onChange?: (index: number, item: string) => void;
@@ -41,7 +41,7 @@ const OptionWheel = ({
   textColor = '#a6a6a6',
   activeColor = '#ffffff',
   side = 'right',
-  fontSize = 1.8,
+  fontSize = 2,
   spacing = 1.4,
   curve = 1,
   tilt = 6,
@@ -56,7 +56,7 @@ const OptionWheel = ({
   soundVolume = 0.5,
   className = ''
 }: OptionWheelProps) => {
-  const rootRef = useRef<HTMLDivElement>(null);
+  const rootRef = useRef<HTMLDivElement | null>(null);
   const itemRefs = useRef<(HTMLDivElement | null)[]>([]);
   const posRef = useRef(defaultSelected);
   const targetRef = useRef(defaultSelected);
@@ -65,8 +65,8 @@ const OptionWheel = ({
   const cfgRef = useRef<any>({});
   const onChangeRef = useRef(onChange);
   const selectedRef = useRef(defaultSelected);
-  const wheelTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const dragRef = useRef<{ y: number; start: number; id: number } | null>(null);
+  const wheelTimerRef = useRef<any>(null);
+  const dragRef = useRef<any>(null);
   const dragMovedRef = useRef(false);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const audioUrlRef = useRef('');
@@ -94,6 +94,9 @@ const OptionWheel = ({
     soundVolume
   };
 
+  // Single rAF loop that eases the wheel position toward its target with
+  // frame-rate independent exponential smoothing, then lays every option out
+  // along the curve based on its distance from the current position.
   const runFrame = useCallback((now: number) => {
     const dt = Math.min((now - lastRef.current) / 1000, 0.05);
     lastRef.current = now;
@@ -111,6 +114,8 @@ const OptionWheel = ({
     const els = itemRefs.current;
     const n = cfg.count;
     const mirror = cfg.side === 'right' ? -1 : 1;
+    // Options sit on a circle whose radius keeps the arc length between two
+    // neighbors equal to one row height, so tilt controls how tightly it curls.
     const tiltRad = (cfg.tilt * Math.PI) / 180;
     const R = tiltRad > 0.0005 ? cfg.rowH / tiltRad : 0;
     for (let i = 0; i < n; i++) {
@@ -146,6 +151,8 @@ const OptionWheel = ({
     rafRef.current = requestAnimationFrame(runFrame);
   }, [runFrame]);
 
+  // Optional tick on selection change, throttled so fast scrolling can't spam
+  // it, and with playback failures (e.g. autoplay policies) silently ignored.
   const playTick = useCallback(() => {
     const { soundUrl, soundVolume } = cfgRef.current;
     if (!soundUrl) return;
@@ -182,6 +189,7 @@ const OptionWheel = ({
     [startLoop, playTick]
   );
 
+  // Wheel / touchpad scrolling, registered manually so it can be non-passive.
   useEffect(() => {
     const el = rootRef.current;
     if (!el) return;
@@ -189,6 +197,8 @@ const OptionWheel = ({
       e.preventDefault();
       const cfg = cfgRef.current;
       const delta = e.deltaMode === 1 ? e.deltaY * 24 : e.deltaY;
+      // Cap each event at one step so notchy mouse wheels move exactly one
+      // option per click, while touchpads still scroll continuously.
       const step = Math.max(-1, Math.min(1, delta / cfg.rowH));
       applyTarget(targetRef.current + step, false);
       if (wheelTimerRef.current) clearTimeout(wheelTimerRef.current);
@@ -199,6 +209,16 @@ const OptionWheel = ({
       el.removeEventListener('wheel', onWheel);
       if (wheelTimerRef.current) clearTimeout(wheelTimerRef.current);
     };
+  }, [applyTarget]);
+
+  // Gentle auto-advance timer when idle
+  useEffect(() => {
+    const timer = setInterval(() => {
+      if (!dragRef.current) {
+        applyTarget(targetRef.current + 1, true);
+      }
+    }, 3200);
+    return () => clearInterval(timer);
   }, [applyTarget]);
 
   const handlePointerDown = useCallback((e: React.PointerEvent) => {
@@ -215,7 +235,13 @@ const OptionWheel = ({
       const dy = e.clientY - drag.y;
       if (!dragMovedRef.current && Math.abs(dy) > 4) {
         dragMovedRef.current = true;
-        rootRef.current?.setPointerCapture(drag.id);
+        // Capture only once a real drag starts, so plain clicks still reach
+        // the items and navigate to them.
+        try {
+          rootRef.current?.setPointerCapture(drag.id);
+        } catch {
+          // Ignore
+        }
       }
       if (dragMovedRef.current) applyTarget(drag.start - dy / cfgRef.current.rowH, false);
     },
@@ -287,20 +313,23 @@ const OptionWheel = ({
       onPointerCancel={handlePointerEnd}
       onKeyDown={handleKeyDown}
     >
-      {items.map((label, index) => (
-        <div
-          key={`${label}-${index}`}
-          ref={el => {
-            itemRefs.current[index] = el;
-          }}
-          role="option"
-          aria-selected={selectedIndex === index}
-          className={`option-wheel__item${selectedIndex === index ? ' option-wheel__item--selected' : ''}`}
-          onClick={() => handleItemClick(index)}
-        >
-          {label}
-        </div>
-      ))}
+      {items.map((label, index) => {
+        const gradClass = `ow-grad-${index % 7}`;
+        return (
+          <div
+            key={`${label}-${index}`}
+            ref={el => {
+              itemRefs.current[index] = el;
+            }}
+            role="option"
+            aria-selected={selectedIndex === index}
+            className={`option-wheel__item ${gradClass}${selectedIndex === index ? ' option-wheel__item--selected' : ''}`}
+            onClick={() => handleItemClick(index)}
+          >
+            {label}
+          </div>
+        );
+      })}
     </div>
   );
 };

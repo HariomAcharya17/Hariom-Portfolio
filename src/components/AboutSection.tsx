@@ -9,7 +9,8 @@ import {
   UserCheck,
   Hammer,
   Target,
-  ArrowRight
+  ArrowRight,
+  Cloud
 } from "lucide-react";
 import developerPhoto from "@/assets/developer-photo.jpg";
 
@@ -34,7 +35,7 @@ export default function AboutSection({ lightMode }: { lightMode?: boolean }) {
             {/* INTRO TEXT (8 COLS ON DESKTOP) */}
             <div className="md:col-span-8 space-y-4">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 text-xs font-mono font-bold uppercase tracking-wider">
-                <Sparkles size={14} /> Full-Stack & AI/ML Engineer
+                <Cloud size={14} /> Full-Stack & Cloud Focus
               </div>
 
               <h1 className="text-3xl md:text-5xl font-bold text-foreground tracking-tight leading-tight">
@@ -42,7 +43,11 @@ export default function AboutSection({ lightMode }: { lightMode?: boolean }) {
               </h1>
 
               <p className="text-base md:text-lg text-secondary_text leading-relaxed">
-                I build full-stack applications and AI-integrated systems. I'm currently a final-year B.Tech Computer Engineering student at <strong className="text-foreground">LDRP Institute of Technology and Research</strong> in Gandhinagar, Gujarat, with a CGPA of 8.64 (SPI 9.29). Alongside my coursework, I completed a software development internship at <strong className="text-foreground">NST Private Limited</strong>, where I built EaseExpense, a full-stack expense-tracking platform using React, Node.js, and Supabase.
+                I build full-stack web applications and AI-integrated systems, with a growing focus on cloud engineering. I'm a final-year B.Tech Computer Engineering student at <strong className="text-foreground">LDRP Institute of Technology and Research</strong> in Gandhinagar, Gujarat.
+              </p>
+
+              <p className="text-base text-secondary_text leading-relaxed">
+                As a Software Development Intern at <strong className="text-foreground">NST Private Limited</strong>, I designed and built EaseExpense, a full-stack expense-management platform — architecting the React frontend, developing the Node.js/Express backend, and integrating Supabase for authentication and data persistence. The experience sharpened my ability to take a product from concept to a working, deployed system.
               </p>
             </div>
 
@@ -92,7 +97,7 @@ export default function AboutSection({ lightMode }: { lightMode?: boolean }) {
 
               <div className="flex items-center gap-1.5">
                 <CheckCircle2 size={15} className="text-emerald-500 shrink-0" />
-                <span><strong className="text-foreground">Status:</strong> Final-Year Student (Open for Engineering Roles)</span>
+                <span><strong className="text-foreground">Status:</strong> Open for SDE & Cloud Engineering Roles</span>
               </div>
             </div>
           </motion.div>
@@ -105,15 +110,15 @@ export default function AboutSection({ lightMode }: { lightMode?: boolean }) {
             className="space-y-6 text-secondary_text leading-relaxed text-sm md:text-base border-t border-border/50 pt-10"
           >
             <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
-              <UserCheck size={22} className="text-primary" /> Personal Bio & Engineering Focus
+              <UserCheck size={22} className="text-primary" /> Projects & Hardware Focus
             </h2>
 
             <p>
-              My focus sits at the intersection of clean frontend engineering, robust backend systems, and practical machine learning — I'm not interested in AI as a checkbox; I look for places where it genuinely makes a project more capable. That same instinct pulls me toward hardware and IoT, where I've built systems like an ESP32-based Machine Failure Detection pipeline that streams live telemetry into classifier models to estimate remaining useful life.
+              My journey extends across building intelligent platforms like <strong className="text-foreground">Vox-Hire</strong> (an AI-powered mock interview system) and <strong className="text-foreground">PhishGuard</strong> (a real-time phishing detection system combining threat feeds with custom classifiers). These hands-on projects taught me more about shipping software than any single course did.
             </p>
 
             <p>
-              My journey here hasn't been purely academic. I've built <strong className="text-foreground">Vox-Hire</strong>, an AI-powered mock interview platform integrating multiple LLM APIs, and <strong className="text-foreground">PhishGuard</strong>, a real-time phishing detection system combining threat feeds with custom classifiers — the kind of projects that taught me more about shipping software than any single course did. I approach all of this with a structured, SDLC-driven mindset — understanding the problem thoroughly, planning before building, and testing rigorously rather than shipping and hoping.
+              I am also drawn to hardware and IoT, having built an <strong className="text-foreground">ESP32-based Machine Failure Detection pipeline</strong> that streams live telemetry into ML classifier models to estimate remaining useful life. I approach all of my work with a structured, SDLC-driven mindset — understanding the problem thoroughly, planning before building, and testing rigorously rather than shipping and hoping.
             </p>
           </motion.div>
 
@@ -125,11 +130,11 @@ export default function AboutSection({ lightMode }: { lightMode?: boolean }) {
             className="space-y-4 border-t border-border/50 pt-10"
           >
             <h2 className="text-2xl font-bold text-foreground flex items-center gap-2">
-              <Hammer size={20} className="text-primary" /> Currently Building
+              <Hammer size={20} className="text-primary" /> Currently Building & Learning
             </h2>
 
             <p className="text-secondary_text leading-relaxed text-sm md:text-base p-4 rounded-2xl bg-layer/40 border border-border">
-              Wrapping up my final year while continuing to sharpen my full-stack and AI/ML skills through hands-on projects — most recently focused on tighter AI integration across my existing work and deepening my grasp of cloud infrastructure.
+              Wrapping up my final year while continuing to sharpen my full-stack skills and actively learning cloud infrastructure — currently focused on AWS, containerization with Docker, serverless patterns, and tighter AI integration across my projects.
             </p>
           </motion.div>
 
@@ -147,7 +152,7 @@ export default function AboutSection({ lightMode }: { lightMode?: boolean }) {
             <ul className="space-y-3 text-secondary_text text-sm md:text-base">
               <li className="flex items-start gap-3 p-3.5 rounded-2xl bg-layer/40 border border-border">
                 <ArrowRight size={18} className="text-primary shrink-0 mt-0.5" />
-                <span>A full-time <strong className="text-foreground">Software Engineer / Full-Stack Developer</strong> role as I graduate.</span>
+                <span>A full-time <strong className="text-foreground">SDE / Software Engineer / Cloud Engineer</strong> role as I graduate.</span>
               </li>
               <li className="flex items-start gap-3 p-3.5 rounded-2xl bg-layer/40 border border-border">
                 <ArrowRight size={18} className="text-primary shrink-0 mt-0.5" />
@@ -155,7 +160,7 @@ export default function AboutSection({ lightMode }: { lightMode?: boolean }) {
               </li>
               <li className="flex items-start gap-3 p-3.5 rounded-2xl bg-layer/40 border border-border">
                 <ArrowRight size={18} className="text-primary shrink-0 mt-0.5" />
-                <span>Room to keep working across the <strong className="text-foreground">full stack — frontend, backend, and wherever it fits, AI/ML and IoT.</strong></span>
+                <span>Room to work across the <strong className="text-foreground">full stack — frontend, backend, and wherever it fits, AI/ML, IoT, and Cloud</strong>.</span>
               </li>
             </ul>
           </motion.div>

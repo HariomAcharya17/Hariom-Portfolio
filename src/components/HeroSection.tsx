@@ -5,16 +5,16 @@ import OptionWheel from "@/components/ui/OptionWheel";
 import DownloadCVButton from "@/components/ui/DownloadCVButton";
 import HeroProjectButton from "@/components/ui/HeroProjectButton";
 
-const roles = ["Full Stack Developer", "AI/ML Enthusiast", "Cloud Engineer"];
+const roles = ["Software Development Intern", "Full-Stack Web Developer", "Aspiring Cloud Engineer"];
 
 const HERO_WHEEL_ITEMS = [
-  "Full-Stack Developer",
-  "AI/ML Engineer",
-  "IoT & Hardware Enthusiast",
-  "Cloud Engineer",
-  "Problem Solver",
-  "Building Real-World Solutions",
-  "AI-Integrated Systems Builder"
+  "Turning Ideas Into Code",
+  "Bridging Hardware & Software",
+  "Building Scalable Systems",
+  "Engineering Intelligent Applications",
+  "From Prototype to Production",
+  "Cloud-Native Thinker",
+  "Systems That Think & Scale"
 ];
 
 export default function HeroSection({ lightMode }: any) {
@@ -91,23 +91,7 @@ return (
           </div>
 
           <p className="max-w-2xl text-sm sm:text-base mb-8 leading-relaxed text-left text-secondary_text">
-
-            I'm a <span className="text-blue-500 font-semibold">
-              Full Stack & AI/ML Engineer
-            </span> passionate about building intelligent, scalable systems that solve real-world problems.
-
-            <br /><br />
-
-            I work with <span className="text-blue-500 font-semibold">
-              AI/ML, IoT, and the MERN stack
-            </span> focusing on scalable solutions.
-
-            <br /><br />
-
-            My interests include <span className="text-blue-500 font-semibold">
-              web development, cloud computing, and intelligent systems
-            </span> solving real-world problems.
-
+            Final-year B.Tech Computer Engineering student at <span className="text-blue-500 font-semibold">LDRP-ITR</span>, building full-stack web applications and AI-integrated systems — with a growing focus on cloud infrastructure.
           </p>
 
           <div className="flex flex-wrap items-center justify-start gap-4">
@@ -125,20 +109,20 @@ return (
         </motion.div>
       </div>
 
-      {/* INTERACTIVE OPTION WHEEL (TRANSPARENT CONTAINER NO BACKGROUND) */}
+      {/* INTERACTIVE OPTION WHEEL (OFFICIAL TRIGONOMETRIC RADIAL PHYSICS) */}
       <div className="relative w-full max-w-full sm:max-w-[520px] h-[340px] sm:h-[420px] lg:h-[550px] z-20 flex items-center justify-center pointer-events-auto touch-pan-y overflow-hidden bg-transparent">
         <OptionWheel
           items={HERO_WHEEL_ITEMS}
           side="right"
-          fontSize={1.6}
-          spacing={1.5}
+          fontSize={1.8}
+          spacing={1.4}
           curve={1.2}
-          tilt={7}
+          tilt={6}
           inset={20}
           defaultSelected={0}
           loop={true}
-          activeColor={lightMode ? "#0f62fe" : "#60a5fa"}
-          textColor={lightMode ? "#94a3b8" : "#64748b"}
+          activeColor={lightMode ? "#0f62fe" : "#ffffff"}
+          textColor={lightMode ? "#94a3b8" : "#8d8d8d"}
         />
       </div>
 
@@ -147,7 +131,7 @@ return (
 
   {/* Scroll Indicator */}
   <motion.div
-    className="absolute left-1/2 -bottom-6 -translate-x-1/2 hidden md:block"
+    className="absolute left-1/2 -bottom-6 -translate-x-1/2 hidden md:block pointer-events-none"
     animate={{ y: [0, 12, 0] }}
     transition={{ duration: 2, repeat: Infinity }}
   >

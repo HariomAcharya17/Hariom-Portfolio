@@ -1,7 +1,6 @@
-/* From Uiverse / Custom OptionWheel Styling */
 .option-wheel {
   --ow-text-color: #a6a6a6;
-  --ow-active-color: #0f62fe;
+  --ow-active-color: #ffffff;
   --ow-font-size: 2.2rem;
   --ow-inset: 30px;
 
@@ -11,13 +10,29 @@
   overflow: hidden;
   cursor: grab;
   user-select: none;
-  touch-action: none;
+  touch-action: pan-y;
   outline: none;
+}
+
+/* Mobile Screen Responsiveness (< 640px) */
+@media (max-width: 640px) {
+  .option-wheel {
+    --ow-font-size: 1.15rem !important;
+    --ow-inset: 8px !important;
+  }
+}
+
+/* Small Smartphone Screen Responsiveness (< 420px) */
+@media (max-width: 420px) {
+  .option-wheel {
+    --ow-font-size: 1.0rem !important;
+    --ow-inset: 4px !important;
+  }
 }
 
 .dark .option-wheel {
   --ow-text-color: #8d8d8d;
-  --ow-active-color: #60a5fa;
+  --ow-active-color: #ffffff;
 }
 
 .option-wheel--dragging {
@@ -32,14 +47,16 @@
   left: var(--ow-inset);
   white-space: nowrap;
   font-size: var(--ow-font-size);
-  line-height: 1.1;
-  font-weight: 300;
+  line-height: 1;
+  font-weight: 200;
   transform-origin: left center;
   cursor: pointer;
+  max-width: 88vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
   will-change: transform, opacity, filter;
   /* --ow-p goes 0 -> 1 as an option approaches the middle of the wheel */
   color: color-mix(in srgb, var(--ow-active-color) calc(var(--ow-p, 0) * 100%), var(--ow-text-color));
-  transition: font-weight 0.2s ease;
 }
 
 .option-wheel--right .option-wheel__item {
@@ -48,11 +65,56 @@
   transform-origin: right center;
 }
 
-.option-wheel__item--selected {
-  font-weight: 700;
-  filter: drop-shadow(0 2px 8px rgba(15, 98, 254, 0.3));
+/* 7 DISTINCT GRADIENT COLORS FOR SELECTED ITEMS */
+.option-wheel__item--selected.ow-grad-0 {
+  background: linear-gradient(135deg, #38bdf8 0%, #3b82f6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 10px rgba(56, 189, 248, 0.4));
 }
 
-.dark .option-wheel__item--selected {
-  filter: drop-shadow(0 0 12px rgba(96, 165, 250, 0.45));
+.option-wheel__item--selected.ow-grad-1 {
+  background: linear-gradient(135deg, #34d399 0%, #14b8a6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 10px rgba(52, 211, 153, 0.4));
+}
+
+.option-wheel__item--selected.ow-grad-2 {
+  background: linear-gradient(135deg, #c084fc 0%, #6366f1 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 10px rgba(192, 132, 252, 0.4));
+}
+
+.option-wheel__item--selected.ow-grad-3 {
+  background: linear-gradient(135deg, #fb923c 0%, #ec4899 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 10px rgba(251, 146, 60, 0.4));
+}
+
+.option-wheel__item--selected.ow-grad-4 {
+  background: linear-gradient(135deg, #e879f9 0%, #8b5cf6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 10px rgba(232, 121, 249, 0.4));
+}
+
+.option-wheel__item--selected.ow-grad-5 {
+  background: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 10px rgba(14, 165, 233, 0.4));
+}
+
+.option-wheel__item--selected.ow-grad-6 {
+  background: linear-gradient(135deg, #fbbf24 0%, #f43f5e 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  filter: drop-shadow(0 2px 10px rgba(251, 191, 36, 0.4));
+}
+
+.option-wheel__item--selected {
+  font-weight: 600;
 }

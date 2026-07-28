@@ -16,9 +16,13 @@ import {
   X,
   Grid,
   BarChart2,
-  Clock,
-  Tag,
-  FileText
+  Plus,
+  Briefcase,
+  Layers,
+  FileText,
+  Bookmark,
+  Sparkles,
+  ListFilter
 } from "lucide-react";
 import { supabase } from "@/lib/supabase";
 import TechBadge from "@/components/ui/TechBadge";
@@ -79,24 +83,30 @@ const FULL_MONTH_NAMES = [
   "July", "August", "September", "October", "November", "December"
 ];
 
-const WEEKDAY_NAMES = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+const WEEKDAY_NAMES = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
 export default function LeetCodePage() {
   const [problems, setProblems] = useState<LeetCodeProblem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(false);
 
-  // View Mode: 'grid' (Month Grid Calendar like reference image) or 'heatmap' (GitHub Heatmap)
-  const [viewMode, setViewMode] = useState<"grid" | "heatmap">("grid");
+  // View Mode: 'month' (Full Month Grid), 'agenda' (Mobile/Comfort Agenda), 'heatmap' (GitHub Heatmap)
+  const [viewMode, setViewMode] = useState<"month" | "agenda" | "heatmap">("month");
 
-  // Selected Month Grid Date (defaults to current date e.g. July 2026)
+  // Selected Month Grid Date
   const [gridDate, setGridDate] = useState<Date>(new Date());
+  
+  // Selected Day for Mobile / Agenda view (defaults to today's date YYYY-MM-DD)
+  const [selectedDateStr, setSelectedDateStr] = useState<string>(() => {
+    const t = new Date();
+    return `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, "0")}-${String(t.getDate()).padStart(2, "0")}`;
+  });
 
   // Problem Modal state
   const [selectedProblem, setSelectedProblem] = useState<LeetCodeProblem | null>(null);
   const [selectedDayProblems, setSelectedDayProblems] = useState<{ date: string; items: LeetCodeProblem[] } | null>(null);
 
-  // Filter States for Table
+  // Filter States for Table & Calendar
   const [searchQuery, setSearchQuery] = useState("");
   const [difficultyFilter, setDifficultyFilter] = useState<string>("All");
   const [languageFilter, setLanguageFilter] = useState<string>("All");
@@ -152,12 +162,15 @@ export default function LeetCodePage() {
     return map;
   }, [problems]);
 
-  // Generate Month Grid Days array for selected gridDate
+  // Generate Month Grid Days array for selected gridDate (Mon-Sun starting like screenshot)
   const gridCells = useMemo(() => {
     const year = gridDate.getFullYear();
     const month = gridDate.getMonth();
 
-    const firstDayIndex = new Date(year, month, 1).getDay();
+    // First day of month (convert Sunday=0 to Monday=0 indexing)
+    const rawFirstDay = new Date(year, month, 1).getDay();
+    const firstDayIndex = (rawFirstDay + 6) % 7; 
+
     const totalDaysInMonth = new Date(year, month + 1, 0).getDate();
     const daysInPrevMonth = new Date(year, month, 0).getDate();
 
@@ -170,6 +183,9 @@ export default function LeetCodePage() {
       isCurrentMonth: boolean;
       isToday: boolean;
       problems: LeetCodeProblem[];
+      easyCount: number;
+      mediumCount: number;
+      hardCount: number;
     }[] = [];
 
     // Previous month padding days
@@ -178,39 +194,51 @@ export default function LeetCodePage() {
       const pMonth = month === 0 ? 11 : month - 1;
       const pYear = month === 0 ? year - 1 : year;
       const dateStr = `${pYear}-${String(pMonth + 1).padStart(2, "0")}-${String(pDay).padStart(2, "0")}`;
+      const dayProbs = problemsByDate.get(dateStr) || [];
       cells.push({
         dateStr,
         dayNumber: pDay,
         isCurrentMonth: false,
         isToday: dateStr === todayStr,
-        problems: problemsByDate.get(dateStr) || [],
+        problems: dayProbs,
+        easyCount: dayProbs.filter(p => p.difficulty?.toLowerCase() === 'easy').length,
+        mediumCount: dayProbs.filter(p => p.difficulty?.toLowerCase() === 'medium').length,
+        hardCount: dayProbs.filter(p => p.difficulty?.toLowerCase() === 'hard').length,
       });
     }
 
     // Current month days
     for (let d = 1; d <= totalDaysInMonth; d++) {
       const dateStr = `${year}-${String(month + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
+      const dayProbs = problemsByDate.get(dateStr) || [];
       cells.push({
         dateStr,
         dayNumber: d,
         isCurrentMonth: true,
         isToday: dateStr === todayStr,
-        problems: problemsByDate.get(dateStr) || [],
+        problems: dayProbs,
+        easyCount: dayProbs.filter(p => p.difficulty?.toLowerCase() === 'easy').length,
+        mediumCount: dayProbs.filter(p => p.difficulty?.toLowerCase() === 'medium').length,
+        hardCount: dayProbs.filter(p => p.difficulty?.toLowerCase() === 'hard').length,
       });
     }
 
     // Next month padding days to complete 35 or 42 grid cells
-    const remaining = 35 - cells.length > 0 ? 35 - cells.length : (42 - cells.length > 0 ? 42 - cells.length : 0);
+    const remaining = cells.length > 35 ? 42 - cells.length : 35 - cells.length;
     for (let n = 1; n <= remaining; n++) {
       const nMonth = month === 11 ? 0 : month + 1;
       const nYear = month === 11 ? year + 1 : year;
       const dateStr = `${nYear}-${String(nMonth + 1).padStart(2, "0")}-${String(n).padStart(2, "0")}`;
+      const dayProbs = problemsByDate.get(dateStr) || [];
       cells.push({
         dateStr,
         dayNumber: n,
         isCurrentMonth: false,
         isToday: dateStr === todayStr,
-        problems: problemsByDate.get(dateStr) || [],
+        problems: dayProbs,
+        easyCount: dayProbs.filter(p => p.difficulty?.toLowerCase() === 'easy').length,
+        mediumCount: dayProbs.filter(p => p.difficulty?.toLowerCase() === 'medium').length,
+        hardCount: dayProbs.filter(p => p.difficulty?.toLowerCase() === 'hard').length,
       });
     }
 
@@ -361,280 +389,460 @@ export default function LeetCodePage() {
       });
   }, [problems, difficultyFilter, languageFilter, searchQuery, sortDesc]);
 
-  // Pill badge color mapping matching the user's image UI design
-  const getPillStyle = (difficulty: string) => {
+  // Image-Exact Pill Badge Colors (matching screenshot)
+  const getPillBadgeStyle = (difficulty: string) => {
     const diff = difficulty?.toLowerCase();
     if (diff === "easy") {
-      return "bg-emerald-500/10 text-emerald-700 dark:text-emerald-300 border border-emerald-500/25 hover:bg-emerald-500/20";
+      // Soft Peach/Orange from screenshot (Work Orders)
+      return {
+        container: "bg-[#fff3eb] text-[#c2410c] border border-[#ffedd5] hover:bg-[#ffedd5] dark:bg-[#7c2d12]/30 dark:text-[#ffedd5] dark:border-[#9a3412]/50",
+        badge: "bg-[#f97316] text-white",
+        iconText: "Easy"
+      };
     }
     if (diff === "medium") {
-      return "bg-blue-500/10 text-blue-700 dark:text-blue-300 border border-blue-500/25 hover:bg-blue-500/20";
+      // Soft Lavender/Purple from screenshot (Move-Outs)
+      return {
+        container: "bg-[#f5f3ff] text-[#6b21a8] border border-[#e9d5ff] hover:bg-[#f3e8ff] dark:bg-[#581c87]/30 dark:text-[#f3e8ff] dark:border-[#7e22ce]/50",
+        badge: "bg-[#a855f7] text-white",
+        iconText: "Medium"
+      };
     }
     if (diff === "hard") {
-      return "bg-rose-500/10 text-rose-700 dark:text-rose-300 border border-rose-500/25 hover:bg-rose-500/20";
+      // Soft Mint Green from screenshot (Move-Ins)
+      return {
+        container: "bg-[#f0fdf4] text-[#15803d] border border-[#bbf7d0] hover:bg-[#dcfce7] dark:bg-[#14532d]/30 dark:text-[#dcfce7] dark:border-[#16a34a]/50",
+        badge: "bg-[#22c55e] text-white",
+        iconText: "Hard"
+      };
     }
-    return "bg-purple-500/10 text-purple-700 dark:text-purple-300 border border-purple-500/25 hover:bg-purple-500/20";
+    // Soft Blue from screenshot (Notes)
+    return {
+      container: "bg-[#f0f9ff] text-[#0369a1] border border-[#bae6fd] hover:bg-[#e0f2fe] dark:bg-[#0c4a6e]/30 dark:text-[#e0f2fe] dark:border-[#0284c7]/50",
+      badge: "bg-[#0284c7] text-white",
+      iconText: "Problem"
+    };
   };
+
+  // Mobile selected day's problems
+  const selectedDayItems = useMemo(() => {
+    return problemsByDate.get(selectedDateStr) || [];
+  }, [selectedDateStr, problemsByDate]);
 
   return (
     <div className="pt-20 pb-20 min-h-screen">
-      <div className="container mx-auto px-4 md:px-6 max-w-6xl space-y-10">
+      <div className="container mx-auto px-4 md:px-6 max-w-7xl space-y-8">
         
-        {/* HEADER */}
-        <div className="border-b border-border/50 pb-6">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 text-primary border border-primary/20 text-xs font-mono font-bold uppercase tracking-wider mb-3">
-            <Code size={14} /> Algorithmic Problem Solving
+        {/* TOP DASHBOARD HEADER - MATCHING SCREENSHOT */}
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-border/50 pb-6">
+          <div>
+            <h1 className="text-3xl md:text-5xl font-bold tracking-tight text-foreground">
+              Calendar
+            </h1>
+            <p className="text-xs md:text-sm text-secondary_text font-mono mt-1">
+              LeetCode Problem Solving Dashboard & Daily Activity Matrix
+            </p>
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-3">
-            LeetCode Tracker
-          </h1>
-          <p className="text-secondary_text text-sm md:text-base max-w-2xl">
-            Live database of solved LeetCode problems, interactive monthly calendar UI, difficulty analytics, and topic tags.
-          </p>
+
+          {/* RIGHT: VIEW SELECTOR PILLS & ADD EVENT ACTION */}
+          <div className="flex flex-wrap items-center gap-3 w-full md:w-auto justify-between md:justify-end">
+            
+            {/* View Mode Pills (Day, Week, Month, Heatmap) */}
+            <div className="flex items-center p-1 rounded-xl bg-layer border border-border">
+              <button
+                onClick={() => setViewMode("month")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  viewMode === "month"
+                    ? "bg-foreground text-background shadow-sm"
+                    : "text-secondary_text hover:text-foreground"
+                }`}
+              >
+                Month
+              </button>
+              <button
+                onClick={() => setViewMode("agenda")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  viewMode === "agenda"
+                    ? "bg-foreground text-background shadow-sm"
+                    : "text-secondary_text hover:text-foreground"
+                }`}
+              >
+                Comfort View
+              </button>
+              <button
+                onClick={() => setViewMode("heatmap")}
+                className={`px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                  viewMode === "heatmap"
+                    ? "bg-foreground text-background shadow-sm"
+                    : "text-secondary_text hover:text-foreground"
+                }`}
+              >
+                Heatmap
+              </button>
+            </div>
+          </div>
         </div>
 
-        {/* 1. CALENDAR CONTAINER WITH VIEW TOGGLE */}
-        <div className="p-4 md:p-8 rounded-3xl border border-border bg-layer/40 shadow-sm space-y-6">
+        {/* MAIN DASHBOARD LAYOUT WITH FILTERS SIDEBAR + CALENDAR GRID */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
           
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 border-b border-border/50 pb-4 select-none">
-            {/* Left: Summary Line & Streak */}
-            <div className="flex items-center gap-3">
-              <div className="p-2.5 rounded-2xl bg-amber-500/10 text-amber-500">
-                <Flame size={22} />
+          {/* LEFT SIDEBAR: CATEGORY FILTERS & MINI SUMMARY (3 COLS) */}
+          <div className="lg:col-span-3 space-y-6 carbon-card p-5 rounded-3xl border border-border bg-layer/30">
+            <div className="flex items-center justify-between border-b border-border/50 pb-3">
+              <h3 className="text-xs font-mono font-bold uppercase tracking-wider text-secondary_text flex items-center gap-1.5">
+                <ListFilter size={14} /> Difficulty Categories
+              </h3>
+            </div>
+
+            {/* Filter Items matching screenshot checkboxes */}
+            <div className="space-y-3 text-xs font-medium">
+              <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#fff3eb] dark:bg-[#7c2d12]/20 border border-[#ffedd5] dark:border-[#9a3412]/40 text-[#c2410c] dark:text-[#ffedd5]">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-sm bg-[#f97316]" />
+                  <span className="font-semibold">Easy Problems</span>
+                </div>
+                <span className="px-2 py-0.5 rounded-md bg-[#f97316] text-white font-bold text-[10px]">
+                  {easyCount}
+                </span>
               </div>
-              <div>
-                <h2 className="font-bold text-base text-foreground">
-                  Solve Activity & Consistency
-                </h2>
-                <p className="text-xs text-secondary_text font-mono">
-                  {problems.length} total problems solved · {streakCount}-day active streak
-                </p>
+
+              <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#f5f3ff] dark:bg-[#581c87]/20 border border-[#e9d5ff] dark:border-[#7e22ce]/40 text-[#6b21a8] dark:text-[#f3e8ff]">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-sm bg-[#a855f7]" />
+                  <span className="font-semibold">Medium Problems</span>
+                </div>
+                <span className="px-2 py-0.5 rounded-md bg-[#a855f7] text-white font-bold text-[10px]">
+                  {mediumCount}
+                </span>
+              </div>
+
+              <div className="flex items-center justify-between p-2.5 rounded-xl bg-[#f0fdf4] dark:bg-[#14532d]/20 border border-[#bbf7d0] dark:border-[#16a34a]/40 text-[#15803d] dark:text-[#dcfce7]">
+                <div className="flex items-center gap-2">
+                  <span className="w-2.5 h-2.5 rounded-sm bg-[#22c55e]" />
+                  <span className="font-semibold">Hard Problems</span>
+                </div>
+                <span className="px-2 py-0.5 rounded-md bg-[#22c55e] text-white font-bold text-[10px]">
+                  {hardCount}
+                </span>
               </div>
             </div>
 
-            {/* Right: View Mode Toggle & Navigation */}
-            <div className="flex flex-wrap items-center gap-3 text-xs w-full lg:w-auto justify-between lg:justify-end">
-              
-              {/* VIEW SWITCHER: MONTH GRID vs HEATMAP */}
-              <div className="flex items-center p-1 rounded-xl bg-input border border-border">
-                <button
-                  onClick={() => setViewMode("grid")}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                    viewMode === "grid"
-                      ? "bg-background text-foreground shadow-sm font-semibold"
-                      : "text-secondary_text hover:text-foreground"
-                  }`}
-                >
-                  <Grid size={13} />
-                  <span>Month Grid</span>
-                </button>
-                <button
-                  onClick={() => setViewMode("heatmap")}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                    viewMode === "heatmap"
-                      ? "bg-background text-foreground shadow-sm font-semibold"
-                      : "text-secondary_text hover:text-foreground"
-                  }`}
-                >
-                  <BarChart2 size={13} />
-                  <span>Heatmap</span>
-                </button>
+            {/* Streak & Solves Stat */}
+            <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 space-y-1">
+              <div className="flex items-center gap-2 font-bold text-xs">
+                <Flame size={16} />
+                <span>{streakCount}-Day Active Streak</span>
               </div>
+              <p className="text-[11px] text-secondary_text leading-relaxed">
+                Consistency is key. {problems.length} total algorithmic challenges solved so far.
+              </p>
+            </div>
+          </div>
 
-              {/* MONTH GRID NAV CONTROLS */}
-              {viewMode === "grid" ? (
-                <div className="flex items-center gap-2">
+          {/* RIGHT CALENDAR BOARD (9 COLS ON DESKTOP) */}
+          <div className="lg:col-span-9 carbon-card p-4 md:p-6 rounded-3xl border border-border bg-background shadow-sm space-y-5 overflow-hidden">
+            
+            {/* MONTH NAV & TITLE BAR */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-border/50 pb-4 select-none">
+              
+              <div className="flex items-center gap-3">
+                <h2 className="text-xl md:text-2xl font-bold tracking-tight text-foreground font-display">
+                  {FULL_MONTH_NAMES[gridDate.getMonth()]} {gridDate.getFullYear()}
+                </h2>
+
+                <div className="flex items-center gap-1">
                   <button
                     onClick={() => setGridDate(new Date(gridDate.getFullYear(), gridDate.getMonth() - 1, 1))}
-                    className="p-1.5 rounded-lg border border-border bg-background hover:bg-layer transition-colors text-foreground"
+                    className="p-1.5 rounded-xl border border-border bg-layer hover:bg-border transition-colors text-foreground"
                     title="Previous Month"
                   >
                     <ChevronLeft size={16} />
                   </button>
-                  <span className="font-bold font-mono text-sm px-2 text-foreground">
-                    {FULL_MONTH_NAMES[gridDate.getMonth()]} {gridDate.getFullYear()}
-                  </span>
                   <button
                     onClick={() => setGridDate(new Date(gridDate.getFullYear(), gridDate.getMonth() + 1, 1))}
-                    className="p-1.5 rounded-lg border border-border bg-background hover:bg-layer transition-colors text-foreground"
+                    className="p-1.5 rounded-xl border border-border bg-layer hover:bg-border transition-colors text-foreground"
                     title="Next Month"
                   >
                     <ChevronRight size={16} />
                   </button>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setGridDate(new Date())}
+                  className="px-3 py-1.5 rounded-xl border border-border bg-layer hover:bg-border transition-colors text-xs font-semibold font-mono text-primary"
+                >
+                  Today
+                </button>
+              </div>
+            </div>
+
+            {/* MAIN DISPLAY BODY */}
+            {loading ? (
+              <div className="h-64 w-full animate-pulse rounded-2xl bg-border/40 flex items-center justify-center text-xs text-secondary_text">
+                Loading LeetCode activity from database...
+              </div>
+            ) : error ? (
+              <div className="p-6 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-600 dark:text-amber-400 flex items-center gap-2">
+                <AlertCircle size={16} />
+                <span>Unable to connect to Supabase leetcode_problems table.</span>
+              </div>
+            ) : viewMode === "month" ? (
+              
+              /* DESKTOP/TABLET 7-COL MONTH GRID MATCHING SCREENSHOT */
+              <div className="space-y-4">
+                
+                {/* Responsive Notice for Mobile Phones (< 768px) */}
+                <div className="block md:hidden p-3 rounded-2xl bg-primary/10 border border-primary/20 text-xs text-foreground flex items-center justify-between">
+                  <span>📱 Switch to Comfort View on Phone for optimum view</span>
                   <button
-                    onClick={() => setGridDate(new Date())}
-                    className="px-2.5 py-1.5 rounded-lg border border-border bg-background hover:bg-layer transition-colors font-mono text-xs font-semibold text-primary"
+                    onClick={() => setViewMode("agenda")}
+                    className="px-2.5 py-1 rounded-lg bg-primary text-white text-[11px] font-bold shrink-0 ml-2"
                   >
-                    Today
+                    Comfort View
                   </button>
                 </div>
-              ) : (
-                /* HEATMAP DROPDOWNS */
-                <div className="flex flex-wrap items-center gap-2">
-                  <div className="flex items-center gap-1 bg-background border border-border px-2.5 py-1 rounded-xl">
-                    <CalendarIcon size={13} className="text-secondary_text" />
-                    <select
-                      value={selectedYear}
-                      onChange={(e) => setSelectedYear(e.target.value)}
-                      className="bg-transparent text-foreground text-xs focus:outline-none cursor-pointer font-medium"
-                    >
-                      <option value="All">All Years</option>
-                      {yearsList.map((y) => (
-                        <option key={y} value={y}>{y}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="bg-background border border-border px-2.5 py-1 rounded-xl">
-                    <select
-                      value={selectedMonth}
-                      onChange={(e) => setSelectedMonth(e.target.value)}
-                      className="bg-transparent text-foreground text-xs focus:outline-none cursor-pointer font-medium"
-                    >
-                      <option value="All">All Months</option>
-                      {MONTH_NAMES.map((m, idx) => (
-                        <option key={m} value={idx.toString()}>{m}</option>
-                      ))}
-                    </select>
-                  </div>
-                </div>
-              )}
-            </div>
-          </div>
 
-          {/* MAIN CALENDAR DISPLAY AREA */}
-          {loading ? (
-            <div className="h-48 w-full animate-pulse rounded-2xl bg-border/40 flex items-center justify-center text-xs text-secondary_text">
-              Loading LeetCode activity from database...
-            </div>
-          ) : error ? (
-            <div className="p-6 rounded-2xl bg-amber-500/10 border border-amber-500/20 text-xs text-amber-600 dark:text-amber-400 flex items-center gap-2">
-              <AlertCircle size={16} />
-              <span>Unable to connect to Supabase leetcode_problems table. Verify table existence and permissions.</span>
-            </div>
-          ) : viewMode === "grid" ? (
-            
-            /* MONTHLY GRID CALENDAR MATCHING REFERENCE IMAGE UI */
-            <div className="overflow-x-auto select-none rounded-2xl border border-border bg-background shadow-sm">
-              <div className="min-w-[700px]">
-                
-                {/* Weekday Header */}
-                <div className="grid grid-cols-7 border-b border-border bg-layer/60 text-center font-mono text-xs font-bold text-secondary_text py-2.5 uppercase tracking-wider">
-                  {WEEKDAY_NAMES.map((day) => (
-                    <div key={day}>{day}</div>
-                  ))}
-                </div>
+                {/* 7-Col Grid Container with Touch Scroll Safety */}
+                <div className="overflow-x-auto select-none rounded-2xl border border-border bg-background shadow-sm">
+                  <div className="min-w-[720px]">
+                    
+                    {/* Weekday Header: Mon to Sun */}
+                    <div className="grid grid-cols-7 border-b border-border bg-layer/70 text-center font-mono text-xs font-bold text-secondary_text py-2.5">
+                      {WEEKDAY_NAMES.map((day, idx) => (
+                        <div key={day} className="flex items-center justify-center gap-1">
+                          <span className="font-semibold text-foreground">{idx + 1}</span>
+                          <span className="text-[11px] text-secondary_text">{day}</span>
+                        </div>
+                      ))}
+                    </div>
 
-                {/* Day Cells Grid */}
-                <div className="grid grid-cols-7 auto-rows-fr divide-x divide-y divide-border bg-background">
-                  {gridCells.map((cell, idx) => (
-                    <div
-                      key={idx}
-                      className={`min-h-[110px] p-2 flex flex-col justify-between transition-colors ${
-                        cell.isCurrentMonth
-                          ? "bg-background"
-                          : "bg-layer/20 text-secondary_text/40"
-                      }`}
-                    >
-                      {/* Top Header: Day Number */}
-                      <div className="flex items-center justify-between mb-1.5">
-                        {cell.isToday ? (
-                          <span className="w-6 h-6 rounded-full bg-purple-600 text-white font-bold text-xs flex items-center justify-center shadow-sm">
-                            {cell.dayNumber}
-                          </span>
-                        ) : (
-                          <span
-                            className={`text-xs font-semibold font-mono ${
-                              cell.isCurrentMonth ? "text-foreground" : "text-secondary_text/40"
+                    {/* Day Cells Grid */}
+                    <div className="grid grid-cols-7 auto-rows-fr divide-x divide-y divide-border bg-background">
+                      {gridCells.map((cell, idx) => {
+                        return (
+                          <div
+                            key={idx}
+                            onClick={() => {
+                              setSelectedDateStr(cell.dateStr);
+                              if (cell.problems.length > 0) {
+                                setSelectedDayProblems({ date: cell.dateStr, items: cell.problems });
+                              }
+                            }}
+                            className={`min-h-[120px] p-2 flex flex-col justify-between transition-colors cursor-pointer hover:bg-layer/30 ${
+                              cell.isCurrentMonth
+                                ? "bg-background"
+                                : "bg-layer/15 text-secondary_text/40"
                             }`}
                           >
-                            {cell.dayNumber}
-                          </span>
-                        )}
-                      </div>
+                            {/* Top Header: Day Number */}
+                            <div className="flex items-center justify-between mb-1.5">
+                              {cell.isToday ? (
+                                <span className="w-6 h-6 rounded-full bg-foreground text-background font-bold text-xs flex items-center justify-center shadow-md">
+                                  {cell.dayNumber}
+                                </span>
+                              ) : (
+                                <span
+                                  className={`text-xs font-bold font-mono ${
+                                    cell.isCurrentMonth ? "text-foreground" : "text-secondary_text/30"
+                                  }`}
+                                >
+                                  {cell.dayNumber}
+                                </span>
+                              )}
+                            </div>
 
-                      {/* Problem Pills inside Day Cell */}
-                      <div className="space-y-1.5 flex-1 overflow-hidden">
-                        {cell.problems.slice(0, 2).map((prob) => (
-                          <button
+                            {/* Cell Content: Event Pill Badges matching screenshot */}
+                            <div className="space-y-1.5 flex-1 overflow-hidden">
+                              
+                              {/* Option A: Detailed Comfort View Pills (Up to 2 per cell) */}
+                              {cell.problems.slice(0, 2).map((prob) => {
+                                const style = getPillBadgeStyle(prob.difficulty);
+                                return (
+                                  <div
+                                    key={prob.id}
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setSelectedProblem(prob);
+                                    }}
+                                    className={`p-1.5 rounded-lg text-[11px] font-medium flex items-center justify-between gap-1 shadow-2xs transition-all ${style.container}`}
+                                    title={prob.title}
+                                  >
+                                    <span className="truncate font-semibold max-w-[110px]">
+                                      {prob.title}
+                                    </span>
+                                    <span className={`px-1.5 py-0.2 rounded-md font-mono text-[9px] font-bold ${style.badge}`}>
+                                      {prob.difficulty[0]}
+                                    </span>
+                                  </div>
+                                );
+                              })}
+
+                              {/* Option B: Compact Category Count Badges (If 3+ entries like Screenshot COMPACT VIEW) */}
+                              {cell.problems.length > 2 && (
+                                <div className="pt-1 flex flex-wrap items-center gap-1">
+                                  {cell.easyCount > 0 && (
+                                    <span className="px-1.5 py-0.5 rounded-md bg-[#f97316] text-white font-mono text-[10px] font-bold">
+                                      {cell.easyCount}
+                                    </span>
+                                  )}
+                                  {cell.mediumCount > 0 && (
+                                    <span className="px-1.5 py-0.5 rounded-md bg-[#a855f7] text-white font-mono text-[10px] font-bold">
+                                      {cell.mediumCount}
+                                    </span>
+                                  )}
+                                  {cell.hardCount > 0 && (
+                                    <span className="px-1.5 py-0.5 rounded-md bg-[#22c55e] text-white font-mono text-[10px] font-bold">
+                                      {cell.hardCount}
+                                    </span>
+                                  )}
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+
+                  </div>
+                </div>
+
+              </div>
+            ) : viewMode === "agenda" ? (
+              
+              /* ADAPTIVE MOBILE COMFORT AGENDA VIEW (NO OVERFLOW ON PHONE SCREENS) */
+              <div className="space-y-6">
+                
+                {/* Date Strip / Picker at top */}
+                <div className="flex items-center gap-2 overflow-x-auto pb-2 select-none scrollbar-none">
+                  {gridCells.filter(c => c.isCurrentMonth).map((c) => {
+                    const isSelected = selectedDateStr === c.dateStr;
+                    const hasEasy = c.easyCount > 0;
+                    const hasMedium = c.mediumCount > 0;
+                    const hasHard = c.hardCount > 0;
+                    return (
+                      <button
+                        key={c.dateStr}
+                        onClick={() => setSelectedDateStr(c.dateStr)}
+                        className={`flex flex-col items-center justify-between p-2.5 min-w-[54px] rounded-2xl border transition-all ${
+                          isSelected
+                            ? "bg-primary text-white border-primary shadow-md scale-105"
+                            : c.isToday
+                            ? "bg-layer border-foreground text-foreground"
+                            : "bg-background border-border text-foreground hover:bg-layer"
+                        }`}
+                      >
+                        <span className="text-[10px] font-mono opacity-80 font-bold">
+                          {c.dayNumber}
+                        </span>
+                        
+                        {/* Colored dots for category presence */}
+                        <div className="flex items-center gap-1 mt-1.5 h-2">
+                          {hasEasy && <span className="w-1.5 h-1.5 rounded-full bg-[#f97316]" />}
+                          {hasMedium && <span className="w-1.5 h-1.5 rounded-full bg-[#a855f7]" />}
+                          {hasHard && <span className="w-1.5 h-1.5 rounded-full bg-[#22c55e]" />}
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {/* Selected Day's Comfort View Cards */}
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between border-b border-border/50 pb-2">
+                    <h3 className="font-bold text-sm text-foreground font-mono flex items-center gap-2">
+                      <span>Solves on {selectedDateStr}</span>
+                      <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs">
+                        {selectedDayItems.length} Problem{selectedDayItems.length === 1 ? "" : "s"}
+                      </span>
+                    </h3>
+                  </div>
+
+                  {selectedDayItems.length === 0 ? (
+                    <div className="p-8 text-center text-xs text-secondary_text border border-dashed border-border rounded-2xl">
+                      No problems logged on this date. Select another date from the strip above.
+                    </div>
+                  ) : (
+                    <div className="space-y-3">
+                      {selectedDayItems.map((prob) => {
+                        const style = getPillBadgeStyle(prob.difficulty);
+                        return (
+                          <div
                             key={prob.id}
                             onClick={() => setSelectedProblem(prob)}
-                            className={`w-full text-left px-2 py-1 rounded-lg text-[11px] font-medium flex items-center justify-between gap-1 transition-all ${getPillStyle(
-                              prob.difficulty
-                            )}`}
-                            title={prob.title}
+                            className={`p-4 rounded-2xl border transition-all cursor-pointer flex items-center justify-between gap-4 shadow-sm hover:shadow-md ${style.container}`}
                           >
-                            <span className="truncate max-w-[100px]">{prob.title}</span>
-                            <span className="text-[9px] font-mono opacity-80 shrink-0 font-bold">
+                            <div className="space-y-1">
+                              <div className="flex items-center gap-2">
+                                <span className="font-bold text-sm text-foreground">
+                                  {prob.title}
+                                </span>
+                              </div>
+                              <div className="flex flex-wrap items-center gap-2 text-xs opacity-80">
+                                <span className="font-mono">Language: {prob.language || "Python"}</span>
+                                {parseTopics(prob.topic).length > 0 && (
+                                  <span>· Topics: {parseTopics(prob.topic).slice(0, 2).join(", ")}</span>
+                                )}
+                              </div>
+                            </div>
+
+                            <span className={`px-3 py-1 rounded-xl font-mono text-xs font-bold ${style.badge}`}>
                               {prob.difficulty}
                             </span>
-                          </button>
-                        ))}
-
-                        {/* Overflow +N more indicator */}
-                        {cell.problems.length > 2 && (
-                          <button
-                            onClick={() =>
-                              setSelectedDayProblems({
-                                date: cell.dateStr,
-                                items: cell.problems,
-                              })
-                            }
-                            className="text-[10px] font-mono text-purple-600 dark:text-purple-400 font-bold hover:underline block pt-0.5"
-                          >
-                            {cell.problems.length - 2} more...
-                          </button>
-                        )}
-                      </div>
+                          </div>
+                        );
+                      })}
                     </div>
-                  ))}
+                  )}
                 </div>
 
               </div>
-            </div>
-          ) : (
+            ) : (
 
-            /* GITHUB PURPLE SIGNUP HEATMAP VIEW */
-            <div className="space-y-4">
-              <div className="overflow-x-auto pb-2">
-                <div className="min-w-[650px]">
-                  <CalendarHeatmap
-                    startDate={heatmapStartDate}
-                    endDate={heatmapEndDate}
-                    values={heatmapValues}
-                    classForValue={(value) => {
-                      if (!value || value.count === 0) return "color-empty";
-                      if (value.count === 1) return "color-scale-1";
-                      if (value.count === 2) return "color-scale-2";
-                      if (value.count < 5) return "color-scale-3";
-                      return "color-scale-4";
-                    }}
-                    titleForValue={(value) => {
-                      if (!value || !value.date) return "No solves logged";
-                      return `${value.date}: ${value.count} problem${value.count === 1 ? "" : "s"} solved`;
-                    }}
-                    showWeekdayLabels={true}
-                  />
+              /* GITHUB PURPLE SIGNUP HEATMAP VIEW */
+              <div className="space-y-4">
+                <div className="overflow-x-auto pb-2">
+                  <div className="min-w-[650px]">
+                    <CalendarHeatmap
+                      startDate={heatmapStartDate}
+                      endDate={heatmapEndDate}
+                      values={heatmapValues}
+                      classForValue={(value) => {
+                        if (!value || value.count === 0) return "color-empty";
+                        if (value.count === 1) return "color-scale-1";
+                        if (value.count === 2) return "color-scale-2";
+                        if (value.count < 5) return "color-scale-3";
+                        return "color-scale-4";
+                      }}
+                      titleForValue={(value) => {
+                        if (!value || !value.date) return "No solves logged";
+                        return `${value.date}: ${value.count} problem${value.count === 1 ? "" : "s"} solved`;
+                      }}
+                      showWeekdayLabels={true}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-end gap-2 text-xs text-secondary_text font-mono select-none pt-2">
+                  <span>Less</span>
+                  <div className="flex items-center gap-1">
+                    <span className="w-3 h-3 rounded-[3px] bg-[#161b22] border border-white/10 dark:block hidden" title="0 solves" />
+                    <span className="w-3 h-3 rounded-[3px] bg-[#f3e8ff] border border-[#d8b4fe] dark:hidden block" title="0 solves" />
+                    <span className="w-3 h-3 rounded-[3px] bg-[#d8b4fe]" title="1 solve" />
+                    <span className="w-3 h-3 rounded-[3px] bg-[#c084fc]" title="2 solves" />
+                    <span className="w-3 h-3 rounded-[3px] bg-[#a855f7]" title="3-4 solves" />
+                    <span className="w-3 h-3 rounded-[3px] bg-[#7e22ce]" title="5+ solves" />
+                  </div>
+                  <span>More</span>
                 </div>
               </div>
+            )}
+          </div>
 
-              {/* INTENSITY LEGEND BELOW CALENDAR */}
-              <div className="flex items-center justify-end gap-2 text-xs text-secondary_text font-mono select-none pt-2">
-                <span>Less</span>
-                <div className="flex items-center gap-1">
-                  <span className="w-3 h-3 rounded-[3px] bg-[#161b22] border border-white/10 dark:block hidden" title="0 solves" />
-                  <span className="w-3 h-3 rounded-[3px] bg-[#f3e8ff] border border-[#d8b4fe] dark:hidden block" title="0 solves" />
-                  <span className="w-3 h-3 rounded-[3px] bg-[#d8b4fe]" title="1 solve" />
-                  <span className="w-3 h-3 rounded-[3px] bg-[#c084fc]" title="2 solves" />
-                  <span className="w-3 h-3 rounded-[3px] bg-[#a855f7]" title="3-4 solves" />
-                  <span className="w-3 h-3 rounded-[3px] bg-[#7e22ce]" title="5+ solves" />
-                </div>
-                <span>More</span>
-              </div>
-            </div>
-          )}
         </div>
 
-        {/* 2. STATS CARDS */}
+        {/* STATS SUMMARY CARDS */}
         <div className="grid grid-cols-2 sm:grid-cols-5 gap-4">
           <div className="p-5 rounded-2xl border border-border bg-layer/40 shadow-sm flex flex-col justify-between">
             <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-secondary_text">
@@ -649,7 +857,7 @@ export default function LeetCodePage() {
           </div>
 
           <div className="p-5 rounded-2xl border border-border bg-layer/40 shadow-sm flex flex-col justify-between">
-            <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+            <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#f97316]">
               Easy Problems
             </span>
             <div className="mt-2 flex items-baseline justify-between">
@@ -663,7 +871,7 @@ export default function LeetCodePage() {
           </div>
 
           <div className="p-5 rounded-2xl border border-border bg-layer/40 shadow-sm flex flex-col justify-between">
-            <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-blue-600 dark:text-blue-400">
+            <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#a855f7]">
               Medium Problems
             </span>
             <div className="mt-2 flex items-baseline justify-between">
@@ -677,7 +885,7 @@ export default function LeetCodePage() {
           </div>
 
           <div className="p-5 rounded-2xl border border-border bg-layer/40 shadow-sm flex flex-col justify-between">
-            <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-rose-600 dark:text-rose-400">
+            <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-[#22c55e]">
               Hard Problems
             </span>
             <div className="mt-2 flex items-baseline justify-between">
@@ -703,7 +911,7 @@ export default function LeetCodePage() {
           </div>
         </div>
 
-        {/* 3. FILTERABLE PROBLEMS TABLE */}
+        {/* FILTERABLE PROBLEMS TABLE */}
         <div className="p-6 md:p-8 rounded-3xl border border-border bg-layer/40 shadow-sm space-y-6">
           
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4">
@@ -826,10 +1034,10 @@ export default function LeetCodePage() {
                           <span
                             className={`px-2.5 py-0.5 rounded-full font-mono text-[10px] font-bold border ${
                               diffLower === "easy"
-                                ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
+                                ? "bg-[#ffedd5] text-[#c2410c] border-[#fed7aa]"
                                 : diffLower === "medium"
-                                ? "bg-blue-500/10 text-blue-600 border-blue-500/20"
-                                : "bg-rose-500/10 text-rose-600 border-rose-500/20"
+                                ? "bg-[#f3e8ff] text-[#6b21a8] border-[#e9d5ff]"
+                                : "bg-[#dcfce7] text-[#15803d] border-[#bbf7d0]"
                             }`}
                           >
                             {prob.difficulty}
@@ -873,10 +1081,10 @@ export default function LeetCodePage() {
                 <span
                   className={`px-2.5 py-0.5 rounded-full font-mono text-[10px] font-bold border mb-2 inline-block ${
                     selectedProblem.difficulty?.toLowerCase() === "easy"
-                      ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
+                      ? "bg-[#ffedd5] text-[#c2410c] border-[#fed7aa]"
                       : selectedProblem.difficulty?.toLowerCase() === "medium"
-                      ? "bg-blue-500/10 text-blue-600 border-blue-500/20"
-                      : "bg-rose-500/10 text-rose-600 border-rose-500/20"
+                      ? "bg-[#f3e8ff] text-[#6b21a8] border-[#e9d5ff]"
+                      : "bg-[#dcfce7] text-[#15803d] border-[#bbf7d0]"
                   }`}
                 >
                   {selectedProblem.difficulty}
@@ -975,21 +1183,24 @@ export default function LeetCodePage() {
             </div>
 
             <div className="space-y-2 max-h-80 overflow-y-auto pr-1">
-              {selectedDayProblems.items.map((prob) => (
-                <div
-                  key={prob.id}
-                  onClick={() => {
-                    setSelectedDayProblems(null);
-                    setSelectedProblem(prob);
-                  }}
-                  className={`p-3 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${getPillStyle(
-                    prob.difficulty
-                  )}`}
-                >
-                  <span className="font-bold text-xs">{prob.title}</span>
-                  <span className="font-mono text-[10px] uppercase font-bold">{prob.difficulty}</span>
-                </div>
-              ))}
+              {selectedDayProblems.items.map((prob) => {
+                const style = getPillBadgeStyle(prob.difficulty);
+                return (
+                  <div
+                    key={prob.id}
+                    onClick={() => {
+                      setSelectedDayProblems(null);
+                      setSelectedProblem(prob);
+                    }}
+                    className={`p-3 rounded-2xl border transition-all cursor-pointer flex items-center justify-between ${style.container}`}
+                  >
+                    <span className="font-bold text-xs">{prob.title}</span>
+                    <span className={`px-2 py-0.5 rounded-md font-mono text-[10px] uppercase font-bold ${style.badge}`}>
+                      {prob.difficulty}
+                    </span>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>
