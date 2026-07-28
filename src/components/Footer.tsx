@@ -189,8 +189,8 @@ export default function Footer({ lightMode }: FooterProps) {
             <Link to="/now" className="text-secondary_text hover:text-primary transition-colors">
               Now Building
             </Link>
-            <Link to="/leetcode" className="text-secondary_text hover:text-primary transition-colors">
-              LeetCode Tracker
+            <Link to="/activity" className="text-secondary_text hover:text-primary transition-colors">
+              GitHub Activity
             </Link>
             <Link to="/resume" className="text-secondary_text hover:text-primary transition-colors">
               Curriculum Vitae / Resume

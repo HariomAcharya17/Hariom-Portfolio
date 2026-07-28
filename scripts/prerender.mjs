@@ -34,7 +34,7 @@ const ROUTES = [
     '/experience',
     '/skills',
     '/now',
-    '/leetcode',
+    '/activity',
     '/resume',
     '/contact',
     '/ai'
